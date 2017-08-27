@@ -1,2 +1,3 @@
-# newsapp
-NewsApp
+# NewsApp
+
+Java Project
