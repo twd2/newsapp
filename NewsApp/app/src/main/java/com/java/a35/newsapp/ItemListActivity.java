@@ -70,7 +70,12 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "菜单", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        .setAction("取消", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(ItemListActivity.this,"你点击了action",Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
             }
         });
 
