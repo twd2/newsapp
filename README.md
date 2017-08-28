@@ -2,7 +2,7 @@
 
 Java Project
 
-**Please do not push to master directly, use PR instead.**
+**Please do not push to the master branch directly, use PR instead.**
 
 ## Notes
 
