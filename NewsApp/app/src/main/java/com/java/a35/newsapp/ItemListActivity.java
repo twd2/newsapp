@@ -54,12 +54,17 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.app_bar_search:
+                    case R.id.app_bar_search: {
                         Toast.makeText(ItemListActivity.this, "Search!", Toast.LENGTH_SHORT).show();
                         Context context = ItemListActivity.this.getCurrentFocus().getContext();
                         Intent intent = new Intent(context, SearchActivity.class);
                         context.startActivity(intent);
                         break;
+                    } case R.id.app_bar_settings: {
+                        Context context = ItemListActivity.this.getCurrentFocus().getContext();
+                        Intent intent = new Intent(context, SettingsActivity.class);
+                        context.startActivity(intent);
+                    }
                 }
                 return true;
             }

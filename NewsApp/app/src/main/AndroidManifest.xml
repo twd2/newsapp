@@ -30,7 +30,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.java.a35.newsapp.ItemListActivity" />
         </activity>
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".SearchActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>
