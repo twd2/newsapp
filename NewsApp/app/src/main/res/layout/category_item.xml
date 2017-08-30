@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <ImageView
+        android:id="@+id/categoryImage"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/sports"
+        android:scaleType="fitXY"
+        />
+
+    <Button
+        android:id="@+id/categoryButton"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#cc000000"
+        android:text="Sports"
+        android:textSize="30dp"
+        android:textColor="#ddeeeeee"
+        />
+    <Button
+        android:id="@+id/decorateButton"
+        android:layout_width="20dp"
+        android:layout_height="fill_parent"
+        android:background="#dd55"/>
+
+
+</RelativeLayout>
