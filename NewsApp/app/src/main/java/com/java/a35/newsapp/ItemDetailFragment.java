@@ -1,6 +1,7 @@
 package com.java.a35.newsapp;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.java.a35.newsapp.dummy.DummyContent;
@@ -64,6 +66,10 @@ public class ItemDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem.details);
+            WebView webView = rootView.findViewById(R.id.item_web);
+            webView.setBackgroundColor(Color.TRANSPARENT);
+            webView.loadDataWithBaseURL(null, "<h1>广告位招租</h1><h2>联系：13000000000</h2>",
+                                        "text/html", "UTF-8", null);
         }
 
         return rootView;

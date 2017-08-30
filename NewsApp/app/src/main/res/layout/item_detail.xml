@@ -1,9 +1,27 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/item_detail"
+    android:id="@+id/item_detail_layout"
     style="?android:attr/textAppearanceLarge"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context="com.java.a35.newsapp.ItemDetailFragment" />
+    tools:context="com.java.a35.newsapp.ItemDetailFragment"
+    android:orientation="vertical">
+
+    <WebView
+        android:id="@+id/item_web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:background="@android:color/transparent" />
+
+    <TextView
+        android:id="@+id/item_detail"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:lineSpacingMultiplier="1.5"
+        android:padding="16dp"
+        android:textIsSelectable="true" />
+
+</LinearLayout>

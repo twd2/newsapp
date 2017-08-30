@@ -43,6 +43,9 @@ public class ItemDetailActivity extends AppCompatActivity {
                                     }
                                 }).show();
                         break;
+                    case R.id.app_bar_share:
+                        Toast.makeText(ItemDetailActivity.this,
+                                "分享到社交网络", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             }
