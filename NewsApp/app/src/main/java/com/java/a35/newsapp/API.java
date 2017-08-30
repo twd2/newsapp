@@ -2,6 +2,7 @@ package com.java.a35.newsapp;
 
 import android.support.annotation.RequiresPermission;
 import android.util.JsonReader;
+import android.util.Log;
 
 import org.json.*;
 
@@ -52,7 +53,7 @@ public class API {
         URLConnection conn = url.openConnection();
         conn.setRequestProperty("User-Agent", "NewsApp/0.0");
         String jsonString = readAllString(conn.getInputStream());
-        System.out.println(jsonString);
+        Log.d("API", jsonString);
         return new JSONObject(jsonString);
     }
 

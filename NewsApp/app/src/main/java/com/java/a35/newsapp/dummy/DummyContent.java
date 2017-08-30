@@ -50,33 +50,17 @@ public class DummyContent {
                 String newsContent =
                     api.getNews(news.getString("news_ID")).getString("news_Content");
                 addItem(new DummyItem(String.valueOf(i + 1), news.getString("news_Title"),
-                        "\n" + newsContent));
+                        newsContent));
             }
         } catch (Exception e) {
             Log.d("init", e.toString());
-            // Add some sample items.
-            for (int i = 1; i <= COUNT; i++) {
-                addItem(createDummyItem(i));
-            }
+            addItem(new DummyItem("-", "网络加载失败", "ggggg"));
         }
     }
 
     private static void addItem(DummyItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
-    }
-
-    private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "新闻 " + position, makeDetails(position));
-    }
-
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("这是第").append(position).append("条新闻。");
-        for (int i = 0; i < position; i++) {
-            builder.append("\n这是新闻内容。");
-        }
-        return builder.toString();
     }
 
     /**

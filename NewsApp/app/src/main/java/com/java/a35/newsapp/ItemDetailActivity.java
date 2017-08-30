@@ -2,10 +2,15 @@ package com.java.a35.newsapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +47,8 @@ public class ItemDetailActivity extends AppCompatActivity {
                                                 "已取消收藏", Toast.LENGTH_SHORT).show();
                                     }
                                 }).show();
+                        Drawable icon = Resources.getSystem().getDrawable(R.drawable.ic_favorite_border_white_24dp, null);
+                        item.setIcon(icon);
                         break;
                     case R.id.app_bar_share:
                         Toast.makeText(ItemDetailActivity.this,
@@ -77,6 +84,25 @@ public class ItemDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
                     .commit();
+        } else {
+            ItemDetailFragment fragment = new ItemDetailFragment();
+            fragment.setArguments(savedInstanceState);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.item_detail_container, fragment)
+                    .commit();
+            NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
+            Log.d("scroll", "" + scroll.getWidth());
+//            int scroll_y = savedInstanceState.getInt("scroll_y");
+//            scroll.setScrollY(scroll_y / scroll.getHeight());
+        }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
+            Log.d("scroll", "" + scroll.getWidth());
         }
     }
 
@@ -101,5 +127,15 @@ public class ItemDetailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detail, menu);
         return true;
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(ItemDetailFragment.ARG_ITEM_ID,
+                           getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+        NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
+        outState.putInt("scroll_y", scroll.getScrollY() * scroll.getHeight());
+        Log.d("scroll", "" + scroll.getWidth());
     }
 }

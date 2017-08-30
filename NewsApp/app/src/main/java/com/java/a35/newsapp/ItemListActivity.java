@@ -5,7 +5,10 @@ import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -18,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,17 +63,9 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.app_bar_search: {
-                        Toast.makeText(ItemListActivity.this, "Search!", Toast.LENGTH_SHORT).show();
-
-//                        Context context = ItemListActivity.this.getCurrentFocus().getContext();
-//                        Intent intent = new Intent(context, SearchActivity.class);
-//                        context.startActivity(intent);
-                        break;
-                    } case R.id.app_bar_settings: {
-                        Context context = ItemListActivity.this.getCurrentFocus().getContext();
-                        Intent intent = new Intent(context, SettingsActivity.class);
-                        context.startActivity(intent);
+                    case R.id.app_bar_settings: {
+                        Intent intent = new Intent(ItemListActivity.this, SettingsActivity.class);
+                        startActivity(intent);
                     }
                 }
                 return true;
@@ -87,6 +83,25 @@ public class ItemListActivity extends AppCompatActivity {
                                 Toast.makeText(ItemListActivity.this,"你点击了action",Toast.LENGTH_SHORT).show();
                             }
                         }).show();
+            }
+        });
+
+        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+        refreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshLayout.setRefreshing(true);
+                //refreshLayout.setEnabled(false);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.setRefreshing(false);
+                        //refreshLayout.setEnabled(true);
+                    }
+                }, 1000);
+                // refreshLayout.setRefreshing(false);
             }
         });
 
@@ -150,12 +165,14 @@ public class ItemListActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String queryText) {
+                Log.d("search", queryText);
                 Toast.makeText(ItemListActivity.this, queryText, Toast.LENGTH_LONG);
                 return true;
             }
 
             @Override
             public boolean onQueryTextSubmit(String queryText) {
+                Log.d("search", queryText);
                 Toast.makeText(ItemListActivity.this, queryText, Toast.LENGTH_LONG);
 
                 if (mSearchView != null) {
@@ -189,7 +206,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     private void doMySearch(String query) {
         // TODO 自动生成的方法存根
-        Toast.makeText(this, "do search " + query, Toast.LENGTH_LONG).show();
+        Log.d("search", "do search " + query);
     }
 
     public class SimpleItemRecyclerViewAdapter
