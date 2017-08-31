@@ -108,11 +108,11 @@ public class API {
 
     public JSONObject searchAllNews(String query, int page)
             throws IOException, JSONException {
-        return searchNews(query, page, DEFAULT_PAGE_SIZE);
+        return searchAllNews(query, page, DEFAULT_PAGE_SIZE);
     }
 
     public JSONObject searchAllNews(String query)
             throws IOException, JSONException {
-        return searchNews(query, 1, DEFAULT_PAGE_SIZE);
+        return searchAllNews(query, 1, DEFAULT_PAGE_SIZE);
     }
 }
