@@ -16,6 +16,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
     interface QueryCallback {
         String getQuery();
+        int getCategory();
     }
     private QueryCallback queryCallback;
 
@@ -28,12 +29,13 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
     public JSONObject loadInBackground() {
         API api = ((App) getContext().getApplicationContext()).getApi();
         String query = queryCallback.getQuery();
+        int category = queryCallback.getCategory();
         try {
             if (query != null && query.length() > 0) {
-                // TODO: search
-                return api.getListNews();
+                // TODO: search category?
+                return api.searchAllNews(query);
             } else {
-                return api.getListNews();
+                return api.getListNews(category);
             }
         } catch (IOException e) {
             return null;

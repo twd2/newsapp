@@ -103,6 +103,12 @@ public class ItemListActivity extends AppCompatActivity {
                             public String getQuery() {
                                 return query;
                             }
+
+                            @Override
+                            public int getCategory() {
+                                // TODO
+                                return 2;
+                            }
                         });
             }
 

@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 
 /**
@@ -21,8 +22,10 @@ import java.net.URLConnection;
  */
 
 public class API {
+
     public static final String SERVER_URL = "http://166.111.68.66:2042";
     public static final int DEFAULT_PAGE_SIZE = 20;
+    public static final int CATEGORY_COUNT = 12;
 
     private final String server;
 
@@ -57,21 +60,59 @@ public class API {
         return new JSONObject(jsonString);
     }
 
-    public JSONObject getListNews(int page, int pageSize) throws IOException, JSONException {
-        String queryString = String.format("pageNo=%d&pageSize=%d", page, pageSize);
+    public JSONObject getListNews(int category, int page, int pageSize)
+            throws IOException, JSONException {
+        String queryString = String.format("category=%d&pageNo=%d&pageSize=%d",
+                                           category, page, pageSize);
         return get("/news/action/query/latest", queryString);
     }
 
-    public JSONObject getListNews(int page) throws IOException, JSONException {
-        return getListNews(page, DEFAULT_PAGE_SIZE);
+    public JSONObject getListNews(int category, int page) throws IOException, JSONException {
+        return getListNews(category, page, DEFAULT_PAGE_SIZE);
     }
 
-    public JSONObject getListNews() throws IOException, JSONException {
-        return getListNews(1);
+    public JSONObject getListNews(int category) throws IOException, JSONException {
+        return getListNews(category, 1, DEFAULT_PAGE_SIZE);
     }
 
     public JSONObject getNews(String newsId) throws IOException, JSONException {
         String queryString = String.format("newsId=%s", newsId);
         return get("/news/action/query/detail", queryString);
+    }
+
+    public JSONObject searchNews(String query, int category, int page, int pageSize)
+            throws IOException, JSONException {
+        String queryString = String.format("keyword=%s&category=%d&pageNo=%d&pageSize=%d",
+                                           URLEncoder.encode(query, "UTF-8"),
+                                           category, page, pageSize);
+        return get("/news/action/query/search", queryString);
+    }
+
+    public JSONObject searchNews(String query, int category, int page)
+            throws IOException, JSONException {
+        return searchNews(query, category, page, DEFAULT_PAGE_SIZE);
+    }
+
+    public JSONObject searchNews(String query, int category)
+            throws IOException, JSONException {
+        return searchNews(query, category, 1, DEFAULT_PAGE_SIZE);
+    }
+
+    public JSONObject searchAllNews(String query, int page, int pageSize)
+            throws IOException, JSONException {
+        String queryString = String.format("keyword=%s&pageNo=%d&pageSize=%d",
+                                           URLEncoder.encode(query, "UTF-8"),
+                                           page, pageSize);
+        return get("/news/action/query/search", queryString);
+    }
+
+    public JSONObject searchAllNews(String query, int page)
+            throws IOException, JSONException {
+        return searchAllNews(query, page, DEFAULT_PAGE_SIZE);
+    }
+
+    public JSONObject searchAllNews(String query)
+            throws IOException, JSONException {
+        return searchAllNews(query, 1, DEFAULT_PAGE_SIZE);
     }
 }
