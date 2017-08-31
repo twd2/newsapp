@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:support="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/app_bar_favorite"
@@ -13,6 +14,7 @@
         android:id="@+id/app_bar_share"
         android:icon="?android:attr/actionModeShareDrawable"
         android:title="分享"
-        app:showAsAction="ifRoom" />
+        support:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        support:showAsAction="always" />
 
 </menu>
