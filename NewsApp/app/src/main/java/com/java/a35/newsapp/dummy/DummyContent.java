@@ -43,7 +43,7 @@ public class DummyContent {
             StrictMode.setThreadPolicy(policy);
         }
         try {
-            JSONObject obj = api.getListNews();
+            JSONObject obj = api.getListNews(2);
             JSONArray newsList = obj.getJSONArray("list");
             for (int i = 0; i < newsList.length(); ++i) {
                 JSONObject news = newsList.getJSONObject(i);
