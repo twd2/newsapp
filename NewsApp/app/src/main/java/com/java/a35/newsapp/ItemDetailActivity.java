@@ -62,8 +62,11 @@ public class ItemDetailActivity extends AppCompatActivity {
                     case R.id.app_bar_share_2:
                         String message = "http://www.baidu.com";
                         Intent share = new Intent(Intent.ACTION_SEND);
-                        share.setType("plain/text");
-                        share.putExtra(Intent.EXTRA_TEXT, message);
+                        share.setType("image/*");
+                        //share.putExtra(Intent.EXTRA_TEXT, message);
+                        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
+                        share.putExtra("Kdescription", "测试描述 ——发自我的 NewsApp");
+                        share.putExtra(Intent.EXTRA_TEXT, "测试文本 ——发自我的 NewsApp");
                         startActivity(Intent.createChooser(share, "Title of the dialog the system will open"));
                         break;
                 }
