@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -57,6 +58,14 @@ public class ItemDetailActivity extends AppCompatActivity {
                     case R.id.app_bar_share:
                         Toast.makeText(ItemDetailActivity.this,
                                 "分享到社交网络", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.app_bar_share_2:
+                        String message = "http://www.baidu.com";
+                        Intent share = new Intent(Intent.ACTION_SEND);
+                        share.setType("plain/text");
+                        share.putExtra(Intent.EXTRA_TEXT, message);
+                        startActivity(Intent.createChooser(share, "Title of the dialog the system will open"));
+                        break;
                 }
                 return true;
             }

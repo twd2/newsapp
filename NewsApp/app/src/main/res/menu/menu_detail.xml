@@ -17,4 +17,11 @@
         support:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         support:showAsAction="always" />
 
+
+    <item
+        android:id="@+id/app_bar_share_2"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="分享_2"
+        app:showAsAction="ifRoom" />
+
 </menu>
