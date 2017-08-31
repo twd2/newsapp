@@ -50,6 +50,9 @@ public class ItemDetailActivity extends AppCompatActivity {
                         Drawable icon = Resources.getSystem().getDrawable(R.drawable.ic_favorite_border_white_24dp, null);
                         item.setIcon(icon);
                         break;
+                    case R.id.app_bar_tts:
+                        Toast.makeText(ItemDetailActivity.this,
+                                "朗读中。。。", Toast.LENGTH_SHORT).show();
                     case R.id.app_bar_share:
                         Toast.makeText(ItemDetailActivity.this,
                                 "分享到社交网络", Toast.LENGTH_SHORT).show();
