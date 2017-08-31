@@ -17,7 +17,19 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+        <HorizontalScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="100dp">
+
+            <LinearLayout
+                android:id="@+id/categoryBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
     </android.support.design.widget.AppBarLayout>
 

@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,12 +44,13 @@ public class ItemListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private SearchView mSearchView;
+    private  CategoryBar mCategoryBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
-
+        mCategoryBar = new CategoryBar((LinearLayout) findViewById(R.id.categoryBar), this);
         Log.d("test", getFilesDir().getAbsolutePath());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
