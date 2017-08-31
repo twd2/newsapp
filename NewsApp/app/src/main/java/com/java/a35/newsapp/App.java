@@ -7,5 +7,12 @@ import android.app.Application;
  */
 
 public class App extends Application {
+
+    private static final API api = new API(API.SERVER_URL);
+
+    public API getApi() {
+        return api;
+    }
+
    // TODO
 }
