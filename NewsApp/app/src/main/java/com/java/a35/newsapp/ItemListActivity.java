@@ -176,7 +176,7 @@ public class ItemListActivity extends AppCompatActivity {
         SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshing(false);
         RecyclerView itemList = (RecyclerView) findViewById(R.id.item_list);
-        setupRecyclerView(itemList);
+        itemList.getAdapter().notifyDataSetChanged();
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
