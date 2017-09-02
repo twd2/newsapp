@@ -1,9 +1,12 @@
 package com.java.a35.newsapp;
 
+import android.support.annotation.BoolRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.Button;
+import java.util.*;
+import java.util.Iterator;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -12,51 +15,49 @@ public class CategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
     }
-    private void createCategory()
-    {
-        LinearLayout categoryLayout = (LinearLayout)findViewById(R.id.categoryLinearLayout);
-        for(int i = 0; i < 10; i++)
-        {
-            Button btn = new Button(this);
-            btn.setText(i);
-            categoryLayout.addView(btn);
-            int idx = categoryLayout.indexOfChild(btn);
-            btn.setTag(Integer.toString(idx));
-        }
-    }
 }
 
 class CategoryController
 {
-    public static String[] categories = {"习近平","胡锦涛","江泽民","邓小平","毛泽东"};
-    public static boolean[] categoriesExist = {true, true, true, true, true};
-    public static int currentCategory = 0;                      //current category of showing news
-    void dump()          //to do, dump current categories to file
+    public static HashMap<String, Boolean> categories;            // = {"推荐","科技","教育","军事","国内","社会","文化","汽车","国际","体育","财经","健康","娱乐","收藏"};          //分类的全集，value为该分类是否在添加的列表内
+    public static String[] addedCategories;
+    static
     {
-
+        categories = new HashMap<String, Boolean>();
+        categories.put("推荐", false);
+        categories.put("科技", true);
+        categories.put("教育", true);
+        categories.put("军事", true);
+        categories.put("国内", true);
+        categories.put("社会", true);
+        categories.put("文化", true);
+        categories.put("汽车", true);
+        categories.put("国际", true);
+        categories.put("体育", true);
+        categories.put("财经", true);
+        categories.put("健康", true);
+        categories.put("娱乐", true);
+        categories.put("收藏", true);
+        refreshAddedCategories();
     }
-    void load()          //to do, load categories from file
+    static void refreshAddedCategories()
     {
-
-    }
-}
-
-class CategoryBar
-{
-    LinearLayout categoryBarLayout;
-    AppCompatActivity mActivity;
-    CategoryBar(LinearLayout categoryBarLayout, AppCompatActivity inputActivity)
-    {
-        this.categoryBarLayout = categoryBarLayout;
-        this.mActivity = inputActivity;
-        for(int i = 0; i < CategoryController.categories.length; i++)
+        int size = 0;
+        for(Boolean value: categories.values())
         {
-            Button btn = new Button(mActivity);
-            btn.setText(CategoryController.categories[i]);
-            categoryBarLayout.addView(btn);
-            int idx = categoryBarLayout.indexOfChild(btn);
-            btn.setTag(Integer.toString(idx));
+            if(value) {
+                size++;
+            }
+        }
+        addedCategories = new String[size];
+        int index = 0;
+        for(String value: categories.keySet())
+        {
+            if(categories.get(value))
+            {
+                addedCategories[index] = value;
+                index++;
+            }
         }
     }
-
 }

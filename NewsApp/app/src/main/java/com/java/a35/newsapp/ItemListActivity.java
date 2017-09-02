@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.support.v4.view.ViewPager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,14 +47,49 @@ public class ItemListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private SearchView mSearchView;
-    private  CategoryBar mCategoryBar;
+
+    private CategoryCollectionPagerAdapter mFragmentPagerAdapter;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private TabLayout.Tab[] mTabs;
+    private ImageButton categoryButton;               //该界面中用于切换到添加删除界面的button
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
-        mCategoryBar = new CategoryBar((LinearLayout) findViewById(R.id.categoryBar), this);
         Log.d("test", getFilesDir().getAbsolutePath());
+
+        // ViewPager and its adapters use support library
+        // fragments, so use getSupportFragmentManager.
+        mTabs = new TabLayout.Tab[CategoryController.addedCategories.length];
+        //使用适配器将ViewPager与Fragment绑定在一起
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mFragmentPagerAdapter =
+                new CategoryCollectionPagerAdapter(
+                        getSupportFragmentManager());
+        mViewPager.setAdapter(mFragmentPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);                          //缓存两个页面
+        //将TabLayout与ViewPager绑定在一起
+        mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
+        mTabLayout.setupWithViewPager(mViewPager);
+
+        //指定Tab位置
+        for(int i = 0; i < CategoryController.addedCategories.length; i++)
+        {
+            mTabs[i] = mTabLayout.getTabAt(i);
+        }
+        //TODO(wuhaozhe), 设置Tab的图标
+        //初始化categoryButton
+        categoryButton = (ImageButton)findViewById(R.id.addCategory);
+        categoryButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,9 +130,9 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
 
-        View recyclerView = findViewById(R.id.item_list);
+        /*View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView((RecyclerView) recyclerView);*/
 
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
@@ -242,6 +280,7 @@ public class ItemListActivity extends AppCompatActivity {
         public int getItemCount() {
             return mValues.size();
         }
+
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;

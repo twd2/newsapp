@@ -11,27 +11,45 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        >
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
-        <HorizontalScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="100dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/category_height"
+            android:background="#ffeeeeee"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:elevation="4dp"
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabIndicatorHeight="5dp"
+            app:tabTextColor="#ff000000"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabMode="scrollable" />
 
-            <LinearLayout
-                android:id="@+id/categoryBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            </LinearLayout>
-        </HorizontalScrollView>
+            <ImageButton
+                android:id="@+id/addCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/category_height"
+                android:background="#eeeeeeee"
+                android:src="@drawable/category"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                />
+        </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>
+
+
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -39,9 +57,11 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/item_list"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
     </FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
