@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -60,6 +61,10 @@ public class ItemListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
+
+        if (savedInstanceState != null) {
+            query = savedInstanceState.getString("query");
+        }
 
         Log.d("test", getFilesDir().getAbsolutePath());
 
@@ -176,7 +181,7 @@ public class ItemListActivity extends AppCompatActivity {
         SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshing(false);
         RecyclerView itemList = (RecyclerView) findViewById(R.id.item_list);
-        setupRecyclerView(itemList);
+        itemList.getAdapter().notifyDataSetChanged();
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -188,23 +193,34 @@ public class ItemListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem search = menu.findItem(R.id.app_bar_search);
         final SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
         SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
         searchView.setSearchableInfo(info);
-
+        searchView.setQueryHint("搜索新闻");
         searchView.setIconifiedByDefault(true);
 
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(ItemListActivity.this,
-                               "s=" + searchView.getQuery(), Toast.LENGTH_LONG);
-            }
-        });
+        if (query != null && query.length() > 0) {
+            search.expandActionView();
+            searchView.setQuery(query, false);
+        }
+
+        // FIXME
+//        search.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+//            @Override
+//            public boolean onMenuItemActionExpand(MenuItem item) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onMenuItemActionCollapse(MenuItem item) {
+//                Log.d("search", "onMenuItemActionCollapse");
+//                return false;
+//            }
+//        });
 
         mSearchView = searchView;
 
-        mSearchView.setSubmitButtonEnabled(true);
 
         mSearchView.onActionViewExpanded();
         mSearchView.setIconifiedByDefault(true);
@@ -250,6 +266,11 @@ public class ItemListActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             // doMySearch(query);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("query", query);
     }
 
     public class SimpleItemRecyclerViewAdapter
