@@ -79,7 +79,7 @@ public class ItemListActivity extends AppCompatActivity {
         {
             mTabs[i] = mTabLayout.getTabAt(i);
         }
-        //TODO(wuhaozhe), 设置Tab的图标
+        //TODO(wuhaozhe): 设置Tab的图标
         //初始化categoryButton
         categoryButton = (ImageButton)findViewById(R.id.addCategory);
         categoryButton.setOnClickListener(new View.OnClickListener()
@@ -87,7 +87,8 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                
+                Intent intent = new Intent(ItemListActivity.this, CategoryActivity.class);
+                startActivity(intent);
             }
         });
 

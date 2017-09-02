@@ -3,36 +3,81 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id = "@+id/categoryLinearLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.java.a35.newsapp.CategoryActivity"
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp">
-    <include layout="@layout/category_item"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        />
-    <include layout="@layout/category_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        />
-    <include layout="@layout/category_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        />
-    <include layout="@layout/category_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        />
-    <include layout="@layout/category_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        />
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/categoryLinearLayout">
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/category_item_height"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

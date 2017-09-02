@@ -7,26 +7,21 @@
 
     <ImageView
         android:id="@+id/categoryImage"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:src="@drawable/sports"
         android:scaleType="fitXY"
         />
 
     <Button
         android:id="@+id/categoryButton"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#cc000000"
-        android:text="Sports"
+        android:text=""
         android:textSize="30dp"
         android:textColor="#ddeeeeee"
         />
-    <Button
-        android:id="@+id/decorateButton"
-        android:layout_width="20dp"
-        android:layout_height="fill_parent"
-        android:background="#dd55"/>
 
 
 </RelativeLayout>

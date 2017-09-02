@@ -1,63 +1,52 @@
 package com.java.a35.newsapp;
 
-import android.support.annotation.BoolRes;
-import android.support.v7.app.AppCompatActivity;
+import android.app.ListActivity;
 import android.os.Bundle;
-import android.widget.LinearLayout;
-import android.widget.Button;
 import java.util.*;
-import java.util.Iterator;
 
-public class CategoryActivity extends AppCompatActivity {
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
+import android.support.v7.app.AppCompatActivity;
 
+/**
+ * Created by wuhaozhe on 2017/9/2.
+ */
+
+public class CategoryActivity extends AppCompatActivity{
+    Button[] categoryButton;             //存储category_item.xml中的button
+    final int selectedColor = 0x22000000;
+    final int canceledColor = 0xcc000000;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+        categoryButton = new Button[CategoryController.categories.size()];
         setContentView(R.layout.activity_category);
-    }
-}
-
-class CategoryController
-{
-    public static HashMap<String, Boolean> categories;            // = {"推荐","科技","教育","军事","国内","社会","文化","汽车","国际","体育","财经","健康","娱乐","收藏"};          //分类的全集，value为该分类是否在添加的列表内
-    public static String[] addedCategories;
-    static
-    {
-        categories = new HashMap<String, Boolean>();
-        categories.put("推荐", false);
-        categories.put("科技", true);
-        categories.put("教育", true);
-        categories.put("军事", true);
-        categories.put("国内", true);
-        categories.put("社会", true);
-        categories.put("文化", true);
-        categories.put("汽车", true);
-        categories.put("国际", true);
-        categories.put("体育", true);
-        categories.put("财经", true);
-        categories.put("健康", true);
-        categories.put("娱乐", true);
-        categories.put("收藏", true);
-        refreshAddedCategories();
-    }
-    static void refreshAddedCategories()
-    {
-        int size = 0;
-        for(Boolean value: categories.values())
-        {
-            if(value) {
-                size++;
-            }
-        }
-        addedCategories = new String[size];
-        int index = 0;
-        for(String value: categories.keySet())
-        {
-            if(categories.get(value))
+        LinearLayout tmp = (LinearLayout) findViewById(R.id.categoryLinearLayout);
+        int counter = 0;
+        Iterator it = CategoryController.categories.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String categoryName = (String)pair.getKey();
+            if(categoryName == "推荐" || categoryName == "收藏")
             {
-                addedCategories[index] = value;
-                index++;
+                continue;
             }
+            Boolean categoryExist = (Boolean)pair.getValue();
+            RelativeLayout categoryItem = (RelativeLayout) tmp.getChildAt(counter);
+            Button categoryButton = (Button)categoryItem.getChildAt(1);
+            categoryButton.setText(categoryName);
+            if(categoryExist)
+            {
+                categoryButton.setBackgroundColor(selectedColor);
+            }
+            else
+            {
+                categoryButton.setBackgroundColor(canceledColor);
+            }
+            counter++;
         }
     }
 }
