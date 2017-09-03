@@ -171,12 +171,14 @@ public class ItemListActivity extends AppCompatActivity {
 //                        api.getNews(news.getString("news_ID")).getString("news_Content");
                 String newsContent = "正在加载...";
                 newsContent = news.getString("news_Intro");
-                DummyContent.addItem(new DummyContent.NewsItem(String.valueOf(i + 1), news.getString("news_Title"),
-                        newsContent));
+                DummyContent.addItem(
+                        new DummyContent.NewsItem(String.valueOf(i + 1),
+                                news.getString("news_Title"),
+                                news));
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-            DummyContent.addItem(new DummyContent.NewsItem(";(", "加载失败", "加载失败"));
+            DummyContent.addItem(new DummyContent.NewsItem(";(", "加载失败", null));
         }
 
         SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);

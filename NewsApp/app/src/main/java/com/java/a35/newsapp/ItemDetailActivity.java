@@ -155,7 +155,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 // TODO(twd2): refactor
                 DummyContent.NewsItem mItem = DummyContent.NEWS_MAP.get(
                         getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
-                int code = mTts.startSpeaking(mItem.details, mTtsListener);
+                int code = mTts.startSpeaking(mItem.detail, mTtsListener);
                 if (code != ErrorCode.SUCCESS) {
                     Toast.makeText(ItemDetailActivity.this,
                             "语音合成失败，错误码: " + code,
