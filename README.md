@@ -15,3 +15,4 @@ Indentation: 4 spaces
 ## References
 
 * [新闻API](http://docs.sai6.apiary.io/#reference)
+* [在线语音合成](http://www.xfyun.cn/services/online_tts)
