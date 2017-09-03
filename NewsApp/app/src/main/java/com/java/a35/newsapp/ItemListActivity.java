@@ -170,6 +170,7 @@ public class ItemListActivity extends AppCompatActivity {
 //                String newsContent =
 //                        api.getNews(news.getString("news_ID")).getString("news_Content");
                 String newsContent = "正在加载...";
+                newsContent = news.getString("news_Intro");
                 DummyContent.addItem(new DummyContent.NewsItem(String.valueOf(i + 1), news.getString("news_Title"),
                         newsContent));
             }
