@@ -167,10 +167,6 @@ public class ItemListActivity extends AppCompatActivity {
             JSONArray newsList = obj.getJSONArray("list");
             for (int i = 0; i < newsList.length(); ++i) {
                 JSONObject news = newsList.getJSONObject(i);
-//                String newsContent =
-//                        api.getNews(news.getString("news_ID")).getString("news_Content");
-                String newsContent = "正在加载...";
-                newsContent = news.getString("news_Intro");
                 DummyContent.addItem(
                         new DummyContent.NewsItem(String.valueOf(i + 1),
                                 news.getString("news_Title"),
@@ -209,18 +205,23 @@ public class ItemListActivity extends AppCompatActivity {
         }
 
         // FIXME
-//        search.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//                Log.d("search", "onMenuItemActionCollapse");
-//                return false;
-//            }
-//        });
+        MenuItemCompat.setOnActionExpandListener(search, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                Log.d("search", "onMenuItemActionExpand");
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Log.d("search", "onMenuItemActionCollapse");
+                query = "";
+                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+                refreshLayout.setRefreshing(true);
+                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                return true;
+            }
+        });
 
         mSearchView = searchView;
 

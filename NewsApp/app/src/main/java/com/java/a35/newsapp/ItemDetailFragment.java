@@ -106,7 +106,7 @@ public class ItemDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            WebView webView = rootView.findViewById(R.id.item_web);
+            WebView webView = (WebView) rootView.findViewById(R.id.item_web);
             webView.setBackgroundColor(Color.TRANSPARENT);
             webView.loadDataWithBaseURL(null, "<p>正在加载...</p>",
                                         "text/html", "UTF-8", null);
@@ -119,7 +119,7 @@ public class ItemDetailFragment extends Fragment {
         if (obj != null) {
             try {
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
-                WebView webView = getActivity().findViewById(R.id.item_web);
+                WebView webView = (WebView) getActivity().findViewById(R.id.item_web);
                 webView.setBackgroundColor(Color.TRANSPARENT);
                 webView.loadDataWithBaseURL(null,
                         String.format("<style>\n" +
