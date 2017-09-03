@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
@@ -71,6 +72,47 @@ public class CategoryActivity extends AppCompatActivity{
                     CategoryController.categories.put(categoryName, !tmp);
                 }
             });
+            //set the image of category
+            ImageView categoryImage = (ImageView)categoryItem.getChildAt(0);
+            switch (categoryName)
+            {
+                case "科技":
+                    categoryImage.setImageResource(R.drawable.science);
+                    break;
+                case "教育":
+                    categoryImage.setImageResource(R.drawable.education);
+                    break;
+                case "军事":
+                    categoryImage.setImageResource(R.drawable.army);
+                    break;
+                case "国内":
+                    categoryImage.setImageResource(R.drawable.china);
+                    break;
+                case "社会":
+                    categoryImage.setImageResource(R.drawable.social);
+                    break;
+                case "文化":
+                    categoryImage.setImageResource(R.drawable.culture);
+                    break;
+                case "汽车":
+                    categoryImage.setImageResource(R.drawable.car);
+                    break;
+                case "国际":
+                    categoryImage.setImageResource(R.drawable.international);
+                    break;
+                case "体育":
+                    categoryImage.setImageResource(R.drawable.sports);
+                    break;
+                case "财经":
+                    categoryImage.setImageResource(R.drawable.financial);
+                    break;
+                case "健康":
+                    categoryImage.setImageResource(R.drawable.health);
+                    break;
+                case "娱乐":
+                    categoryImage.setImageResource(R.drawable.entertainment);
+                    break;
+            }
             counter++;
         }
     }
