@@ -239,8 +239,8 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         @Override
         public void onCompleted(SpeechError error) {
+            isTtsPlaying = false;
             if (error == null) {
-                isTtsPlaying = false;
                 Log.d("tts", "播放完成");
                 Toast.makeText(ItemDetailActivity.this,
                         "播放完成", Toast.LENGTH_SHORT).show();
