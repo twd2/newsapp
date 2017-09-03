@@ -1,5 +1,7 @@
 package com.java.a35.newsapp.dummy;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +27,13 @@ public class DummyContent {
     public static class NewsItem {
         public final String id;
         public final String content;
-        public final String details;
+        public String detail = "";
+        public final JSONObject obj;
 
-        public NewsItem(String id, String content, String details) {
+        public NewsItem(String id, String content, JSONObject obj) {
             this.id = id;
             this.content = content;
-            this.details = details;
+            this.obj = obj;
         }
 
         @Override
