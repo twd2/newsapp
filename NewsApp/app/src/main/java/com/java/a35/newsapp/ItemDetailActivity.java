@@ -24,6 +24,8 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.java.a35.newsapp.dummy.DummyContent;
+
 /**
  * An activity representing a single Item detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
@@ -57,18 +59,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 //                        item.setIcon(icon);
                         break;
                     case R.id.app_bar_share:
-                        Toast.makeText(ItemDetailActivity.this,
-                                "分享到社交网络", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.app_bar_share_2:
-                        String message = "http://www.baidu.com";
-                        Intent share = new Intent(Intent.ACTION_SEND);
-                        share.setType("image/*");
-                        //share.putExtra(Intent.EXTRA_TEXT, message);
-                        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
-                        share.putExtra("Kdescription", "测试描述 ——发自我的 NewsApp");
-                        share.putExtra(Intent.EXTRA_TEXT, "测试文本 ——发自我的 NewsApp");
-                        startActivity(Intent.createChooser(share, "Title of the dialog the system will open"));
+                        doShare();
                         break;
                 }
                 return true;
@@ -127,19 +118,6 @@ public class ItemDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detail, menu);
-        MenuItem item = menu.findItem(R.id.app_bar_share);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        String title = getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID);
-        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-        if (appBarLayout != null){
-            CharSequence titleName = appBarLayout.getTitle();
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, titleName);
-            shareIntent.setType("text/plain");
-            mShareActionProvider.setShareIntent(shareIntent);
-            Log.d("DEBUG", "title name = " + titleName);
-        }
         return true;
     }
 
@@ -152,4 +130,18 @@ public class ItemDetailActivity extends AppCompatActivity {
         outState.putInt("scroll_y", scroll.getScrollY() * scroll.getHeight());
         Log.d("scroll", "" + scroll.getWidth());
     }
+
+    protected void doShare() {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        // TODO(twd2): image
+        // share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
+        // extra for WeChat
+        share.putExtra("Kdescription", "测试描述 ——发自我的 NewsApp");
+        DummyContent.NewsItem item = DummyContent.NEWS_MAP
+                .get(getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+        share.putExtra(Intent.EXTRA_TEXT, item.content + " ——发自我的 NewsApp");
+        startActivity(Intent.createChooser(share, "分享到社交网络"));
+    }
+
 }
