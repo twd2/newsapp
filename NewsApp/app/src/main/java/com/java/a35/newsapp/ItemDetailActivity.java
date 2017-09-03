@@ -1,9 +1,20 @@
 package com.java.a35.newsapp;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +40,8 @@ import com.java.a35.newsapp.dummy.DummyContent;
  * in a {@link ItemListActivity}.
  */
 public class ItemDetailActivity extends AppCompatActivity {
+
+    private ShareActionProvider mShareActionProvider;
 
     private SpeechSynthesizer mTts;
 
@@ -62,8 +75,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                         playTts();
                         break;
                     case R.id.app_bar_share:
-                        Toast.makeText(ItemDetailActivity.this,
-                                "分享到社交网络", Toast.LENGTH_SHORT).show();
+                        doShare();
                         break;
                 }
                 return true;
@@ -135,6 +147,19 @@ public class ItemDetailActivity extends AppCompatActivity {
         NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
         outState.putInt("scroll_y", scroll.getScrollY() * scroll.getHeight());
         Log.d("scroll", "" + scroll.getWidth());
+    }
+
+    protected void doShare() {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        // TODO(twd2): image
+        // share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
+        // extra for WeChat
+        share.putExtra("Kdescription", "测试描述 ——发自我的 NewsApp");
+        DummyContent.NewsItem item = DummyContent.NEWS_MAP
+                .get(getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+        share.putExtra(Intent.EXTRA_TEXT, item.content + " ——发自我的 NewsApp");
+        startActivity(Intent.createChooser(share, "分享到社交网络"));
     }
 
     // TTS interfaces
