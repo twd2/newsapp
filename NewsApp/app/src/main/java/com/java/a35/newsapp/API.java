@@ -23,6 +23,21 @@ import java.net.URLEncoder;
 
 public class API {
 
+    public static final int CATEGORY_TECHNOLOGY = 1;
+    public static final int CATEGORY_EDUCATION = 2;
+    public static final int CATEGORY_MILITARY = 3;
+    public static final int CATEGORY_CHINA = 4;
+    public static final int CATEGORY_SOCIAL = 5;
+    public static final int CATEGORY_CULTURE = 6;
+    public static final int CATEGORY_AUTOMOBILE = 7;
+    public static final int CATEGORY_INTERNATIONAL = 8;
+    public static final int CATEGORY_SPORTS = 9;
+    public static final int CATEGORY_FINANCIAL = 10;
+    public static final int CATEGORY_HEALTH = 11;
+    public static final int CATEGORY_ENTERTAINMENT = 12;
+    public static final int CATEGORY_MIN = 1;
+    public static final int CATEGORY_MAX = 12;
+
     public static final String SERVER_URL = "http://166.111.68.66:2042";
     public static final int DEFAULT_PAGE_SIZE = 20;
     public static final int CATEGORY_COUNT = 12;

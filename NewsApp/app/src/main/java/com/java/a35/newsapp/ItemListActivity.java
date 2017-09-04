@@ -7,9 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.os.EnvironmentCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,7 +80,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         // ViewPager and its adapters use support library
         // fragments, so use getSupportFragmentManager.
-        mTabs = new TabLayout.Tab[CategoryController.addedCategories.length];
+        mTabs = new TabLayout.Tab[Categories.enabledCategories.length];
         //使用适配器将ViewPager与Fragment绑定在一起
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mFragmentPagerAdapter =
@@ -92,7 +92,7 @@ public class ItemListActivity extends AppCompatActivity {
         mTabLayout.setupWithViewPager(mViewPager);
 
         //指定Tab位置
-        for(int i = 0; i < CategoryController.addedCategories.length; i++)
+        for(int i = 0; i < Categories.enabledCategories.length; i++)
         {
             mTabs[i] = mTabLayout.getTabAt(i);
         }
