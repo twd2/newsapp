@@ -29,7 +29,7 @@ public class APIUnitTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        JSONObject obj = api.getListNews();
+        JSONObject obj = api.getListNews(2);
         assertTrue(obj.has("list"));
         assertTrue(obj.get("list") instanceof JSONArray);
         assertTrue(obj.has("pageNo"));

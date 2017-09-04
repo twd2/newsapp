@@ -1,12 +1,17 @@
 package com.java.a35.newsapp;
 
+import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -29,7 +34,12 @@ import android.widget.Toast;
 
 import com.java.a35.newsapp.dummy.DummyContent;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
+
 
 /**
  * An activity representing a list of Items. This activity
@@ -47,6 +57,9 @@ public class ItemListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private SearchView mSearchView;
+    private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
+    private String query = "";
+    private static final int NEWS_LIST_LOADER_ID = 0;
 
     private CategoryCollectionPagerAdapter mFragmentPagerAdapter;
     private TabLayout mTabLayout;
@@ -58,6 +71,11 @@ public class ItemListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
+
+        if (savedInstanceState != null) {
+            query = savedInstanceState.getString("query");
+        }
+
         Log.d("test", getFilesDir().getAbsolutePath());
 
         // ViewPager and its adapters use support library
@@ -100,17 +118,9 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.app_bar_search: {
-                        Toast.makeText(ItemListActivity.this, "Search!", Toast.LENGTH_SHORT).show();
-
-//                        Context context = ItemListActivity.this.getCurrentFocus().getContext();
-//                        Intent intent = new Intent(context, SearchActivity.class);
-//                        context.startActivity(intent);
-                        break;
-                    } case R.id.app_bar_settings: {
-                        Context context = ItemListActivity.this.getCurrentFocus().getContext();
-                        Intent intent = new Intent(context, SettingsActivity.class);
-                        context.startActivity(intent);
+                    case R.id.app_bar_settings: {
+                        Intent intent = new Intent(ItemListActivity.this, SettingsActivity.class);
+                        startActivity(intent);
                     }
                 }
                 return true;
@@ -131,9 +141,53 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
 
-        /*View recyclerView = findViewById(R.id.item_list);
+        newsListCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
+            @Override
+            public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
+                return new NewsListLoader(ItemListActivity.this,
+                        new NewsListLoader.QueryCallback() {
+                            @Override
+                            public String getQuery() {
+                                return query;
+                            }
+
+                            @Override
+                            public int getCategory() {
+                                // TODO
+                                return 2;
+                            }
+                        });
+            }
+
+            @Override
+            public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
+                updateNews(data);
+            }
+
+            @Override
+            public void onLoaderReset(Loader<JSONObject> loader) {
+
+            }
+        };
+
+        getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+
+        final SwipeRefreshLayout refreshLayout =
+                (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+        refreshLayout.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary,
+                R.color.colorPrimaryDark);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshLayout.setRefreshing(true);
+                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+            }
+        });
+
+        View recyclerView = findViewById(R.id.item_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);*/
+        setupRecyclerView((RecyclerView) recyclerView);
 
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
@@ -144,10 +198,35 @@ public class ItemListActivity extends AppCompatActivity {
         }
 
         handleIntent(getIntent());
+
+        refreshLayout.setRefreshing(true);
+        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+    }
+
+    private void updateNews(JSONObject obj) {
+        DummyContent.clear();
+        try {
+            JSONArray newsList = obj.getJSONArray("list");
+            for (int i = 0; i < newsList.length(); ++i) {
+                JSONObject news = newsList.getJSONObject(i);
+                DummyContent.addItem(
+                        new DummyContent.NewsItem(String.valueOf(i + 1),
+                                news.getString("news_Title"),
+                                news));
+            }
+        } catch (JSONException | NullPointerException e) {
+            e.printStackTrace();
+            DummyContent.addItem(new DummyContent.NewsItem(";(", "加载失败", null));
+        }
+
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+        refreshLayout.setRefreshing(false);
+        RecyclerView itemList = (RecyclerView) findViewById(R.id.item_list);
+        itemList.getAdapter().notifyDataSetChanged();
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.NEWS));
     }
 
     @Override
@@ -155,49 +234,56 @@ public class ItemListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem search = menu.findItem(R.id.app_bar_search);
         final SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
         SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
         searchView.setSearchableInfo(info);
-
+        searchView.setQueryHint("搜索新闻");
         searchView.setIconifiedByDefault(true);
 
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
+        if (query != null && query.length() > 0) {
+            search.expandActionView();
+            searchView.setQuery(query, false);
+        }
+
+        // FIXME
+        MenuItemCompat.setOnActionExpandListener(search, new MenuItemCompat.OnActionExpandListener() {
             @Override
-            public void onClick(View view) {
-                Toast.makeText(ItemListActivity.this,
-                               "s=" + searchView.getQuery(), Toast.LENGTH_LONG);
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                Log.d("search", "onMenuItemActionExpand");
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                Log.d("search", "onMenuItemActionCollapse");
+                query = "";
+                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+                refreshLayout.setRefreshing(true);
+                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                return true;
             }
         });
 
         mSearchView = searchView;
 
-        /**
-         * 默认情况下是没提交搜索的按钮，所以用户必须在键盘上按下"enter"键来提交搜索.你可以同过setSubmitButtonEnabled(
-         * true)来添加一个提交按钮（"submit" button)
-         * 设置true后，右边会出现一个箭头按钮。如果用户没有输入，就不会触发提交（submit）事件
-         */
-        mSearchView.setSubmitButtonEnabled(true);
-        /**
-         * 初始是否已经是展开的状态
-         * 写上此句后searchView初始展开的，也就是是可以点击输入的状态，如果不写，那么就需要点击下放大镜，才能展开出现输入框
-         */
+
         mSearchView.onActionViewExpanded();
-        /**
-         * 默认情况下, search widget是"iconified“的，只是用一个图标 来表示它(一个放大镜),
-         * 当用户按下它的时候才显示search box . 你可以调用setIconifiedByDefault(false)让search
-         * box默认都被显示。 你也可以调用setIconified()让它以iconified“的形式显示。
-         */
         mSearchView.setIconifiedByDefault(true);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String queryText) {
-                Toast.makeText(ItemListActivity.this, queryText, Toast.LENGTH_LONG);
+                Log.d("search", queryText);
                 return true;
             }
 
             @Override
             public boolean onQueryTextSubmit(String queryText) {
-                Toast.makeText(ItemListActivity.this, queryText, Toast.LENGTH_LONG);
+                Log.d("search", queryText);
+                query = queryText;
+                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+                refreshLayout.setRefreshing(true);
+                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
                 if (mSearchView != null) {
                     // 得到输入管理对象
@@ -224,21 +310,21 @@ public class ItemListActivity extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            doMySearch(query);
+            // doMySearch(query);
         }
     }
 
-    private void doMySearch(String query) {
-        // TODO 自动生成的方法存根
-        Toast.makeText(this, "do search " + query, Toast.LENGTH_LONG).show();
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("query", query);
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<DummyContent.NewsItem> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
+        public SimpleItemRecyclerViewAdapter(List<DummyContent.NewsItem> items) {
             mValues = items;
         }
 
@@ -287,7 +373,7 @@ public class ItemListActivity extends AppCompatActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
+            public DummyContent.NewsItem mItem;
 
             public ViewHolder(View view) {
                 super(view);
