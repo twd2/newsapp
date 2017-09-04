@@ -25,8 +25,6 @@ import android.widget.TableRow;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup.LayoutParams;
 
-import java.nio.file.Paths;
-
 /**
  * Created by wuhaozhe on 2017/9/2.
  */
