@@ -10,7 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/sports"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
+        android:layout_marginLeft="@dimen/category_right_margin"
+        android:layout_marginRight="@dimen/category_right_margin"
+        android:layout_marginTop="@dimen/category_upper_margin"
+        android:layout_marginBottom="@dimen/category_upper_margin"
         />
 
     <Button
@@ -18,10 +22,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#cc000000"
-
+        android:layout_marginLeft="@dimen/category_right_margin"
+        android:layout_marginRight="@dimen/category_right_margin"
+        android:layout_marginTop="@dimen/category_upper_margin"
+        android:layout_marginBottom="@dimen/category_upper_margin"
         android:text=""
         android:textSize="30dp"
-        android:textColor="#ddeeeeee"
+        android:textColor="#cc000000"
         />
 
 

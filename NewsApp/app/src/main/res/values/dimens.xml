@@ -6,4 +6,6 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="category_height">35dp</dimen>
     <dimen name="category_item_height">100dp</dimen>
+    <dimen name="category_right_margin">8dp</dimen>
+    <dimen name="category_upper_margin">10dp</dimen>
 </resources>

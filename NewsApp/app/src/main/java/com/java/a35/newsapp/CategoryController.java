@@ -20,25 +20,26 @@ import java.util.Iterator;
 
 public class CategoryController
 {
-    public static HashMap<String, Boolean> categories;            // = {"推荐","科技","教育","军事","国内","社会","文化","汽车","国际","体育","财经","健康","娱乐","收藏"};          //分类的全集，value为该分类是否在添加的列表内
+    public static LinkedHashMap<String, Boolean> categories;            // 分类的全集，value为该分类是否在添加的列表内
     public static String[] addedCategories;
     static
     {
-        categories = new HashMap<String, Boolean>();
+        categories = new LinkedHashMap<String, Boolean>();
         categories.put("推荐", true);
-        categories.put("科技", true);
-        categories.put("教育", true);
-        categories.put("军事", true);
+        categories.put("收藏", true);
         categories.put("国内", true);
+        categories.put("国际", true);
         categories.put("社会", true);
         categories.put("文化", true);
-        categories.put("汽车", true);
-        categories.put("国际", true);
         categories.put("体育", true);
+        categories.put("科技", true);
+        categories.put("娱乐", true);
+        categories.put("教育", true);
+        categories.put("军事", true);
         categories.put("财经", true);
         categories.put("健康", true);
-        categories.put("娱乐", true);
-        categories.put("收藏", true);
+        categories.put("汽车", true);
+
         refreshAddedCategories();
     }
     static void refreshAddedCategories()

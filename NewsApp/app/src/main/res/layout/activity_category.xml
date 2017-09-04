@@ -15,71 +15,91 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-        <LinearLayout
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/categoryLinearLayout">
+            android:id="@+id/categoryTableLayout"
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            android:weightSum="12">
+            <TableRow
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                >
+                <include layout="@layout/category_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    />
+                <include layout="@layout/category_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    />
+                <include layout="@layout/category_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    />
+            </TableRow>
+            <TableRow
+                android:layout_weight="1"
+                android:layout_width="0dp">
             <include layout="@layout/category_item"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 />
             <include layout="@layout/category_item"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 />
             <include layout="@layout/category_item"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+            </TableRow>
+            <TableRow
+                android:layout_weight="1"
+                android:layout_width="0dp">
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 />
             <include layout="@layout/category_item"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 />
             <include layout="@layout/category_item"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+            </TableRow>
+            <TableRow
+                android:layout_weight="1"
+                android:layout_width="0dp">
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
+            <include layout="@layout/category_item"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 />
             <include layout="@layout/category_item"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 />
-            <include layout="@layout/category_item"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
-                android:layout_weight="1"
-                />
-            <include layout="@layout/category_item"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
-                android:layout_weight="1"
-                />
-            <include layout="@layout/category_item"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
-                android:layout_weight="1"
-                />
-            <include layout="@layout/category_item"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
-                android:layout_weight="1"
-                />
-            <include layout="@layout/category_item"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
-                android:layout_weight="1"
-                />
-            <include layout="@layout/category_item"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/category_item_height"
-                android:layout_weight="1"
-                />
-        </LinearLayout>
+            </TableRow>
+        </TableLayout>
     </ScrollView>
 </LinearLayout>

@@ -6,34 +6,58 @@ import android.os.Bundle;
 import java.util.*;
 
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.util.DisplayMetrics;
+import android.view.ViewGroup.LayoutParams;
+
+import java.nio.file.Paths;
 
 /**
  * Created by wuhaozhe on 2017/9/2.
  */
 
-public class CategoryActivity extends AppCompatActivity{
-    Button[] categoryButton;             //存储category_item.xml中的button
-    final int selectedColor = 0x88000000;
+public class CategoryActivity extends AppCompatActivity
+{
+    final int selectedColor = 0x44000000;
     final int canceledColor = 0xcc000000;
+    final int textSelectedColor = 0xcc000000;
+    final int textCanceledColor = 0xddeeeeee;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        categoryButton = new Button[CategoryController.categories.size()];
         setContentView(R.layout.activity_category);
-        LinearLayout tmp = (LinearLayout) findViewById(R.id.categoryLinearLayout);
+        TableLayout categoryTableLayout = (TableLayout) findViewById(R.id.categoryTableLayout);
+        int childCount = categoryTableLayout.getChildCount();
+        TableRow[] categoryTableRow = new TableRow[childCount];
+        for(int i = 0; i < childCount; i++)
+        {
+            categoryTableRow[i] = (TableRow)categoryTableLayout.getChildAt(i);
+        }
+        int rowChildCount = categoryTableRow[0].getChildCount();
         int counter = 0;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int height = metrics.widthPixels;
+        int width = metrics.heightPixels;
+        height /= (childCount);
+        width /= (rowChildCount);
+        height *= 2;
         Iterator it = CategoryController.categories.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
@@ -43,10 +67,17 @@ public class CategoryActivity extends AppCompatActivity{
                 continue;
             }
             final Boolean categoryExist = (Boolean)pair.getValue();
-            RelativeLayout categoryItem = (RelativeLayout) tmp.getChildAt(counter);
+            RelativeLayout categoryItem = (RelativeLayout) categoryTableRow[counter / rowChildCount].getChildAt(counter % rowChildCount);
+            LayoutParams params = categoryItem.getLayoutParams();
+            params.height = height;
+            params.width = width;
+            categoryItem.setLayoutParams(params);
             //get the button and set its color
             final Button categoryButton = (Button)categoryItem.getChildAt(1);
             categoryButton.setText(categoryName);
+            //TODO (wuhaozhe): add shadow to button
+            //categoryButton.setTranslationZ(10);
+            //categoryButton.setElevation(10);
             if(categoryExist)
             {
                 categoryButton.setBackgroundColor(selectedColor);
@@ -60,16 +91,18 @@ public class CategoryActivity extends AppCompatActivity{
                 @Override
                 public void onClick(View v)
                 {
-                    Boolean tmp = CategoryController.categories.get(categoryName);
-                    if(tmp)
+                    Boolean categoryExist = CategoryController.categories.get(categoryName);
+                    if(categoryExist)
                     {
                         categoryButton.setBackgroundColor(canceledColor);
+                        categoryButton.setTextColor(textCanceledColor);
                     }
                     else
                     {
                         categoryButton.setBackgroundColor(selectedColor);
+                        categoryButton.setTextColor(textSelectedColor);
                     }
-                    CategoryController.categories.put(categoryName, !tmp);
+                    CategoryController.categories.put(categoryName, !categoryExist);
                 }
             });
             //set the image of category

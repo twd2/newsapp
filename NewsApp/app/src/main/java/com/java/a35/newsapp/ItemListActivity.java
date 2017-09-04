@@ -69,7 +69,6 @@ public class ItemListActivity extends AppCompatActivity {
                 new CategoryCollectionPagerAdapter(
                         getSupportFragmentManager());
         mViewPager.setAdapter(mFragmentPagerAdapter);
-        mViewPager.setOffscreenPageLimit(2);                          //缓存两个页面
         //将TabLayout与ViewPager绑定在一起
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
         mTabLayout.setupWithViewPager(mViewPager);
