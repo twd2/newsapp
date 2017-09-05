@@ -57,7 +57,6 @@ public class ItemListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private SearchView mSearchView;
-    private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
     private String query = "";
     private static final int NEWS_LIST_LOADER_ID = 0;
     private static final int REQUEST_CATEGORY = 0;
@@ -65,7 +64,6 @@ public class ItemListActivity extends AppCompatActivity {
     private CategoryCollectionPagerAdapter mFragmentPagerAdapter;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    private TabLayout.Tab[] mTabs;
     private ImageButton categoryButton;               //该界面中用于切换到添加删除界面的button
 
     @Override
@@ -81,7 +79,6 @@ public class ItemListActivity extends AppCompatActivity {
 
         // ViewPager and its adapters use support library
         // fragments, so use getSupportFragmentManager.
-        mTabs = new TabLayout.Tab[Categories.enabledCategories.length];
         //使用适配器将ViewPager与Fragment绑定在一起
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mFragmentPagerAdapter =
@@ -92,10 +89,6 @@ public class ItemListActivity extends AppCompatActivity {
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
         mTabLayout.setupWithViewPager(mViewPager);
 
-        //指定Tab位置
-        for (int i = 0; i < Categories.enabledCategories.length; i++) {
-            mTabs[i] = mTabLayout.getTabAt(i);
-        }
         //TODO(wuhaozhe): 设置Tab的图标
         //初始化categoryButton
         categoryButton = (ImageButton)findViewById(R.id.addCategory);
@@ -140,36 +133,36 @@ public class ItemListActivity extends AppCompatActivity {
 //            }
 //        });
 
-        newsListCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
-            @Override
-            public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
-                return new NewsListLoader(ItemListActivity.this,
-                        new NewsListLoader.QueryCallback() {
-                            @Override
-                            public String getQuery() {
-                                return query;
-                            }
-
-                            @Override
-                            public int getCategory() {
-                                // TODO
-                                return 2;
-                            }
-                        });
-            }
-
-            @Override
-            public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-                updateNews(data);
-            }
-
-            @Override
-            public void onLoaderReset(Loader<JSONObject> loader) {
-
-            }
-        };
-
-        getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+//        newsListCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
+//            @Override
+//            public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
+//                return new NewsListLoader(ItemListActivity.this,
+//                        new NewsListLoader.QueryCallback() {
+//                            @Override
+//                            public String getQuery() {
+//                                return query;
+//                            }
+//
+//                            @Override
+//                            public int getCategory() {
+//                                // TODO
+//                                return 2;
+//                            }
+//                        });
+//            }
+//
+//            @Override
+//            public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
+//                updateNews(data);
+//            }
+//
+//            @Override
+//            public void onLoaderReset(Loader<JSONObject> loader) {
+//
+//            }
+//        };
+//
+//        getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
 //        final SwipeRefreshLayout refreshLayout =
 //                (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
@@ -259,14 +252,14 @@ public class ItemListActivity extends AppCompatActivity {
                 query = "";
 //                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
 //                refreshLayout.setRefreshing(true);
-                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+//                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
                 return true;
             }
         });
 
+        // mViewPager.setOnPageChangeListener();
+
         mSearchView = searchView;
-
-
         mSearchView.onActionViewExpanded();
         mSearchView.setIconifiedByDefault(true);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -280,9 +273,13 @@ public class ItemListActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String queryText) {
                 Log.d("search", queryText);
                 query = queryText;
+
+//                mViewPager.getChildAt(mViewPager.getCurrentItem())
+                Log.d("search", "" + mViewPager.getCurrentItem());
+                Log.d("search", mViewPager.getChildAt(mViewPager.getCurrentItem()).toString());
 //                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
 //                refreshLayout.setRefreshing(true);
-                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                // getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
                 if (mSearchView != null) {
                     // 得到输入管理对象
@@ -323,6 +320,10 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("query", query);
+    }
+
+    public String getQuery() {
+        return query;
     }
 
     public class SimpleItemRecyclerViewAdapter

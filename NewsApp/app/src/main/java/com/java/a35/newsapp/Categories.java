@@ -47,7 +47,7 @@ public class Categories {
 
         public Category(CategoryType type) {
             this.type = type;
-            this.enabled = true; // TODO(twd2)
+            this.enabled = true; // TODO(twd2): read from preferences
         }
     }
 
@@ -59,6 +59,7 @@ public class Categories {
 
         addCategory(new Category(CategoryType.RECOMMENDED));
         addCategory(new Category(CategoryType.FAVORITE));
+
         addCategory(new Category(CategoryType.CHINA));
         addCategory(new Category(CategoryType.INTERNATIONAL));
         addCategory(new Category(CategoryType.SOCIAL));

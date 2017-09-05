@@ -1,7 +1,8 @@
 package com.java.a35.newsapp;
 
-import android.content.AsyncTaskLoader;
+import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +28,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
     @Override
     public JSONObject loadInBackground() {
+        Log.d("loader", "loading... " + toString());
         API api = ((App) getContext().getApplicationContext()).getApi();
         String query = queryCallback.getQuery();
         int category = queryCallback.getCategory();
