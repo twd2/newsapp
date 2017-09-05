@@ -21,32 +21,29 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/category_height"
-                android:background="#ffeeeeee"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:elevation="4dp"
-                app:tabIndicatorColor="@color/colorPrimary"
-                app:tabIndicatorHeight="5dp"
-                app:tabTextColor="#ff000000"
-                app:tabSelectedTextColor="@color/colorPrimary"
-                app:tabMode="scrollable"
-                app:tabMinWidth="@dimen/tab_width"
-                app:tabMaxWidth="@dimen/tab_width"
-                />
-            <ImageButton
-                android:id="@+id/addCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/category_height"
-                android:background="#eeeeeeee"
-                android:src="@drawable/category"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-        </RelativeLayout>
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/category_height"
+                    android:background="#ffeeeeee"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:elevation="4dp"
+                    app:tabIndicatorColor="@color/colorPrimary"
+                    app:tabIndicatorHeight="5dp"
+                    app:tabTextColor="#ff000000"
+                    app:tabSelectedTextColor="@color/colorPrimary"
+                    app:tabMode="scrollable" />
 
+                <ImageButton
+                    android:id="@+id/addCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/category_height"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="#eeeeeeee"
+                    app:srcCompat="@drawable/ic_add_circle_outline_black_24dp" />
+        </RelativeLayout>
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
