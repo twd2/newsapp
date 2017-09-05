@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
@@ -26,9 +27,22 @@
         android:layout_marginRight="@dimen/category_right_margin"
         android:layout_marginTop="@dimen/category_upper_margin"
         android:layout_marginBottom="@dimen/category_upper_margin"
-        android:text=""
+        android:text="国际"
         android:textSize="30dp"
         android:textColor="#cc000000"
+        android:gravity="top|left"
+        android:paddingTop="3dp"
+        android:paddingLeft="30dp"
         />
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:srcCompat="@drawable/ic_check_black_24dp"
+        android:elevation="10dp"
+        android:layout_alignTop="@+id/categoryImage"
+        android:layout_alignLeft="@+id/categoryImage"
+        android:layout_alignStart="@+id/categoryImage"
+        android:layout_marginTop="9dp"
+        android:layout_marginLeft="2dp"/>
 
 </RelativeLayout>

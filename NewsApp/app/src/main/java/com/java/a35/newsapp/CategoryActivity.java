@@ -5,6 +5,7 @@ import android.os.Bundle;
 import java.util.*;
 
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup.LayoutParams;
+import android.content.res.Configuration;
 
 
 /**
@@ -24,6 +26,7 @@ import android.view.ViewGroup.LayoutParams;
  */
 
 public class CategoryActivity extends AppCompatActivity {
+    RelativeLayout[] categories;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,12 +35,19 @@ public class CategoryActivity extends AppCompatActivity {
         TableLayout categoryTableLayout = (TableLayout) findViewById(R.id.categoryTableLayout);
         int childCount = categoryTableLayout.getChildCount();
         int rowChildCount = ((TableRow)categoryTableLayout.getChildAt(0)).getChildCount();
+        categories = new RelativeLayout[childCount * rowChildCount];
 
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int height = metrics.widthPixels;
         int width = metrics.heightPixels;
+        if(height > width)   //swap
+        {
+            int tmp = height;
+            height = width;
+            width = tmp;
+        }
         height = height * 2 / childCount;
         width /= rowChildCount;
 
@@ -51,6 +61,7 @@ public class CategoryActivity extends AppCompatActivity {
             RelativeLayout categoryItem = (RelativeLayout)((TableRow)categoryTableLayout
                     .getChildAt(counter / rowChildCount))
                     .getChildAt(counter % rowChildCount);
+            categories[counter] = categoryItem;
             LayoutParams params = categoryItem.getLayoutParams();
             params.height = height;
             params.width = width;
@@ -58,6 +69,7 @@ public class CategoryActivity extends AppCompatActivity {
 
             // get the button and set its color
             final Button button = (Button)categoryItem.getChildAt(1);
+            final ImageView flag = (ImageView)categoryItem.getChildAt(2);
             button.setText(entry.getKey().getName());
 
             // TODO (wuhaozhe): add shadow to button
@@ -69,11 +81,13 @@ public class CategoryActivity extends AppCompatActivity {
                         R.color.categoryEnabledColor, getTheme()));
                 button.setTextColor(ResourcesCompat.getColor(getResources(),
                         R.color.categoryEnabledTextColor, getTheme()));
+                flag.setVisibility(View.VISIBLE);
             } else {
                 button.setBackgroundColor(ResourcesCompat.getColor(getResources(),
                         R.color.categoryDisabledColor, getTheme()));
                 button.setTextColor(ResourcesCompat.getColor(getResources(),
                         R.color.categoryDisabledTextColor, getTheme()));
+                flag.setVisibility(View.INVISIBLE);
             }
 
             // set the click listener of button
@@ -86,11 +100,13 @@ public class CategoryActivity extends AppCompatActivity {
                                 R.color.categoryEnabledColor, getTheme()));
                         button.setTextColor(ResourcesCompat.getColor(getResources(),
                                 R.color.categoryEnabledTextColor, getTheme()));
+                        flag.setVisibility(View.VISIBLE);
                     } else {
                         button.setBackgroundColor(ResourcesCompat.getColor(getResources(),
                                 R.color.categoryDisabledColor, getTheme()));
                         button.setTextColor(ResourcesCompat.getColor(getResources(),
                                 R.color.categoryDisabledTextColor, getTheme()));
+                        flag.setVisibility(View.INVISIBLE);
                     }
                 }
             });
@@ -129,4 +145,5 @@ public class CategoryActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_category, menu);
         return true;
     }
+
 }

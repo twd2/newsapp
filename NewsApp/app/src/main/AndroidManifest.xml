@@ -43,7 +43,7 @@
             android:label="@string/title_activity_settings"></activity>
         <activity
             android:name=".CategoryActivity"
-            android:label="Channel"
+            android:label="分类"
              ></activity>
     </application>
 
