@@ -91,6 +91,10 @@ public class ItemListActivity extends AppCompatActivity {
         });
 
 
+        if (savedInstanceState != null) {
+            mViewPager.setCurrentItem(savedInstanceState.getInt("tab_id"));
+        }
+
         categoryButton = (ImageButton)findViewById(R.id.addCategory);
         categoryButton.setOnClickListener(new View.OnClickListener()
         {
@@ -229,6 +233,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("query", query);
+        outState.putInt("tab_id", mViewPager.getCurrentItem());
     }
 
     public String getQuery() {

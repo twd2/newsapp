@@ -120,7 +120,7 @@ public class NewsListFragment extends Fragment {
             for (int i = 0; i < newsList.length(); ++i) {
                 JSONObject news = newsList.getJSONObject(i);
                 category.addItem(
-                        new Categories.NewsItem(String.valueOf(i + 1),
+                        new Categories.NewsItem(news.getString("news_ID"),
                                 news.getString("news_Title"),
                                 news));
             }
