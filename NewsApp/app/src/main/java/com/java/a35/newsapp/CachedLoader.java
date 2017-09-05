@@ -84,9 +84,9 @@ public class CachedLoader {
             }
             BufferedInputStream ins = new BufferedInputStream(conn.getInputStream());
             BufferedOutputStream fos = new BufferedOutputStream(
-                    new FileOutputStream(cacheFile), 1024);
-            byte[] data = new byte[1024];
-            int len = 0;
+                    new FileOutputStream(cacheFile), 4096);
+            byte[] data = new byte[4096];
+            int len;
             while ((len = ins.read(data, 0, data.length)) >= 0){
                 fos.write(data, 0, len);
             }

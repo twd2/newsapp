@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -155,9 +156,19 @@ public class NewsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).title);
-
+            holder.mTitleView.setText(mValues.get(position).title);
+            // TODO(twd2)
+            if (Math.random() > 0.5) {
+                holder.mTitleView.setTextColor(ResourcesCompat.getColor(
+                        getResources(),
+                        R.color.newsTitleUnread,
+                        getContext().getTheme()));
+            } else {
+                holder.mTitleView.setTextColor(ResourcesCompat.getColor(
+                        getResources(),
+                        R.color.newsTitleRead,
+                        getContext().getTheme()));
+            }
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -177,20 +188,18 @@ public class NewsListFragment extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final TextView mIdView;
-            public final TextView mContentView;
+            public final TextView mTitleView;
             public Categories.NewsItem mItem;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mTitleView = (TextView) view.findViewById(R.id.content);
             }
 
             @Override
             public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
+                return super.toString() + " '" + mTitleView.getText() + "'";
             }
         }
     }

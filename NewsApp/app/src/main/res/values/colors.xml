@@ -7,4 +7,6 @@
     <color name="categoryEnabledTextColor">#CC000000</color>
     <color name="categoryDisabledColor">#CC000000</color>
     <color name="categoryDisabledTextColor">#DDEEEEEE</color>
+    <color name="newsTitleUnread">#FF000000</color>
+    <color name="newsTitleRead">#FF808080</color>
 </resources>

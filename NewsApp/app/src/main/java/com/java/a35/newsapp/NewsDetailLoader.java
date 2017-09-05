@@ -48,6 +48,7 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
             Log.d("test", obj.get("pictures_path").toString());
             return obj;
         } catch (IOException | JSONException e) {
+            e.printStackTrace();
             return null;
         }
     }
