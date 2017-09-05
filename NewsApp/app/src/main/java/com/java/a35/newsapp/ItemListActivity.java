@@ -60,6 +60,7 @@ public class ItemListActivity extends AppCompatActivity {
     private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
     private String query = "";
     private static final int NEWS_LIST_LOADER_ID = 0;
+    private static final int REQUEST_CATEGORY = 0;
 
     private CategoryCollectionPagerAdapter mFragmentPagerAdapter;
     private TabLayout mTabLayout;
@@ -92,8 +93,7 @@ public class ItemListActivity extends AppCompatActivity {
         mTabLayout.setupWithViewPager(mViewPager);
 
         //指定Tab位置
-        for(int i = 0; i < Categories.enabledCategories.length; i++)
-        {
+        for (int i = 0; i < Categories.enabledCategories.length; i++) {
             mTabs[i] = mTabLayout.getTabAt(i);
         }
         //TODO(wuhaozhe): 设置Tab的图标
@@ -105,7 +105,7 @@ public class ItemListActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 Intent intent = new Intent(ItemListActivity.this, CategoryActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CATEGORY);
             }
         });
 
@@ -310,6 +310,13 @@ public class ItemListActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             // doMySearch(query);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CATEGORY) {
+            mViewPager.getAdapter().notifyDataSetChanged();
         }
     }
 

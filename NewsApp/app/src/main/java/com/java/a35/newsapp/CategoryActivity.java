@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import java.util.*;
 
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,11 +23,6 @@ import android.view.ViewGroup.LayoutParams;
  */
 
 public class CategoryActivity extends AppCompatActivity {
-    final int selectedColor = 0x44000000;
-    final int canceledColor = 0xcc000000;
-    final int textSelectedColor = 0xcc000000;
-    final int textCanceledColor = 0xddeeeeee;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,42 +54,49 @@ public class CategoryActivity extends AppCompatActivity {
             params.height = height;
             params.width = width;
             categoryItem.setLayoutParams(params);
+
             // get the button and set its color
-            final Button categoryButton = (Button)categoryItem.getChildAt(1);
-            categoryButton.setText(entry.getKey().getName());
+            final Button button = (Button)categoryItem.getChildAt(1);
+            button.setText(entry.getKey().getName());
 
             // TODO (wuhaozhe): add shadow to button
-            // categoryButton.setTranslationZ(10);
-            // categoryButton.setElevation(10);
+//            button.setTranslationZ(10);
+//            button.setElevation(10);
 
             if (entry.getValue().enabled) {
-                // TODO(twd2): use R.color.xxx
-                categoryButton.setBackgroundColor(selectedColor);
-                categoryButton.setTextColor(textSelectedColor);
+                button.setBackgroundColor(ResourcesCompat.getColor(getResources(),
+                        R.color.categoryEnabledColor, getTheme()));
+                button.setTextColor(ResourcesCompat.getColor(getResources(),
+                        R.color.categoryEnabledTextColor, getTheme()));
             } else {
-                categoryButton.setBackgroundColor(canceledColor);
-                categoryButton.setTextColor(textCanceledColor);
+                button.setBackgroundColor(ResourcesCompat.getColor(getResources(),
+                        R.color.categoryDisabledColor, getTheme()));
+                button.setTextColor(ResourcesCompat.getColor(getResources(),
+                        R.color.categoryDisabledTextColor, getTheme()));
             }
 
             // set the click listener of button
-            categoryButton.setOnClickListener(new View.OnClickListener() {
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     entry.getValue().enabled = !entry.getValue().enabled;
                     if (entry.getValue().enabled) {
-                        // TODO(twd2): use R.color.xxx
-                        categoryButton.setBackgroundColor(selectedColor);
-                        categoryButton.setTextColor(textSelectedColor);
+                        button.setBackgroundColor(ResourcesCompat.getColor(getResources(),
+                                R.color.categoryEnabledColor, getTheme()));
+                        button.setTextColor(ResourcesCompat.getColor(getResources(),
+                                R.color.categoryEnabledTextColor, getTheme()));
                     } else {
-                        categoryButton.setBackgroundColor(canceledColor);
-                        categoryButton.setTextColor(textCanceledColor);
+                        button.setBackgroundColor(ResourcesCompat.getColor(getResources(),
+                                R.color.categoryDisabledColor, getTheme()));
+                        button.setTextColor(ResourcesCompat.getColor(getResources(),
+                                R.color.categoryDisabledTextColor, getTheme()));
                     }
                 }
             });
 
             // set the image of category
-            ImageView categoryImage = (ImageView)categoryItem.getChildAt(0);
-            categoryImage.setImageResource(entry.getKey().getUiId());
+            ImageView image = (ImageView)categoryItem.getChildAt(0);
+            image.setImageResource(entry.getKey().getUiId());
             counter++;
         }
     }
