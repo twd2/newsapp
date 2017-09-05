@@ -8,4 +8,5 @@
     <dimen name="category_item_height">100dp</dimen>
     <dimen name="category_right_margin">8dp</dimen>
     <dimen name="category_upper_margin">10dp</dimen>
+    <dimen name="tab_width">60dp</dimen>
 </resources>
