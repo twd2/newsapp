@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.java.a35.newsapp.dummy.DummyContent;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +29,7 @@ import java.util.List;
 
 public class NewsListFragment extends Fragment {
 
-    public static final String ARG_CATEGORY_ID = "category";
+    public static final String ARG_CATEGORY = "category";
 
     private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
     private static final int NEWS_LIST_LOADER_ID = 0;
@@ -49,7 +47,12 @@ public class NewsListFragment extends Fragment {
                         new NewsListLoader.QueryCallback() {
                             @Override
                             public String getQuery() {
-                                return ((ItemListActivity)getActivity()).getQuery();
+                                ItemListActivity activity = (ItemListActivity)getActivity();
+                                if (activity != null) {
+                                    return activity.getQuery();
+                                } else {
+                                    return "";
+                                }
                             }
 
                             @Override
@@ -78,7 +81,7 @@ public class NewsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        String type = getArguments().getString(ARG_CATEGORY_ID);
+        String type = getArguments().getString(ARG_CATEGORY);
         Log.d("onCreateView", type);
         categoryType = Categories.CategoryType.valueOf(type);
 
@@ -102,23 +105,27 @@ public class NewsListFragment extends Fragment {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new NewsItemRecyclerViewAdapter(DummyContent.NEWS));
+        recyclerView.setAdapter(new NewsItemRecyclerViewAdapter(
+                Categories.categories.get(categoryType).items
+        ));
     }
 
     private void updateNews(JSONObject obj) {
-        DummyContent.clear();
+        Categories.Category category = Categories.categories.get(categoryType);
+
+        category.clear();
         try {
             JSONArray newsList = obj.getJSONArray("list");
             for (int i = 0; i < newsList.length(); ++i) {
                 JSONObject news = newsList.getJSONObject(i);
-                DummyContent.addItem(
-                        new DummyContent.NewsItem(String.valueOf(i + 1),
+                category.addItem(
+                        new Categories.NewsItem(String.valueOf(i + 1),
                                 news.getString("news_Title"),
                                 news));
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-            DummyContent.addItem(new DummyContent.NewsItem(";(", "加载失败", null));
+            category.addItem(new Categories.NewsItem(";(", "加载失败", null));
         }
 
         SwipeRefreshLayout refreshLayout =
@@ -131,9 +138,9 @@ public class NewsListFragment extends Fragment {
     public class NewsItemRecyclerViewAdapter
             extends RecyclerView.Adapter<NewsItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.NewsItem> mValues;
+        private final List<Categories.NewsItem> mValues;
 
-        public NewsItemRecyclerViewAdapter(List<DummyContent.NewsItem> items) {
+        public NewsItemRecyclerViewAdapter(List<Categories.NewsItem> items) {
             mValues = items;
         }
 
@@ -148,15 +155,15 @@ public class NewsListFragment extends Fragment {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mContentView.setText(mValues.get(position).title);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ItemDetailActivity.class);
+                    intent.putExtra(ItemDetailFragment.ARG_CATEGORY, categoryType.toString());
                     intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
                     context.startActivity(intent);
                 }
             });
@@ -171,7 +178,7 @@ public class NewsListFragment extends Fragment {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public DummyContent.NewsItem mItem;
+            public Categories.NewsItem mItem;
 
             public ViewHolder(View view) {
                 super(view);

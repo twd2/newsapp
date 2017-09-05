@@ -1,18 +1,10 @@
 package com.java.a35.newsapp;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -32,7 +24,6 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
-import com.java.a35.newsapp.dummy.DummyContent;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -95,6 +86,8 @@ public class ItemDetailActivity extends AppCompatActivity {
             Bundle arguments = new Bundle();
             arguments.putString(ItemDetailFragment.ARG_ITEM_ID,
                     getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+            arguments.putString(ItemDetailFragment.ARG_CATEGORY,
+                    getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -156,8 +149,10 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(ItemDetailFragment.ARG_CATEGORY,
+                           getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
         outState.putString(ItemDetailFragment.ARG_ITEM_ID,
-                           getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+                getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
         NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
         outState.putInt("scroll_y", scroll.getScrollY() * scroll.getHeight());
         Log.d("scroll", "" + scroll.getWidth());
@@ -170,9 +165,12 @@ public class ItemDetailActivity extends AppCompatActivity {
         // share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
         // extra for WeChat
         share.putExtra("Kdescription", "测试描述 ——发自我的 NewsApp");
-        DummyContent.NewsItem item = DummyContent.NEWS_MAP
+        Categories.CategoryType categoryType =
+                Categories.CategoryType.valueOf(
+                        getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
+        Categories.NewsItem item = Categories.categories.get(categoryType).map
                 .get(getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
-        share.putExtra(Intent.EXTRA_TEXT, item.content + " ——发自我的 NewsApp");
+        share.putExtra(Intent.EXTRA_TEXT, item.title + " ——发自我的 NewsApp");
         startActivity(Intent.createChooser(share, "分享到社交网络"));
     }
 
@@ -192,9 +190,12 @@ public class ItemDetailActivity extends AppCompatActivity {
         if (mTts != null) {
             if (!isTtsPlaying) {
                 // TODO(twd2): refactor
-                DummyContent.NewsItem mItem = DummyContent.NEWS_MAP.get(
-                        getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
-                int code = mTts.startSpeaking(mItem.detail, mTtsListener);
+                Categories.CategoryType categoryType =
+                        Categories.CategoryType.valueOf(
+                                getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
+                Categories.NewsItem item = Categories.categories.get(categoryType).map
+                        .get(getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+                int code = mTts.startSpeaking(item.detail, mTtsListener);
                 if (code != ErrorCode.SUCCESS) {
                     Toast.makeText(ItemDetailActivity.this,
                             "语音合成失败，错误码: " + code,
