@@ -56,8 +56,8 @@ public class NewsListFragment extends Fragment {
                             }
 
                             @Override
-                            public int getCategory() {
-                                return categoryType.getApiId();
+                            public Categories.CategoryType getCategory() {
+                                return categoryType;
                             }
                         });
             }
@@ -97,6 +97,7 @@ public class NewsListFragment extends Fragment {
                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
             }
         });
+        refreshLayout.setRefreshing(true);
 
         View recyclerView = refreshLayout.findViewById(R.id.newsList);
         assert recyclerView != null;
@@ -163,7 +164,7 @@ public class NewsListFragment extends Fragment {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_CATEGORY, categoryType.toString());
-                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                    intent.putExtra(ItemDetailFragment.ARG_NEWS_ID, holder.mItem.id);
                     context.startActivity(intent);
                 }
             });

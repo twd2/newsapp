@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +26,7 @@ import org.json.JSONObject;
 public class ItemDetailFragment extends Fragment {
 
     public static final String ARG_CATEGORY = "category";
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_NEWS_ID = "news_id";
 
     private LoaderManager.LoaderCallbacks<JSONObject> newsDetailCallbacks;
     private static final int NEWS_DETAIL_LOADER_ID = 0;
@@ -45,16 +44,15 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("frag", "onCreate");
 
         Bundle args = getArguments();
 
-        if (args.containsKey(ARG_CATEGORY) && args.containsKey(ARG_ITEM_ID)) {
+        if (args.containsKey(ARG_CATEGORY) && args.containsKey(ARG_NEWS_ID)) {
             Categories.CategoryType categoryType =
                     Categories.CategoryType.valueOf(
                             args.getString(ItemDetailFragment.ARG_CATEGORY));
             mItem = Categories.categories.get(categoryType).map
-                    .get(args.getString(ItemDetailFragment.ARG_ITEM_ID));
+                    .get(args.getString(ItemDetailFragment.ARG_NEWS_ID));
 
             newsDetailCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
                 @Override
@@ -89,7 +87,7 @@ public class ItemDetailFragment extends Fragment {
 
             getLoaderManager().initLoader(NEWS_DETAIL_LOADER_ID, null, newsDetailCallbacks);
 
-            Activity activity = this.getActivity();
+            Activity activity = getActivity();
             CollapsingToolbarLayout appBarLayout =
                     (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
@@ -103,7 +101,6 @@ public class ItemDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
         if (mItem != null) {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);
             webView.setBackgroundColor(Color.TRANSPARENT);
@@ -115,11 +112,11 @@ public class ItemDetailFragment extends Fragment {
     }
 
     protected void showDetail(JSONObject obj) {
+        WebView webView = (WebView) getView().findViewById(R.id.item_web);
+        webView.setBackgroundColor(Color.TRANSPARENT);
         if (obj != null) {
             try {
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
-                WebView webView = (WebView) getActivity().findViewById(R.id.item_web);
-                webView.setBackgroundColor(Color.TRANSPARENT);
                 // TODO
                 webView.loadDataWithBaseURL(null,
                         String.format("<style>\n" +
@@ -137,7 +134,7 @@ public class ItemDetailFragment extends Fragment {
                 e.printStackTrace();
             }
         } else {
-            ((TextView) getActivity().findViewById(R.id.item_detail)).setText("加载失败:(");
+            webView.loadDataWithBaseURL(null, "<h1>加载失败 :(</h1>", "text/html", "UTF-8", null);
         }
     }
 

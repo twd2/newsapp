@@ -3,9 +3,7 @@ package com.java.a35.newsapp;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -37,20 +35,23 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     private SpeechSynthesizer mTts;
 
+    private Categories.NewsItem mItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
 
         initTts();
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.app_bar_favorite:
+                        // TODO(twd2): favorite
                         Snackbar.make(getCurrentFocus(), "已收藏", Snackbar.LENGTH_LONG)
                                 .setAction("取消", new View.OnClickListener() {
                                     @Override
@@ -59,9 +60,6 @@ public class ItemDetailActivity extends AppCompatActivity {
                                                 "已取消收藏", Toast.LENGTH_SHORT).show();
                                     }
                                 }).show();
-                        // TODO
-//                        Drawable icon = Resources.getSystem().getDrawable(R.drawable.ic_favorite_border_white_24dp, null);
-//                        item.setIcon(icon);
                         break;
                     case R.id.app_bar_tts:
                         playTts();
@@ -80,12 +78,16 @@ public class ItemDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        Categories.CategoryType categoryType =
+                Categories.CategoryType.valueOf(
+                        getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
+        mItem = Categories.categories.get(categoryType).map
+                .get(getIntent().getStringExtra(ItemDetailFragment.ARG_NEWS_ID));
+
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(ItemDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+            arguments.putString(ItemDetailFragment.ARG_NEWS_ID,
+                    getIntent().getStringExtra(ItemDetailFragment.ARG_NEWS_ID));
             arguments.putString(ItemDetailFragment.ARG_CATEGORY,
                     getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
             ItemDetailFragment fragment = new ItemDetailFragment();
@@ -99,19 +101,6 @@ public class ItemDetailActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
                     .commit();
-            NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
-            Log.d("scroll", "" + scroll.getWidth());
-//            int scroll_y = savedInstanceState.getInt("scroll_y");
-//            scroll.setScrollY(scroll_y / scroll.getHeight());
-        }
-    }
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
-            Log.d("scroll", "" + scroll.getWidth());
         }
     }
 
@@ -151,11 +140,8 @@ public class ItemDetailActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(ItemDetailFragment.ARG_CATEGORY,
                            getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
-        outState.putString(ItemDetailFragment.ARG_ITEM_ID,
-                getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
-        NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
-        outState.putInt("scroll_y", scroll.getScrollY() * scroll.getHeight());
-        Log.d("scroll", "" + scroll.getWidth());
+        outState.putString(ItemDetailFragment.ARG_NEWS_ID,
+                getIntent().getStringExtra(ItemDetailFragment.ARG_NEWS_ID));
     }
 
     protected void doShare() {
@@ -165,12 +151,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         // share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
         // extra for WeChat
         share.putExtra("Kdescription", "测试描述 ——发自我的 NewsApp");
-        Categories.CategoryType categoryType =
-                Categories.CategoryType.valueOf(
-                        getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
-        Categories.NewsItem item = Categories.categories.get(categoryType).map
-                .get(getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
-        share.putExtra(Intent.EXTRA_TEXT, item.title + " ——发自我的 NewsApp");
+        share.putExtra(Intent.EXTRA_TEXT, mItem.title + " ——发自我的 NewsApp");
         startActivity(Intent.createChooser(share, "分享到社交网络"));
     }
 
@@ -189,13 +170,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     protected void playTts() {
         if (mTts != null) {
             if (!isTtsPlaying) {
-                // TODO(twd2): refactor
-                Categories.CategoryType categoryType =
-                        Categories.CategoryType.valueOf(
-                                getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
-                Categories.NewsItem item = Categories.categories.get(categoryType).map
-                        .get(getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
-                int code = mTts.startSpeaking(item.detail, mTtsListener);
+                int code = mTts.startSpeaking(mItem.detail, mTtsListener);
                 if (code != ErrorCode.SUCCESS) {
                     Toast.makeText(ItemDetailActivity.this,
                             "语音合成失败，错误码: " + code,
@@ -211,7 +186,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(ItemDetailActivity.this,
-                    "合成失败", Toast.LENGTH_SHORT).show();
+                    "语音合成初始化失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -259,7 +234,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 Log.d("tts", "播放完成");
                 Toast.makeText(ItemDetailActivity.this,
                         "播放完成", Toast.LENGTH_SHORT).show();
-            } else if (error != null) {
+            } else {
                 Log.d("tts", error.getPlainDescription(true));
                 Toast.makeText(ItemDetailActivity.this,
                         error.getPlainDescription(true), Toast.LENGTH_SHORT).show();
