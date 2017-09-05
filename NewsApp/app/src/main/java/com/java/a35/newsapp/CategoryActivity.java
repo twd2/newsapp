@@ -30,22 +30,20 @@ import android.view.ViewGroup.LayoutParams;
  * Created by wuhaozhe on 2017/9/2.
  */
 
-public class CategoryActivity extends AppCompatActivity
-{
+public class CategoryActivity extends AppCompatActivity {
     final int selectedColor = 0x44000000;
     final int canceledColor = 0xcc000000;
     final int textSelectedColor = 0xcc000000;
     final int textCanceledColor = 0xddeeeeee;
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
         TableLayout categoryTableLayout = (TableLayout) findViewById(R.id.categoryTableLayout);
         int childCount = categoryTableLayout.getChildCount();
         TableRow[] categoryTableRow = new TableRow[childCount];
-        for(int i = 0; i < childCount; i++)
-        {
+        for (int i = 0; i < childCount; i++) {
             categoryTableRow[i] = (TableRow)categoryTableLayout.getChildAt(i);
         }
         int rowChildCount = categoryTableRow[0].getChildCount();
@@ -61,12 +59,12 @@ public class CategoryActivity extends AppCompatActivity
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             final String categoryName = (String)pair.getKey();
-            if(categoryName == "推荐" || categoryName == "收藏")
-            {
+            if (categoryName == "推荐" || categoryName == "收藏") {
                 continue;
             }
             final Boolean categoryExist = (Boolean)pair.getValue();
-            RelativeLayout categoryItem = (RelativeLayout) categoryTableRow[counter / rowChildCount].getChildAt(counter % rowChildCount);
+            RelativeLayout categoryItem = (RelativeLayout) categoryTableRow[counter / rowChildCount]
+                    .getChildAt(counter % rowChildCount);
             LayoutParams params = categoryItem.getLayoutParams();
             params.height = height;
             params.width = width;
@@ -77,27 +75,20 @@ public class CategoryActivity extends AppCompatActivity
             //TODO (wuhaozhe): add shadow to button
             //categoryButton.setTranslationZ(10);
             //categoryButton.setElevation(10);
-            if(categoryExist)
-            {
+            if (categoryExist) {
                 categoryButton.setBackgroundColor(selectedColor);
-            }
-            else
-            {
+            } else {
                 categoryButton.setBackgroundColor(canceledColor);
             }
             //set the click listener of button
-            categoryButton.setOnClickListener(new View.OnClickListener(){
+            categoryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     Boolean categoryExist = CategoryController.categories.get(categoryName);
-                    if(categoryExist)
-                    {
+                    if (categoryExist) {
                         categoryButton.setBackgroundColor(canceledColor);
                         categoryButton.setTextColor(textCanceledColor);
-                    }
-                    else
-                    {
+                    } else {
                         categoryButton.setBackgroundColor(selectedColor);
                         categoryButton.setTextColor(textSelectedColor);
                     }
@@ -106,8 +97,7 @@ public class CategoryActivity extends AppCompatActivity
             });
             //set the image of category
             ImageView categoryImage = (ImageView)categoryItem.getChildAt(0);
-            switch (categoryName)
-            {
+            switch (categoryName) {
                 case "科技":
                     categoryImage.setImageResource(R.drawable.science);
                     break;
@@ -148,11 +138,10 @@ public class CategoryActivity extends AppCompatActivity
             counter++;
         }
     }
+
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        switch (keyCode)
-        {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 CategoryController.refreshAddedCategories();
                 Intent intent = new Intent(this, ItemListActivity.class);
@@ -162,6 +151,7 @@ public class CategoryActivity extends AppCompatActivity
         }
         return super.onKeyDown(keyCode, event);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -174,6 +164,7 @@ public class CategoryActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_category, menu);
