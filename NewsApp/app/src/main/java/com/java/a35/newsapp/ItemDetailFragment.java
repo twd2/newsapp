@@ -13,10 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.TextView;
 
-import com.java.a35.newsapp.dummy.DummyContent;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,7 +46,6 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("frag", "onCreate");
 
         Bundle args = getArguments();
 
@@ -105,12 +103,11 @@ public class ItemDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
         if (mItem != null) {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);
             webView.setBackgroundColor(Color.TRANSPARENT);
             webView.loadDataWithBaseURL(null, "<p>正在加载...</p>",
-                                        "text/html", "UTF-8", null);
+                    "text/html", "UTF-8", null);
         }
 
         return rootView;
@@ -122,7 +119,6 @@ public class ItemDetailFragment extends Fragment {
         if (obj != null) {
             try {
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
-                webView.setBackgroundColor(Color.TRANSPARENT);
                 StringBuilder stringBuilder = new StringBuilder();
                 JSONArray pictures_path = obj.getJSONArray("pictures_path");
                 for (int i=0; i < pictures_path.length(); i++) {
@@ -131,21 +127,21 @@ public class ItemDetailFragment extends Fragment {
                     );
                 }
                 stringBuilder.append(
-                String.format("<style>\n" +
-                    "a {color: darkblue; font-size: 20px;}\n" +
-                    "p {font-size: 20px; line-height: 150%%}" +
-                    "</style>" +
-                    "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
-                    "<h1>%s</h1>\n<p>%s</p>\n" +
-                    "<a href=\"%s\" target=\"_blank\">查看原文</a>",
-                TextUtils.htmlEncode(mItem.content),
-                TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
-                obj.getString("news_URL")));
+                        String.format("<style>\n" +
+                                        "a {color: darkblue; font-size: 20px;}\n" +
+                                        "p {font-size: 20px; line-height: 150%%}" +
+                                        "</style>" +
+                                        "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
+                                        "<h1>%s</h1>\n<p>%s</p>\n" +
+                                        "<a href=\"%s\" target=\"_blank\">查看原文</a>",
+                                TextUtils.htmlEncode(mItem.title),
+                                TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
+                                obj.getString("news_URL")));
 
                 webView.loadDataWithBaseURL(null,
-                    stringBuilder.toString(),
-                    "text/html", "UTF-8", null);
-                } catch (JSONException e) {
+                        stringBuilder.toString(),
+                        "text/html", "UTF-8", null);
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
