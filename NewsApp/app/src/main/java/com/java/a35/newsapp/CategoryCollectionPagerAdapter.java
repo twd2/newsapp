@@ -18,7 +18,8 @@ public class CategoryCollectionPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         NewsListFragment fragment = new NewsListFragment();
         Bundle args = new Bundle();
-        args.putString("category", Categories.enabledCategories[position].getName());
+        args.putString(NewsListFragment.ARG_ID_CATEGORY,
+                Categories.enabledCategories[position].getName());
         fragment.setArguments(args);
         return fragment;
     }

@@ -40,7 +40,6 @@ public class API {
 
     public static final String SERVER_URL = "http://166.111.68.66:2042";
     public static final int DEFAULT_PAGE_SIZE = 20;
-    public static final int CATEGORY_COUNT = 12;
 
     private final String server;
 

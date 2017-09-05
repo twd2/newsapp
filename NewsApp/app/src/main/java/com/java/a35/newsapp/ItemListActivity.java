@@ -126,19 +126,19 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "菜单", Snackbar.LENGTH_LONG)
-                        .setAction("取消", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(ItemListActivity.this,"你点击了action",Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "菜单", Snackbar.LENGTH_LONG)
+//                        .setAction("取消", new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                Toast.makeText(ItemListActivity.this,"你点击了action",Toast.LENGTH_SHORT).show();
+//                            }
+//                        }).show();
+//            }
+//        });
 
         newsListCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
             @Override
@@ -171,22 +171,22 @@ public class ItemListActivity extends AppCompatActivity {
 
         getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
-        final SwipeRefreshLayout refreshLayout =
-                (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-        refreshLayout.setColorSchemeResources(R.color.colorAccent,
-                R.color.colorPrimary,
-                R.color.colorPrimaryDark);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshLayout.setRefreshing(true);
-                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-            }
-        });
-
-        View recyclerView = findViewById(R.id.item_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+//        final SwipeRefreshLayout refreshLayout =
+//                (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+//        refreshLayout.setColorSchemeResources(R.color.colorAccent,
+//                R.color.colorPrimary,
+//                R.color.colorPrimaryDark);
+//        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                refreshLayout.setRefreshing(true);
+//                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+//            }
+//        });
+//
+//        View recyclerView = findViewById(R.id.item_list);
+//        assert recyclerView != null;
+//        setupRecyclerView((RecyclerView) recyclerView);
 
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
@@ -198,8 +198,8 @@ public class ItemListActivity extends AppCompatActivity {
 
         handleIntent(getIntent());
 
-        refreshLayout.setRefreshing(true);
-        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+//        refreshLayout.setRefreshing(true);
+//        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
     }
 
     private void updateNews(JSONObject obj) {
@@ -218,10 +218,10 @@ public class ItemListActivity extends AppCompatActivity {
             DummyContent.addItem(new DummyContent.NewsItem(";(", "加载失败", null));
         }
 
-        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-        refreshLayout.setRefreshing(false);
-        RecyclerView itemList = (RecyclerView) findViewById(R.id.item_list);
-        itemList.getAdapter().notifyDataSetChanged();
+//        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+//        refreshLayout.setRefreshing(false);
+//        RecyclerView itemList = (RecyclerView) findViewById(R.id.item_list);
+//        itemList.getAdapter().notifyDataSetChanged();
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -257,8 +257,8 @@ public class ItemListActivity extends AppCompatActivity {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 Log.d("search", "onMenuItemActionCollapse");
                 query = "";
-                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-                refreshLayout.setRefreshing(true);
+//                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+//                refreshLayout.setRefreshing(true);
                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
                 return true;
             }
@@ -280,8 +280,8 @@ public class ItemListActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String queryText) {
                 Log.d("search", queryText);
                 query = queryText;
-                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-                refreshLayout.setRefreshing(true);
+//                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+//                refreshLayout.setRefreshing(true);
                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
                 if (mSearchView != null) {
