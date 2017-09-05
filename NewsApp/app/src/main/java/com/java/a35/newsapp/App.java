@@ -13,6 +13,10 @@ public class App extends Application {
     public API getApi() {
         return api;
     }
+    public CachedLoader getCachedLoader(){
+        return cachedLoader;
+    }
+
 
     @Override
     public void onCreate() {

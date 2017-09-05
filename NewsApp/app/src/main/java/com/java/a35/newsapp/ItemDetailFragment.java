@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.java.a35.newsapp.dummy.DummyContent;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -121,17 +122,27 @@ public class ItemDetailFragment extends Fragment {
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
                 WebView webView = (WebView) getActivity().findViewById(R.id.item_web);
                 webView.setBackgroundColor(Color.TRANSPARENT);
+                StringBuilder stringBuilder = new StringBuilder();
+                JSONArray pictures_path = obj.getJSONArray("pictures_path");
+                for (int i=0; i < pictures_path.length(); i++) {
+                    stringBuilder.append(
+                        String.format("<img src=\"%s\" alt=\"xxx\"/>", pictures_path.getString(i))
+                    );
+                }
+                stringBuilder.append(
+                    String.format("<style>\n" +
+                        "a {color: darkblue; font-size: 20px;}\n" +
+                        "p {font-size: 20px; line-height: 150%%}" +
+                        "</style>" +
+                        "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
+                        "<h1>%s</h1>\n<p>%s</p>\n" +
+                        "<a href=\"%s\" target=\"_blank\">查看原文</a>",
+                    TextUtils.htmlEncode(mItem.content),
+                    TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
+                    obj.getString("news_URL")));
+
                 webView.loadDataWithBaseURL(null,
-                        String.format("<style>\n" +
-                                      "a {color: darkblue; font-size: 20px;}\n" +
-                                      "p {font-size: 20px; line-height: 150%%}" +
-                                      "</style>" +
-                                      "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
-                                      "<h1>%s</h1>\n<p>%s</p>\n" +
-                                      "<a href=\"%s\" target=\"_blank\">查看原文</a>",
-                                TextUtils.htmlEncode(mItem.content),
-                                TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
-                                obj.getString("news_URL")),
+                        stringBuilder.toString(),
                         "text/html", "UTF-8", null);
             } catch (JSONException e) {
                 e.printStackTrace();
