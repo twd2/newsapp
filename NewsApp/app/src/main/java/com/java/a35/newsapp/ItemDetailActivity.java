@@ -17,6 +17,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -119,6 +120,19 @@ public class ItemDetailActivity extends AppCompatActivity {
             NestedScrollView scroll = (NestedScrollView)findViewById(R.id.item_detail_container);
             Log.d("scroll", "" + scroll.getWidth());
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mTts != null) {
+                    mTts.stopSpeaking();
+                }
+                finish();
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
