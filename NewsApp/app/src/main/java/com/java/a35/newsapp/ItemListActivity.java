@@ -72,6 +72,10 @@ public class ItemListActivity extends AppCompatActivity {
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
         mTabLayout.setupWithViewPager(mViewPager);
 
+        if (savedInstanceState != null) {
+            mViewPager.setCurrentItem(savedInstanceState.getInt("tab_id"));
+        }
+
         //TODO(wuhaozhe): 设置Tab的图标
         //初始化categoryButton
         categoryButton = (ImageButton)findViewById(R.id.addCategory);
@@ -212,6 +216,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("query", query);
+        outState.putInt("tab_id", mViewPager.getCurrentItem());
     }
 
     public String getQuery() {
