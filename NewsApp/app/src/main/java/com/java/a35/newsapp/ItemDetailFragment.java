@@ -118,16 +118,17 @@ public class ItemDetailFragment extends Fragment {
         webView.setBackgroundColor(Color.TRANSPARENT);
         if (obj != null) {
             try {
+                // TODO(twd2): !!!
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
                 StringBuilder sb = new StringBuilder();
                 JSONArray picturesPath = obj.getJSONArray("pictures_path");
                 for (int i = 0; i < picturesPath.length(); i++) {
-                    sb.append(String.format("<img src=\"file://%s\" alt=\"xxx\"/>",
+                    sb.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"width: 100%%\" /></p>",
                                             picturesPath.getString(i)));
                 }
                 sb.append(
                         String.format("<style>\n" +
-                                      "a {color: darkblue; font-size: 20px;}\n" +
+                                      "a {text-decoration: none; color: darkblue; font-size: 20px;}\n" +
                                       "p {font-size: 20px; line-height: 150%%}" +
                                       "</style>" +
                                       "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
