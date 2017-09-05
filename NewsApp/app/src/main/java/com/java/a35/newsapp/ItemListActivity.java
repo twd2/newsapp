@@ -43,6 +43,7 @@ public class ItemListActivity extends AppCompatActivity {
     private String query = "";
     private static final int NEWS_LIST_LOADER_ID = 0;
     private static final int REQUEST_CATEGORY = 0;
+    private static int TAB_POSITION = 0;
 
     private CategoryCollectionPagerAdapter mFragmentPagerAdapter;
     private TabLayout mTabLayout;
@@ -71,9 +72,25 @@ public class ItemListActivity extends AppCompatActivity {
         //将TabLayout与ViewPager绑定在一起
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
         mTabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setCurrentItem(TAB_POSITION);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                TAB_POSITION = position;
+            }
 
-        //TODO(wuhaozhe): 设置Tab的图标
-        //初始化categoryButton
+            @Override
+            public void onPageSelected(int position) {
+                TAB_POSITION = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
         categoryButton = (ImageButton)findViewById(R.id.addCategory);
         categoryButton.setOnClickListener(new View.OnClickListener()
         {
