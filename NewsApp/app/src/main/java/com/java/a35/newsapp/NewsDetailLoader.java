@@ -33,17 +33,20 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         CachedLoader cachedLoader = ((App) getContext().getApplicationContext()).getCachedLoader();
         String id = queryCallback.getId();
         try {
-            JSONObject object = api.getNews(id);
-            if (!((String)object.get("news_Pictures")).equals("")){
+            JSONObject obj = api.getNews(id);
+            if (!obj.getString("news_Pictures").equals("")) {
                 JSONArray pictures_path = new JSONArray();
-                String pictures[] = ((String) object.get("news_Pictures")).split(";");
-                for (String picture: pictures){
-                    pictures_path.put(cachedLoader.fetch(picture, "", new HashMap<String, String>(), false));
+                String pictures[] = obj.getString("news_Pictures").replace(' ', ';').split(";");
+                for (String picture : pictures) {
+                    pictures_path.put(
+                            cachedLoader.fetch(picture, "", new HashMap<String, String>(), false));
                 }
-                object.put("pictures_path", pictures_path);
+                obj.put("pictures_path", pictures_path);
+            } else {
+                obj.put("pictures_path", new JSONArray());
             }
-            Log.i("test", object.get("pictures_path").toString());
-            return object;
+            Log.d("test", obj.get("pictures_path").toString());
+            return obj;
         } catch (IOException | JSONException e) {
             return null;
         }

@@ -63,7 +63,7 @@ public class CachedLoader {
 
     public String fetch(String targetURL, String queryString, Map<String, String> headerPayload,
                         boolean asString) throws IOException {
-        if (queryString.charAt(0) != '?') {
+        if (queryString.length() > 0 && queryString.charAt(0) != '?') {
             queryString = "?" + queryString;
         }
 
@@ -74,8 +74,7 @@ public class CachedLoader {
         }
 
         File cacheFile = new File(cacheDir, uuid);
-        //if (!cacheFile.exists())
-        {
+        if (!cacheFile.exists()) {
             URL url = new URL(targetURL + queryString);
             URLConnection conn = url.openConnection();
             for (Iterator<Map.Entry<String, String>> it = headerPayload.entrySet().iterator();
