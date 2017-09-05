@@ -94,7 +94,7 @@ public class API {
         return get("/news/action/query/detail", queryString);
     }
 
-    public JSONObject searchNews(String query, int category, int page, int pageSize)
+    public JSONObject searchNews(int category, String query, int page, int pageSize)
             throws IOException, JSONException {
         String queryString = String.format("keyword=%s&category=%d&pageNo=%d&pageSize=%d",
                                            URLEncoder.encode(query, "UTF-8"),
@@ -102,14 +102,14 @@ public class API {
         return get("/news/action/query/search", queryString);
     }
 
-    public JSONObject searchNews(String query, int category, int page)
+    public JSONObject searchNews(int category, String query, int page)
             throws IOException, JSONException {
-        return searchNews(query, category, page, DEFAULT_PAGE_SIZE);
+        return searchNews(category, query, page, DEFAULT_PAGE_SIZE);
     }
 
-    public JSONObject searchNews(String query, int category)
+    public JSONObject searchNews(int category, String query)
             throws IOException, JSONException {
-        return searchNews(query, category, 1, DEFAULT_PAGE_SIZE);
+        return searchNews(category, query, 1, DEFAULT_PAGE_SIZE);
     }
 
     public JSONObject searchAllNews(String query, int page, int pageSize)
