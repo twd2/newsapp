@@ -1,25 +1,18 @@
 package com.java.a35.newsapp;
 
-import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.os.EnvironmentCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.view.ViewPager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,16 +22,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-
-import com.java.a35.newsapp.dummy.DummyContent;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
 
 
 /**
@@ -119,68 +102,6 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "菜单", Snackbar.LENGTH_LONG)
-//                        .setAction("取消", new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                Toast.makeText(ItemListActivity.this,"你点击了action",Toast.LENGTH_SHORT).show();
-//                            }
-//                        }).show();
-//            }
-//        });
-
-//        newsListCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
-//            @Override
-//            public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
-//                return new NewsListLoader(ItemListActivity.this,
-//                        new NewsListLoader.QueryCallback() {
-//                            @Override
-//                            public String getQuery() {
-//                                return query;
-//                            }
-//
-//                            @Override
-//                            public int getCategory() {
-//                                // TODO
-//                                return 2;
-//                            }
-//                        });
-//            }
-//
-//            @Override
-//            public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-//                updateNews(data);
-//            }
-//
-//            @Override
-//            public void onLoaderReset(Loader<JSONObject> loader) {
-//
-//            }
-//        };
-//
-//        getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-
-//        final SwipeRefreshLayout refreshLayout =
-//                (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-//        refreshLayout.setColorSchemeResources(R.color.colorAccent,
-//                R.color.colorPrimary,
-//                R.color.colorPrimaryDark);
-//        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                refreshLayout.setRefreshing(true);
-//                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-//            }
-//        });
-//
-//        View recyclerView = findViewById(R.id.item_list);
-//        assert recyclerView != null;
-//        setupRecyclerView((RecyclerView) recyclerView);
-
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -190,35 +111,6 @@ public class ItemListActivity extends AppCompatActivity {
         }
 
         handleIntent(getIntent());
-
-//        refreshLayout.setRefreshing(true);
-//        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-    }
-
-    private void updateNews(JSONObject obj) {
-        DummyContent.clear();
-        try {
-            JSONArray newsList = obj.getJSONArray("list");
-            for (int i = 0; i < newsList.length(); ++i) {
-                JSONObject news = newsList.getJSONObject(i);
-                DummyContent.addItem(
-                        new DummyContent.NewsItem(String.valueOf(i + 1),
-                                news.getString("news_Title"),
-                                news));
-            }
-        } catch (JSONException | NullPointerException e) {
-            e.printStackTrace();
-            DummyContent.addItem(new DummyContent.NewsItem(";(", "加载失败", null));
-        }
-
-//        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-//        refreshLayout.setRefreshing(false);
-//        RecyclerView itemList = (RecyclerView) findViewById(R.id.item_list);
-//        itemList.getAdapter().notifyDataSetChanged();
-    }
-
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.NEWS));
     }
 
     @Override
@@ -326,73 +218,4 @@ public class ItemListActivity extends AppCompatActivity {
         return query;
     }
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final List<DummyContent.NewsItem> mValues;
-
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.NewsItem> items) {
-            mValues = items;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        ItemDetailFragment fragment = new ItemDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.item_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, ItemDetailActivity.class);
-                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
-                        context.startActivity(intent);
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mIdView;
-            public final TextView mContentView;
-            public DummyContent.NewsItem mItem;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-
-            @Override
-            public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
-            }
-        }
-    }
 }

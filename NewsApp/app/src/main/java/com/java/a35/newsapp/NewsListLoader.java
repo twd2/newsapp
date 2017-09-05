@@ -17,7 +17,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
     interface QueryCallback {
         String getQuery();
-        int getCategory();
+        Categories.CategoryType getCategory();
     }
     private QueryCallback queryCallback;
 
@@ -30,18 +30,32 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
     public JSONObject loadInBackground() {
         Log.d("loader", "loading... " + toString());
         API api = ((App) getContext().getApplicationContext()).getApi();
+
         String query = queryCallback.getQuery();
-        int category = queryCallback.getCategory();
+        Categories.CategoryType categoryType = queryCallback.getCategory();
+        int category = categoryType.getApiId();
         try {
             if (query != null && query.length() > 0) {
-                // TODO: search category?
-                return api.searchAllNews(query);
+                if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
+                    return api.searchNews(category, query);
+                } else {
+                    return api.searchAllNews(query);
+                }
             } else {
-                return api.getListNews(category);
+                if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
+                    return api.getListNews(category);
+                } else if (categoryType == Categories.CategoryType.RECOMMENDED) {
+                    // TODO(twd2): list recommended
+                    return api.getListNews(category);
+                } else if (categoryType == Categories.CategoryType.FAVORITE) {
+                    // TODO(twd2): list favorite
+                    return api.getListNews(category);
+                } else {
+                    // ???
+                    return null;
+                }
             }
-        } catch (IOException e) {
-            return null;
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             return null;
         }
     }

@@ -1,5 +1,7 @@
 package com.java.a35.newsapp;
 
+import org.json.JSONObject;
+
 import java.util.*;
 
 public class Categories {
@@ -45,9 +47,22 @@ public class Categories {
         public CategoryType type;
         public boolean enabled;
 
+        public List<NewsItem> items = new ArrayList<>();
+        public Map<String, NewsItem> map = new HashMap<>();
+
         public Category(CategoryType type) {
             this.type = type;
             this.enabled = true; // TODO(twd2): read from preferences
+        }
+
+        public void clear() {
+            items.clear();
+            map.clear();
+        }
+
+        public void addItem(NewsItem item) {
+            items.add(item);
+            map.put(item.id, item);
         }
     }
 
@@ -94,6 +109,24 @@ public class Categories {
                 enabledCategories[index] = c.type;
                 index++;
             }
+        }
+    }
+
+    public static class NewsItem {
+        public final String id;
+        public final String title;
+        public String detail = "";
+        public final JSONObject obj;
+
+        public NewsItem(String id, String title, JSONObject obj) {
+            this.id = id;
+            this.title = title;
+            this.obj = obj;
+        }
+
+        @Override
+        public String toString() {
+            return title;
         }
     }
 }

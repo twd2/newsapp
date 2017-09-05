@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.java.a35.newsapp.dummy.DummyContent;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,24 +27,21 @@ import org.json.JSONObject;
  * on handsets.
  */
 public class ItemDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
+
+    public static final String ARG_CATEGORY = "category";
+    public static final String ARG_NEWS_ID = "news_id";
+
     private LoaderManager.LoaderCallbacks<JSONObject> newsDetailCallbacks;
     private static final int NEWS_DETAIL_LOADER_ID = 0;
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private DummyContent.NewsItem mItem;
+    private Categories.NewsItem mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public ItemDetailFragment() {
+
     }
 
     @Override
@@ -53,11 +49,14 @@ public class ItemDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("frag", "onCreate");
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = DummyContent.NEWS_MAP.get(getArguments().getString(ARG_ITEM_ID));
+        Bundle args = getArguments();
+
+        if (args.containsKey(ARG_CATEGORY) && args.containsKey(ARG_NEWS_ID)) {
+            Categories.CategoryType categoryType =
+                    Categories.CategoryType.valueOf(
+                            args.getString(ItemDetailFragment.ARG_CATEGORY));
+            mItem = Categories.categories.get(categoryType).map
+                    .get(args.getString(ItemDetailFragment.ARG_NEWS_ID));
 
             newsDetailCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
                 @Override
@@ -92,10 +91,11 @@ public class ItemDetailFragment extends Fragment {
 
             getLoaderManager().initLoader(NEWS_DETAIL_LOADER_ID, null, newsDetailCallbacks);
 
-            Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+            Activity activity = getActivity();
+            CollapsingToolbarLayout appBarLayout =
+                    (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mItem.title);
             }
         }
     }
@@ -117,38 +117,39 @@ public class ItemDetailFragment extends Fragment {
     }
 
     protected void showDetail(JSONObject obj) {
+        WebView webView = (WebView) getView().findViewById(R.id.item_web);
+        webView.setBackgroundColor(Color.TRANSPARENT);
         if (obj != null) {
             try {
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
-                WebView webView = (WebView) getActivity().findViewById(R.id.item_web);
                 webView.setBackgroundColor(Color.TRANSPARENT);
                 StringBuilder stringBuilder = new StringBuilder();
                 JSONArray pictures_path = obj.getJSONArray("pictures_path");
                 for (int i=0; i < pictures_path.length(); i++) {
                     stringBuilder.append(
-                        String.format("<img src=\"%s\" alt=\"xxx\"/>", pictures_path.getString(i))
+                            String.format("<img src=\"%s\" alt=\"xxx\"/>", pictures_path.getString(i))
                     );
                 }
                 stringBuilder.append(
-                    String.format("<style>\n" +
-                        "a {color: darkblue; font-size: 20px;}\n" +
-                        "p {font-size: 20px; line-height: 150%%}" +
-                        "</style>" +
-                        "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
-                        "<h1>%s</h1>\n<p>%s</p>\n" +
-                        "<a href=\"%s\" target=\"_blank\">查看原文</a>",
-                    TextUtils.htmlEncode(mItem.content),
-                    TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
-                    obj.getString("news_URL")));
+                String.format("<style>\n" +
+                    "a {color: darkblue; font-size: 20px;}\n" +
+                    "p {font-size: 20px; line-height: 150%%}" +
+                    "</style>" +
+                    "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
+                    "<h1>%s</h1>\n<p>%s</p>\n" +
+                    "<a href=\"%s\" target=\"_blank\">查看原文</a>",
+                TextUtils.htmlEncode(mItem.content),
+                TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
+                obj.getString("news_URL")));
 
                 webView.loadDataWithBaseURL(null,
-                        stringBuilder.toString(),
-                        "text/html", "UTF-8", null);
-            } catch (JSONException e) {
+                    stringBuilder.toString(),
+                    "text/html", "UTF-8", null);
+                } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
-            ((TextView) getActivity().findViewById(R.id.item_detail)).setText("加载失败:(");
+            webView.loadDataWithBaseURL(null, "<h1>加载失败 :(</h1>", "text/html", "UTF-8", null);
         }
     }
 
