@@ -9,10 +9,15 @@ import android.app.Application;
 public class App extends Application {
 
     private static final API api = new API(API.SERVER_URL);
-
+    private static CachedLoader cachedLoader = null;
     public API getApi() {
         return api;
     }
 
-   // TODO
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        cachedLoader = new CachedLoader(this.getApplicationContext());
+    }
+    // TODO
 }
