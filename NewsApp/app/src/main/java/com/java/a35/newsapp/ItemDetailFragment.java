@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -105,7 +107,7 @@ public class ItemDetailFragment extends Fragment {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);
             webView.setBackgroundColor(Color.TRANSPARENT);
             webView.loadDataWithBaseURL(null, "<p>正在加载...</p>",
-                                        "text/html", "UTF-8", null);
+                    "text/html", "UTF-8", null);
         }
 
         return rootView;
@@ -117,8 +119,13 @@ public class ItemDetailFragment extends Fragment {
         if (obj != null) {
             try {
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
-                // TODO
-                webView.loadDataWithBaseURL(null,
+                StringBuilder sb = new StringBuilder();
+                JSONArray picturesPath = obj.getJSONArray("pictures_path");
+                for (int i = 0; i < picturesPath.length(); i++) {
+                    sb.append(String.format("<img src=\"file://%s\" alt=\"xxx\"/>",
+                                            picturesPath.getString(i)));
+                }
+                sb.append(
                         String.format("<style>\n" +
                                       "a {color: darkblue; font-size: 20px;}\n" +
                                       "p {font-size: 20px; line-height: 150%%}" +
@@ -128,7 +135,10 @@ public class ItemDetailFragment extends Fragment {
                                       "<a href=\"%s\" target=\"_blank\">查看原文</a>",
                                 TextUtils.htmlEncode(mItem.title),
                                 TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
-                                obj.getString("news_URL")),
+                                obj.getString("news_URL")));
+
+                webView.loadDataWithBaseURL(null,
+                        sb.toString(),
                         "text/html", "UTF-8", null);
             } catch (JSONException e) {
                 e.printStackTrace();
