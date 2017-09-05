@@ -9,7 +9,7 @@
         android:id="@+id/categoryImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/sports"
+        android:src="@drawable/category_sports"
         android:scaleType="fitCenter"
         android:layout_marginLeft="@dimen/category_right_margin"
         android:layout_marginRight="@dimen/category_right_margin"
@@ -30,6 +30,5 @@
         android:textSize="30dp"
         android:textColor="#cc000000"
         />
-
 
 </RelativeLayout>
