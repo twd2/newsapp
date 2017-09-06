@@ -36,7 +36,7 @@ public class NewsListFragment extends Fragment {
     private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
     private static final int NEWS_LIST_LOADER_ID = 0;
     private Categories.CategoryType categoryType;
-    private boolean isLoading = false;
+    private boolean isLoadingMore = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public class NewsListFragment extends Fragment {
 
             @Override
             public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-                updateNews(data);
+                updateNews(data, isLoadingMore);
             }
 
             @Override
@@ -111,10 +111,11 @@ public class NewsListFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 int totalItemCount = linearLayoutManager.getItemCount();
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-                if (!isLoading && totalItemCount <= (lastVisibleItem + 5) ){
+                if (!isLoadingMore && totalItemCount <= (lastVisibleItem + 5)) {
+                    isLoadingMore = true;
                     ((NewsItemRecyclerViewAdapter)recyclerView.getAdapter()).mValues.add(null);
                     recyclerView.getAdapter().notifyItemInserted(totalItemCount);
-                    isLoading = true;
+                    getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
                 }
             }
         });
@@ -143,11 +144,18 @@ public class NewsListFragment extends Fragment {
         getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
     }
 
-    private void updateNews(JSONObject obj) {
+    private void updateNews(JSONObject obj, boolean append) {
         Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         Categories.Category category = categories.categories.get(categoryType);
 
-        category.clear();
+        if (!append) {
+            category.clear();
+        } else {
+            if (category.items.get(category.items.size() - 1) == null) {
+                category.items.remove(category.items.size() - 1);
+            }
+        }
+
         try {
             JSONArray newsList = obj.getJSONArray("list");
             for (int i = 0; i < newsList.length(); ++i) {
@@ -160,6 +168,7 @@ public class NewsListFragment extends Fragment {
             category.addItem(new Categories.NewsItem(";(", "加载失败", null));
         }
 
+        isLoadingMore = false;
         SwipeRefreshLayout refreshLayout =
                 (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshing(false);
@@ -187,8 +196,14 @@ public class NewsListFragment extends Fragment {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
             if (holder.mItem == null){
-                holder.mTitleView.setText("Loading...");
-                return ;
+                holder.mTitleView.setText("加载更多中...");
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+                return;
             }
             holder.mTitleView.setText(mValues.get(position).title);
             // TODO(twd2)
