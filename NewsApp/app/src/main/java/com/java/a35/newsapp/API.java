@@ -4,6 +4,8 @@ import android.support.annotation.RequiresPermission;
 import android.util.JsonReader;
 import android.util.Log;
 
+import com.java.a35.newsapp.dummy.Utility;
+
 import org.json.*;
 
 import java.io.IOException;
@@ -47,17 +49,6 @@ public class API {
         this.server = server;
     }
 
-    private String readAllString(InputStream stream) throws IOException {
-        InputStreamReader reader = new InputStreamReader(stream);
-        char[] buffer = new char[4096];
-        StringBuffer sb = new StringBuffer();
-        int count;
-        while ((count = reader.read(buffer)) >= 0) {
-            sb.append(buffer, 0, count);
-        }
-        return sb.toString();
-    }
-
     private JSONObject get(String action, String queryString) throws IOException, JSONException {
         StringBuffer sb = new StringBuffer();
         sb.append(server);
@@ -69,7 +60,7 @@ public class API {
         URL url = new URL(sb.toString());
         URLConnection conn = url.openConnection();
         conn.setRequestProperty("User-Agent", "NewsApp/0.0");
-        String jsonString = readAllString(conn.getInputStream());
+        String jsonString = Utility.readAllString(conn.getInputStream());
         Log.d("API", jsonString);
         return new JSONObject(jsonString);
     }

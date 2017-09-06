@@ -1,5 +1,6 @@
 package com.java.a35.newsapp;
 
+import android.graphics.Picture;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
@@ -32,6 +33,7 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         API api = ((App) getContext().getApplicationContext()).getApi();
         CachedLoader cachedLoader = ((App) getContext().getApplicationContext()).getCachedLoader();
         String id = queryCallback.getId();
+        PictureAPI pictureAPI = new PictureAPI();
         try {
             JSONObject obj = api.getNews(id);
             if (!obj.getString("news_Pictures").equals("")) {
