@@ -95,6 +95,7 @@ public class CategoryActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     entry.getValue().enabled = !entry.getValue().enabled;
+                    entry.getValue().save();
                     if (entry.getValue().enabled) {
                         button.setBackgroundColor(ResourcesCompat.getColor(getResources(),
                                 R.color.categoryEnabledColor, getTheme()));

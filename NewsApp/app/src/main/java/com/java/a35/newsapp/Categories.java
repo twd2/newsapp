@@ -2,6 +2,7 @@ package com.java.a35.newsapp;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import org.json.JSONObject;
 
@@ -55,7 +56,8 @@ public class Categories {
 
         public Category(CategoryType type) {
             this.type = type;
-            this.enabled = true; // TODO(twd2): read from preferences
+            SharedPreferences sharedPreferences = Categories.this.context.getSharedPreferences("categories", Context.MODE_PRIVATE);
+            this.enabled = sharedPreferences.getBoolean(type.getName(), true);
         }
 
         public void clear() {
@@ -67,6 +69,14 @@ public class Categories {
             items.add(item);
             map.put(item.id, item);
         }
+
+        public void save()
+        {
+            SharedPreferences sharedPreferences = Categories.this.context.getSharedPreferences("categories", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(type.getName(), enabled);
+            editor.commit();
+        }
     }
 
     public Context context;
@@ -77,7 +87,6 @@ public class Categories {
     {
         this.context = context;
         categories = new LinkedHashMap<>();
-
 
         addCategory(new Category(CategoryType.RECOMMENDED));
         addCategory(new Category(CategoryType.FAVORITE));
