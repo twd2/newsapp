@@ -28,6 +28,11 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
     @Override
     public JSONObject loadInBackground() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Log.d("loader", "loading... " + toString());
         API api = ((App) getContext().getApplicationContext()).getApi();
 

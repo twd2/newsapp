@@ -30,7 +30,7 @@ public class CachedLoader {
         }
 
         try {
-            messageDigest = MessageDigest.getInstance("SHA-1");
+            messageDigest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

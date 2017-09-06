@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ public class NewsListFragment extends Fragment {
     private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
     private static final int NEWS_LIST_LOADER_ID = 0;
     private Categories.CategoryType categoryType;
+    private boolean isLoadingMore = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +67,7 @@ public class NewsListFragment extends Fragment {
 
             @Override
             public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-                updateNews(data);
+                updateNews(data, isLoadingMore);
             }
 
             @Override
@@ -102,6 +104,21 @@ public class NewsListFragment extends Fragment {
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
         getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) ((RecyclerView) recyclerView).getLayoutManager();
+        ((RecyclerView) recyclerView).addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int totalItemCount = linearLayoutManager.getItemCount();
+                int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                if (!isLoadingMore && totalItemCount <= (lastVisibleItem + 5)) {
+                    isLoadingMore = true;
+                    ((NewsItemRecyclerViewAdapter)recyclerView.getAdapter()).mValues.add(null);
+                    recyclerView.getAdapter().notifyItemInserted(totalItemCount);
+                    getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                }
+            }
+        });
 
         // TODO(twd2): strange code
         Log.d("frag", "" + (ItemListActivity)getActivity());
@@ -127,11 +144,18 @@ public class NewsListFragment extends Fragment {
         getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
     }
 
-    private void updateNews(JSONObject obj) {
+    private void updateNews(JSONObject obj, boolean append) {
         Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         Categories.Category category = categories.categories.get(categoryType);
 
-        category.clear();
+        if (!append) {
+            category.clear();
+        } else {
+            if (category.items.get(category.items.size() - 1) == null) {
+                category.items.remove(category.items.size() - 1);
+            }
+        }
+
         try {
             JSONArray newsList = obj.getJSONArray("list");
             for (int i = 0; i < newsList.length(); ++i) {
@@ -144,6 +168,7 @@ public class NewsListFragment extends Fragment {
             category.addItem(new Categories.NewsItem(";(", "加载失败", null));
         }
 
+        isLoadingMore = false;
         SwipeRefreshLayout refreshLayout =
                 (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshing(false);
@@ -170,6 +195,16 @@ public class NewsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
+            if (holder.mItem == null){
+                holder.mTitleView.setText("加载更多中...");
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+                return;
+            }
             holder.mTitleView.setText(mValues.get(position).title);
             // TODO(twd2)
             if (Math.random() > 0.5) {
