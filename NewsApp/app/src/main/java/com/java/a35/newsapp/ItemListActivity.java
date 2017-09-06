@@ -115,8 +115,8 @@ public class ItemListActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                Categories mcategories = ((App)getApplicationContext()).getCategories();
-                Categories.CategoryType categorySelected = mcategories.enabledCategories[position];
+                Categories categories = ((App)getApplicationContext()).getCategories();
+                Categories.CategoryType categorySelected = categories.enabledCategories[position];
                 MenuItem search = toolbar.getMenu().findItem(R.id.app_bar_search);
                 if (search != null) {
                     if (categorySelected == Categories.CategoryType.FAVORITE) {
@@ -145,8 +145,6 @@ public class ItemListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-
-        handleIntent(getIntent());
     }
 
     @Override
@@ -162,9 +160,9 @@ public class ItemListActivity extends AppCompatActivity {
         searchView.setIconifiedByDefault(true);
 
         if (mViewPager != null) {
-            Categories mcategories = ((App)getApplicationContext()).getCategories();
+            Categories categories = ((App)getApplicationContext()).getCategories();
             Categories.CategoryType categorySelected =
-                    mcategories.enabledCategories[mViewPager.getCurrentItem()];
+                    categories.enabledCategories[mViewPager.getCurrentItem()];
             if (categorySelected == Categories.CategoryType.FAVORITE) {
                 search.collapseActionView();
                 search.setVisible(false);
@@ -211,32 +209,18 @@ public class ItemListActivity extends AppCompatActivity {
                 doRefresh();
 
                 if (mSearchView != null) {
-                    // 得到输入管理对象
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm =
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {
-                        // 这将让键盘在所有的情况下都被隐藏，但是一般我们在点击搜索按钮后，输入法都会乖乖的自动隐藏的。
-                        imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0); // 输入法如果是显示状态，那么就隐藏输入法
+                        imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
                     }
-                    mSearchView.clearFocus(); // 不获取焦点
+                    mSearchView.clearFocus();
                 }
                 return true;
             }
         });
 
         return true;
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            // doMySearch(query);
-        }
     }
 
     @Override
@@ -266,32 +250,34 @@ public class ItemListActivity extends AppCompatActivity {
     public String getQuery() {
         return query;
     }
+
     public class CategoryCollectionPagerAdapter extends FragmentStatePagerAdapter {
+
+        private Categories mCategories;
+
         public CategoryCollectionPagerAdapter(FragmentManager fm) {
             super(fm);
+            mCategories = ((App)getApplicationContext()).getCategories();
         }
 
         @Override
         public Fragment getItem(int position) {
             NewsListFragment fragment = new NewsListFragment();
             Bundle args = new Bundle();
-            Categories mcategories = ((App)getApplicationContext()).getCategories();
             args.putString(NewsListFragment.ARG_CATEGORY,
-                    mcategories.enabledCategories[position].toString());
+                    mCategories.enabledCategories[position].toString());
             fragment.setArguments(args);
             return fragment;
         }
 
         @Override
         public int getCount() {
-            Categories mcategories = ((App)getApplicationContext()).getCategories();
-            return mcategories.enabledCategories.length;
+            return mCategories.enabledCategories.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Categories mcategories = ((App)getApplicationContext()).getCategories();
-            return mcategories.enabledCategories[position].getName();
+            return mCategories.enabledCategories[position].getName();
         }
     }
 

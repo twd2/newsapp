@@ -23,8 +23,7 @@ public class PictureAPI {
     public static final String USER_AGENT = "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; NOKIA; Lumia 822)";
     public static final int KEYWORD_NUM = 3;              //the number of keyword that will be queried
 
-    private JSONObject get(String action, String queryString) throws IOException, JSONException
-    {
+    private JSONObject get(String action, String queryString) throws IOException, JSONException {
         StringBuffer sb = new StringBuffer();
         sb.append(IMAGE_SERVER_URL);
         sb.append(action);
@@ -40,20 +39,17 @@ public class PictureAPI {
         return new JSONObject(jsonString);
     }
 
-    private String[] getQueries(JSONObject inputNews) throws IOException, JSONException                //参数是输入的新闻，根据新闻得到需要查询的关键字
-    {
-        JSONArray keywordsArray = (JSONArray) inputNews.get("Keywords");
+    private String[] getQueries(JSONObject inputNews) throws IOException, JSONException {
+        JSONArray keywordsArray = inputNews.getJSONArray("Keywords");
         int length = Math.min(KEYWORD_NUM, keywordsArray.length());
         String[] keywords = new String[length];
-        for(int i = 0; i < length; i++)
-        {
-            keywords[i] = (keywordsArray.getJSONObject(i)).getString("word");
+        for (int i = 0; i < length; i++) {
+            keywords[i] = keywordsArray.getJSONObject(i).getString("word");
         }
         return keywords;
     }
 
-    public JSONObject getImages(String queryKeyword) throws IOException, JSONException
-    {
+    public JSONObject getImages(String queryKeyword) throws IOException, JSONException {
         String queryString = String.format("q=%s&mkt=%s&count=%d",
                 URLEncoder.encode(queryKeyword, "UTF-8"),
                 SEARCH_PLACE, IMAGE_NUM);
@@ -62,12 +58,10 @@ public class PictureAPI {
         return imagesArray.getJSONObject(0);
     }
 
-    public JSONArray getImageJson(JSONObject inputNews) throws IOException, JSONException                //参数是输入的新闻，输出是一个JSONArray, 每一项中是一个JSONObject
-    {
+    public JSONArray getImageJson(JSONObject inputNews) throws IOException, JSONException {
         String[] queries = getQueries(inputNews);
         JSONArray images = new JSONArray();
-        for(int i = 0; i < queries.length; i++)
-        {
+        for (int i = 0; i < queries.length; i++) {
             JSONObject src = getImages(queries[i]);
             JSONObject dst = new JSONObject();
             dst.put("url", src.getString("contentUrl"));
@@ -79,23 +73,17 @@ public class PictureAPI {
         return images;
     }
 
-    public void addImage(JSONObject inputNews) throws  IOException, JSONException            //if no image in the news, add some images
-    {
-        if(!inputNews.getString("news_Pictures").equals(""))
-        {
+    public void checkAndAddImage(JSONObject inputNews) throws IOException, JSONException {
+        if (!inputNews.getString("news_Pictures").equals("")) {
             inputNews.put("searchImage", false);
-            return;
-        }
-        else             //no picture in the news
-        {
-            JSONArray imagePaths =getImageJson(inputNews);
-            String paths = "";
-            for(int i = 0; i < imagePaths.length(); i++)
-            {
-                paths += imagePaths.getJSONObject(i).getString("url");
-                paths += ";";
+        } else {
+            JSONArray imagePaths = getImageJson(inputNews);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < imagePaths.length(); i++) {
+                sb.append(imagePaths.getJSONObject(i).getString("url"));
+                sb.append(";");
             }
-            inputNews.put("news_Pictures", paths);
+            inputNews.put("news_Pictures", sb.toString());
             inputNews.put("searchImage", true);
         }
     }

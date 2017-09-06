@@ -53,8 +53,8 @@ public class ItemDetailFragment extends Fragment {
             Categories.CategoryType categoryType =
                     Categories.CategoryType.valueOf(
                             args.getString(ItemDetailFragment.ARG_CATEGORY));
-            Categories mcategories = ((App)getContext().getApplicationContext()).getCategories();
-            mItem = mcategories.categories.get(categoryType).map
+            Categories categories = ((App)getContext().getApplicationContext()).getCategories();
+            mItem = categories.categories.get(categoryType).map
                     .get(args.getString(ItemDetailFragment.ARG_NEWS_ID));
 
             newsDetailCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {

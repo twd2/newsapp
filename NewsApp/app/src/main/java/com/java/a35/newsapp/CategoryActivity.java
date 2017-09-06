@@ -51,9 +51,9 @@ public class CategoryActivity extends AppCompatActivity {
         width /= rowChildCount;
 
         int counter = 0;
-        Categories mcategories = ((App)getApplicationContext()).getCategories();
+        Categories categories = ((App)getApplicationContext()).getCategories();
         for (final Map.Entry<Categories.CategoryType, Categories.Category> entry
-                : mcategories.categories.entrySet()) {
+                : categories.categories.entrySet()) {
             if (entry.getKey().getApiId() < 0) {
                 continue;
             }
@@ -122,8 +122,8 @@ public class CategoryActivity extends AppCompatActivity {
     public boolean onKeyShortcut(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                Categories mcategories = ((App)getApplicationContext()).getCategories();
-                mcategories.updateCategories();
+                Categories categories = ((App)getApplicationContext()).getCategories();
+                categories.updateCategories();
                 finish();
                 return true;
         }
@@ -134,8 +134,8 @@ public class CategoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.app_bar_exit) {
-            Categories mcategories = ((App)getApplicationContext()).getCategories();
-            mcategories.updateCategories();
+            Categories categories = ((App)getApplicationContext()).getCategories();
+            categories.updateCategories();
             finish();
             return true;
         }

@@ -110,9 +110,9 @@ public class NewsListFragment extends Fragment {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        Categories mcategories = ((App)getContext().getApplicationContext()).getCategories();
+        Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         recyclerView.setAdapter(new NewsItemRecyclerViewAdapter(
-                mcategories.categories.get(categoryType).items
+                categories.categories.get(categoryType).items
         ));
     }
 
@@ -128,18 +128,16 @@ public class NewsListFragment extends Fragment {
     }
 
     private void updateNews(JSONObject obj) {
-        Categories mcategories = ((App)getContext().getApplicationContext()).getCategories();
-        Categories.Category category = mcategories.categories.get(categoryType);
+        Categories categories = ((App)getContext().getApplicationContext()).getCategories();
+        Categories.Category category = categories.categories.get(categoryType);
 
         category.clear();
         try {
             JSONArray newsList = obj.getJSONArray("list");
             for (int i = 0; i < newsList.length(); ++i) {
                 JSONObject news = newsList.getJSONObject(i);
-                category.addItem(
-                        new Categories.NewsItem(news.getString("news_ID"),
-                                news.getString("news_Title"),
-                                news));
+                category.addItem(new Categories.NewsItem(news.getString("news_ID"),
+                        news.getString("news_Title"), news));
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();

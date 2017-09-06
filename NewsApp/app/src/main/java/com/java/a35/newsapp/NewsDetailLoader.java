@@ -1,6 +1,5 @@
 package com.java.a35.newsapp;
 
-import android.graphics.Picture;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
@@ -36,7 +35,7 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         PictureAPI pictureAPI = new PictureAPI();
         try {
             JSONObject obj = api.getNews(id);
-            pictureAPI.addImage(obj);
+            pictureAPI.checkAndAddImage(obj);
             if (!obj.getString("news_Pictures").equals("")) {
                 JSONArray pictures_path = new JSONArray();
                 String pictures[] = obj.getString("news_Pictures").replace(' ', ';').split(";");

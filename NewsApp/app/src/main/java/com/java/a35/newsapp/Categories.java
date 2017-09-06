@@ -56,7 +56,8 @@ public class Categories {
 
         public Category(CategoryType type) {
             this.type = type;
-            SharedPreferences sharedPreferences = Categories.this.context.getSharedPreferences("categories", Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences =
+                    context.getSharedPreferences("categories", Context.MODE_PRIVATE);
             this.enabled = sharedPreferences.getBoolean(type.getName(), true);
         }
 
@@ -70,12 +71,12 @@ public class Categories {
             map.put(item.id, item);
         }
 
-        public void save()
-        {
-            SharedPreferences sharedPreferences = Categories.this.context.getSharedPreferences("categories", Context.MODE_PRIVATE);
+        public void save() {
+            SharedPreferences sharedPreferences =
+                    context.getSharedPreferences("categories", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(type.getName(), enabled);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -83,8 +84,7 @@ public class Categories {
     public LinkedHashMap<CategoryType, Category> categories;
     public CategoryType[] enabledCategories;
 
-    public Categories(Context context)
-    {
+    public Categories(Context context) {
         this.context = context;
         categories = new LinkedHashMap<>();
 
