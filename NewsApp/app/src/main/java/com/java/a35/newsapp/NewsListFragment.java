@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ public class NewsListFragment extends Fragment {
     private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
     private static final int NEWS_LIST_LOADER_ID = 0;
     private Categories.CategoryType categoryType;
+    private boolean isLoading = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,20 @@ public class NewsListFragment extends Fragment {
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
         getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) ((RecyclerView) recyclerView).getLayoutManager();
+        ((RecyclerView) recyclerView).addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int totalItemCount = linearLayoutManager.getItemCount();
+                int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                if (!isLoading && totalItemCount <= (lastVisibleItem + 5) ){
+                    ((NewsItemRecyclerViewAdapter)recyclerView.getAdapter()).mValues.add(null);
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    isLoading = true;
+                }
+            }
+        });
 
         // TODO(twd2): strange code
         Log.d("frag", "" + (ItemListActivity)getActivity());
@@ -170,6 +186,10 @@ public class NewsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
+            if (holder.mItem == null){
+                holder.mTitleView.setText("Loading...");
+                return ;
+            }
             holder.mTitleView.setText(mValues.get(position).title);
             // TODO(twd2)
             if (Math.random() > 0.5) {
