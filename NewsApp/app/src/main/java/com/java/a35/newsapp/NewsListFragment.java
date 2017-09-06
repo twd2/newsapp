@@ -105,19 +105,19 @@ public class NewsListFragment extends Fragment {
         });
         refreshLayout.setRefreshing(true);
 
-        View recyclerView = refreshLayout.findViewById(R.id.newsList);
+        RecyclerView recyclerView = (RecyclerView)refreshLayout.findViewById(R.id.newsList);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView(recyclerView);
         getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(recyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
-        ((RecyclerView)recyclerView).addItemDecoration(dividerItemDecoration);
+        recyclerView.addItemDecoration(dividerItemDecoration);
         // load more
         final LinearLayoutManager linearLayoutManager =
-                (LinearLayoutManager) ((RecyclerView) recyclerView).getLayoutManager();
-        ((RecyclerView) recyclerView).addOnScrollListener(new RecyclerView.OnScrollListener() {
+                (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(final RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -228,12 +228,10 @@ public class NewsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            try {
-                holder.mDatetimeView.setText(mValues.get(position).obj.getString("news_Time").substring(0, 8));
-                holder.mSourceView.setText(mValues.get(position).obj.getString("news_Author"));
-            } catch (JSONException e){
-                e.printStackTrace();
-            if (holder.mItem == null){
+
+            if (holder.mItem == null) {
+                holder.mSourceView.setText("");
+                holder.mDatetimeView.setText("");
                 holder.mTitleView.setText("加载更多中...");
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -243,6 +241,15 @@ public class NewsListFragment extends Fragment {
                 });
                 return;
             }
+
+            try {
+                holder.mSourceView.setText(mValues.get(position).obj.getString("news_Author"));
+                holder.mDatetimeView.setText(mValues.get(position).obj.getString("news_Time")
+                        .substring(0, 8));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             holder.mTitleView.setText(mValues.get(position).title);
             // TODO(twd2)
             if (Math.random() > 0.5) {
