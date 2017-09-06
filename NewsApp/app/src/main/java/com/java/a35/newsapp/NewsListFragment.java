@@ -39,7 +39,7 @@ public class NewsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("frag", "NewsListFragment.onCreate");
+        Log.d("frag", "NewsListFragment.onCreate " + categoryType);
 
         newsListCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
             @Override
@@ -73,8 +73,6 @@ public class NewsListFragment extends Fragment {
 
             }
         };
-
-        getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
     }
 
     @Nullable
@@ -103,6 +101,11 @@ public class NewsListFragment extends Fragment {
         View recyclerView = refreshLayout.findViewById(R.id.newsList);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
+        getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+
+        // TODO(twd2): strange code
+        Log.d("frag", "" + (ItemListActivity)getActivity());
+        ((ItemListActivity)getActivity()).registerFragment(categoryType, this);
         return refreshLayout;
     }
 
@@ -110,6 +113,17 @@ public class NewsListFragment extends Fragment {
         recyclerView.setAdapter(new NewsItemRecyclerViewAdapter(
                 Categories.categories.get(categoryType).items
         ));
+    }
+
+    public void doRefresh() {
+        if (getView() == null) {
+            return;
+        }
+
+        SwipeRefreshLayout refreshLayout =
+                (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
+        refreshLayout.setRefreshing(true);
+        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
     }
 
     private void updateNews(JSONObject obj) {

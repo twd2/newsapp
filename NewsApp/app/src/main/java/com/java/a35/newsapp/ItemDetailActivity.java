@@ -105,7 +105,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyShortcut(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 if (mTts != null) {
@@ -114,7 +114,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 finish();
                 return true;
         }
-        return super.onKeyDown(keyCode, event);
+        return super.onKeyShortcut(keyCode, event);
     }
 
     @Override

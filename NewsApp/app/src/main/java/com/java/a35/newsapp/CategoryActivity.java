@@ -27,6 +27,7 @@ import android.content.res.Configuration;
 
 public class CategoryActivity extends AppCompatActivity {
     RelativeLayout[] categories;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,10 +41,9 @@ public class CategoryActivity extends AppCompatActivity {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int height = metrics.widthPixels;
-        int width = metrics.heightPixels;
-        if(height > width)   //swap
-        {
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        if(height > width) {
             int tmp = height;
             height = width;
             width = tmp;
@@ -119,14 +119,14 @@ public class CategoryActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyShortcut(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 Categories.updateCategories();
                 finish();
                 return true;
         }
-        return super.onKeyDown(keyCode, event);
+        return super.onKeyShortcut(keyCode, event);
     }
 
     @Override
