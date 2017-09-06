@@ -9,9 +9,13 @@ import org.json.JSONObject;
 import java.util.*;
 
 public class Categories {
+
+    public static final String PREFERENCES_CATEGORY = "categories";
+
     public enum CategoryType {
         RECOMMENDED(-1, "推荐", -1),
         FAVORITE(-1, "收藏", -1),
+
         CHINA(API.CATEGORY_CHINA, "国内", R.drawable.category_china),
         INTERNATIONAL(API.CATEGORY_INTERNATIONAL, "国际", R.drawable.category_international),
         SOCIAL(API.CATEGORY_SOCIAL, "社会", R.drawable.category_social),
@@ -49,16 +53,13 @@ public class Categories {
 
     public class Category {
         public CategoryType type;
-        public boolean enabled;
+        public boolean enabled = false;
 
         public List<NewsItem> items = new ArrayList<>();
         public Map<String, NewsItem> map = new HashMap<>();
 
         public Category(CategoryType type) {
             this.type = type;
-            SharedPreferences sharedPreferences =
-                    context.getSharedPreferences("categories", Context.MODE_PRIVATE);
-            this.enabled = sharedPreferences.getBoolean(type.getName(), true);
         }
 
         public void clear() {
@@ -97,7 +98,7 @@ public class Categories {
         addCategory(new Category(CategoryType.HEALTH));
         addCategory(new Category(CategoryType.AUTOMOBILE));
 
-
+        load();
         updateCategories();
     }
 
@@ -123,6 +124,28 @@ public class Categories {
         }
     }
 
+    public void load() {
+        SharedPreferences sharedPreferences =
+                context.getSharedPreferences(PREFERENCES_CATEGORY, Context.MODE_PRIVATE);
+        for (final Map.Entry<Categories.CategoryType, Categories.Category> entry
+                : categories.entrySet()) {
+            // TODO(twd2): default value
+            entry.getValue().enabled =
+                    sharedPreferences.getBoolean(entry.getKey().toString(), true);
+        }
+    }
+
+    public void save() {
+        SharedPreferences sharedPreferences =
+                context.getSharedPreferences(PREFERENCES_CATEGORY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        for (final Map.Entry<Categories.CategoryType, Categories.Category> entry
+                : categories.entrySet()) {
+            editor.putBoolean(entry.getKey().toString(), entry.getValue().enabled);
+        }
+        editor.apply();
+    }
+
     public static class NewsItem {
         public final String id;
         public final String title;
@@ -139,17 +162,6 @@ public class Categories {
         public String toString() {
             return title;
         }
-    }
-
-    public void save() {
-        SharedPreferences sharedPreferences =
-                context.getSharedPreferences("categories", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        for (final Map.Entry<Categories.CategoryType, Categories.Category> entry
-                : categories.entrySet()) {
-            editor.putBoolean(entry.getKey().getName(), entry.getValue().enabled);
-        }
-        editor.apply();
     }
 
 }
