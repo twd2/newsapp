@@ -71,13 +71,6 @@ public class Categories {
             map.put(item.id, item);
         }
 
-        public void save() {
-            SharedPreferences sharedPreferences =
-                    context.getSharedPreferences("categories", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean(type.getName(), enabled);
-            editor.apply();
-        }
     }
 
     public Context context;
@@ -147,4 +140,16 @@ public class Categories {
             return title;
         }
     }
+
+    public void save() {
+        SharedPreferences sharedPreferences =
+                context.getSharedPreferences("categories", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        for (final Map.Entry<Categories.CategoryType, Categories.Category> entry
+                : categories.entrySet()) {
+            editor.putBoolean(entry.getKey().getName(), entry.getValue().enabled);
+        }
+        editor.apply();
+    }
+
 }

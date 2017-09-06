@@ -94,7 +94,6 @@ public class CategoryActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     entry.getValue().enabled = !entry.getValue().enabled;
-                    entry.getValue().save();
                     if (entry.getValue().enabled) {
                         button.setBackgroundColor(ResourcesCompat.getColor(getResources(),
                                 R.color.categoryEnabledColor, getTheme()));
@@ -124,6 +123,7 @@ public class CategoryActivity extends AppCompatActivity {
             case KeyEvent.KEYCODE_BACK:
                 Categories categories = ((App)getApplicationContext()).getCategories();
                 categories.updateCategories();
+                categories.save();
                 finish();
                 return true;
         }
@@ -136,6 +136,7 @@ public class CategoryActivity extends AppCompatActivity {
         if (id == R.id.app_bar_exit) {
             Categories categories = ((App)getApplicationContext()).getCategories();
             categories.updateCategories();
+            categories.save();
             finish();
             return true;
         }
