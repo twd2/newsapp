@@ -16,7 +16,7 @@ public class App extends Application {
         return api;
     }
 
-    public CachedLoader getCachedLoader(){
+    public CachedLoader getCachedLoader() {
         return cachedLoader;
     }
 
