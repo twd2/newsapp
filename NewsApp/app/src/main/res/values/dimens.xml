@@ -4,4 +4,9 @@
     <dimen name="app_bar_height">200dp</dimen>
     <dimen name="item_width">200dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="category_height">35dp</dimen>
+    <dimen name="category_item_height">100dp</dimen>
+    <dimen name="category_right_margin">2dp</dimen>
+    <dimen name="category_upper_margin">3dp</dimen>
+    <dimen name="tab_width">60dp</dimen>
 </resources>

@@ -21,6 +21,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.SEARCH" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -39,9 +40,11 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
-
-        </activity>
+            android:label="@string/title_activity_settings"></activity>
+        <activity
+            android:name=".CategoryActivity"
+            android:label="分类"
+             ></activity>
     </application>
 
 </manifest>

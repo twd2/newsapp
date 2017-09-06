@@ -164,8 +164,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // FIXME
-
         int id = item.getItemId();
         if (id == android.R.id.home) {
             finish();

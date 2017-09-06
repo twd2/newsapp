@@ -8,11 +8,27 @@ import android.app.Application;
 
 public class App extends Application {
 
-    private static final API api = new API(API.SERVER_URL);
+    private API api = new API(API.SERVER_URL);
+    private CachedLoader cachedLoader = null;
+    private Categories categories = null;
 
     public API getApi() {
         return api;
     }
 
-   // TODO
+    public CachedLoader getCachedLoader() {
+        return cachedLoader;
+    }
+
+    public Categories getCategories() {
+        return categories;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        cachedLoader = new CachedLoader(this.getApplicationContext());
+        categories = new Categories(this.getApplicationContext());
+    }
+    // TODO
 }

@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="categoryEnabledColor">#44000000</color>
+    <color name="categoryEnabledTextColor">#CC000000</color>
+    <color name="categoryDisabledColor">#CC000000</color>
+    <color name="categoryDisabledTextColor">#DDEEEEEE</color>
+    <color name="newsTitleUnread">#FF000000</color>
+    <color name="newsTitleRead">#FF808080</color>
 </resources>

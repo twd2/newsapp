@@ -1,22 +1,21 @@
 package com.java.a35.newsapp;
 
-import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,17 +23,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-
-import com.java.a35.newsapp.dummy.DummyContent;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -53,9 +46,14 @@ public class ItemListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private SearchView mSearchView;
-    private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
     private String query = "";
-    private static final int NEWS_LIST_LOADER_ID = 0;
+    private static final int REQUEST_CATEGORY = 0;
+
+    private CategoryCollectionPagerAdapter mFragmentPagerAdapter;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private ImageButton categoryButton;               //该界面中用于切换到添加删除界面的button
+    private Map<Categories.CategoryType, NewsListFragment> fragmentMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +66,30 @@ public class ItemListActivity extends AppCompatActivity {
 
         Log.d("test", getFilesDir().getAbsolutePath());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // ViewPager and its adapters use support library
+        // fragments, so use getSupportFragmentManager.
+        //使用适配器将ViewPager与Fragment绑定在一起
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mFragmentPagerAdapter =
+                new CategoryCollectionPagerAdapter(
+                        getSupportFragmentManager());
+        mViewPager.setAdapter(mFragmentPagerAdapter);
+        //将TabLayout与ViewPager绑定在一起
+        mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
+        mTabLayout.setupWithViewPager(mViewPager);
+
+        categoryButton = (ImageButton)findViewById(R.id.addCategory);
+        categoryButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(ItemListActivity.this, CategoryActivity.class);
+                startActivityForResult(intent, REQUEST_CATEGORY);
+            }
+        });
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
@@ -85,67 +106,39 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "菜单", Snackbar.LENGTH_LONG)
-                        .setAction("取消", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(ItemListActivity.this,"你点击了action",Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
+            public void onPageScrolled(int position, float positionOffset,
+                                       int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Categories categories = ((App)getApplicationContext()).getCategories();
+                Categories.CategoryType categorySelected = categories.enabledCategories[position];
+                MenuItem search = toolbar.getMenu().findItem(R.id.app_bar_search);
+                if (search != null) {
+                    if (categorySelected == Categories.CategoryType.FAVORITE) {
+                        if (search.isActionViewExpanded()) {
+                            search.collapseActionView();
+                        }
+                        search.setVisible(false);
+                    } else {
+                        search.setVisible(true);
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
 
-        newsListCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
-            @Override
-            public Loader<JSONObject> onCreateLoader(int id, Bundle args) {
-                return new NewsListLoader(ItemListActivity.this,
-                        new NewsListLoader.QueryCallback() {
-                            @Override
-                            public String getQuery() {
-                                return query;
-                            }
-
-                            @Override
-                            public int getCategory() {
-                                // TODO
-                                return 2;
-                            }
-                        });
-            }
-
-            @Override
-            public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-                updateNews(data);
-            }
-
-            @Override
-            public void onLoaderReset(Loader<JSONObject> loader) {
-
-            }
-        };
-
-        getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-
-        final SwipeRefreshLayout refreshLayout =
-                (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-        refreshLayout.setColorSchemeResources(R.color.colorAccent,
-                R.color.colorPrimary,
-                R.color.colorPrimaryDark);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshLayout.setRefreshing(true);
-                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-            }
-        });
-
-        View recyclerView = findViewById(R.id.item_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        if (savedInstanceState != null) {
+            mViewPager.setCurrentItem(savedInstanceState.getInt("tab_id"));
+        }
 
         if (findViewById(R.id.item_detail_container) != null) {
             // The detail container view will be present only in the
@@ -154,37 +147,6 @@ public class ItemListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-
-        handleIntent(getIntent());
-
-        refreshLayout.setRefreshing(true);
-        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-    }
-
-    private void updateNews(JSONObject obj) {
-        DummyContent.clear();
-        try {
-            JSONArray newsList = obj.getJSONArray("list");
-            for (int i = 0; i < newsList.length(); ++i) {
-                JSONObject news = newsList.getJSONObject(i);
-                DummyContent.addItem(
-                        new DummyContent.NewsItem(String.valueOf(i + 1),
-                                news.getString("news_Title"),
-                                news));
-            }
-        } catch (JSONException | NullPointerException e) {
-            e.printStackTrace();
-            DummyContent.addItem(new DummyContent.NewsItem(";(", "加载失败", null));
-        }
-
-        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-        refreshLayout.setRefreshing(false);
-        RecyclerView itemList = (RecyclerView) findViewById(R.id.item_list);
-        itemList.getAdapter().notifyDataSetChanged();
-    }
-
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.NEWS));
     }
 
     @Override
@@ -193,18 +155,29 @@ public class ItemListActivity extends AppCompatActivity {
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         MenuItem search = menu.findItem(R.id.app_bar_search);
-        final SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
+        final SearchView searchView = (SearchView) search.getActionView();
         SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
         searchView.setSearchableInfo(info);
         searchView.setQueryHint("搜索新闻");
         searchView.setIconifiedByDefault(true);
+
+        if (mViewPager != null) {
+            Categories categories = ((App)getApplicationContext()).getCategories();
+            Categories.CategoryType categorySelected =
+                    categories.enabledCategories[mViewPager.getCurrentItem()];
+            if (categorySelected == Categories.CategoryType.FAVORITE) {
+                search.collapseActionView();
+                search.setVisible(false);
+            } else {
+                search.setVisible(true);
+            }
+        }
 
         if (query != null && query.length() > 0) {
             search.expandActionView();
             searchView.setQuery(query, false);
         }
 
-        // FIXME
         MenuItemCompat.setOnActionExpandListener(search, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -216,16 +189,12 @@ public class ItemListActivity extends AppCompatActivity {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 Log.d("search", "onMenuItemActionCollapse");
                 query = "";
-                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-                refreshLayout.setRefreshing(true);
-                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                doRefresh();
                 return true;
             }
         });
 
         mSearchView = searchView;
-
-
         mSearchView.onActionViewExpanded();
         mSearchView.setIconifiedByDefault(true);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -239,18 +208,15 @@ public class ItemListActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String queryText) {
                 Log.d("search", queryText);
                 query = queryText;
-                SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
-                refreshLayout.setRefreshing(true);
-                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                doRefresh();
 
                 if (mSearchView != null) {
-                    // 得到输入管理对象
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm =
+                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {
-                        // 这将让键盘在所有的情况下都被隐藏，但是一般我们在点击搜索按钮后，输入法都会乖乖的自动隐藏的。
-                        imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0); // 输入法如果是显示状态，那么就隐藏输入法
+                        imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
                     }
-                    mSearchView.clearFocus(); // 不获取焦点
+                    mSearchView.clearFocus();
                 }
                 return true;
             }
@@ -260,89 +226,61 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            // doMySearch(query);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CATEGORY) {
+            mViewPager.getAdapter().notifyDataSetChanged();
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("query", query);
+        outState.putInt("tab_id", mViewPager.getCurrentItem());
     }
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
-
-        private final List<DummyContent.NewsItem> mValues;
-
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.NewsItem> items) {
-            mValues = items;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        ItemDetailFragment fragment = new ItemDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.item_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, ItemDetailActivity.class);
-                        intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
-                        context.startActivity(intent);
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mIdView;
-            public final TextView mContentView;
-            public DummyContent.NewsItem mItem;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
-            }
-
-            @Override
-            public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
-            }
+    public void doRefresh() {
+        // TODO(twd2): strange code
+        for (NewsListFragment fragment : fragmentMap.values()) {
+            fragment.doRefresh();
         }
     }
+
+    public void registerFragment(Categories.CategoryType category, NewsListFragment fragment) {
+        fragmentMap.put(category, fragment);
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public class CategoryCollectionPagerAdapter extends FragmentStatePagerAdapter {
+
+        private Categories mCategories;
+
+        public CategoryCollectionPagerAdapter(FragmentManager fm) {
+            super(fm);
+            mCategories = ((App)getApplicationContext()).getCategories();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            NewsListFragment fragment = new NewsListFragment();
+            Bundle args = new Bundle();
+            args.putString(NewsListFragment.ARG_CATEGORY,
+                    mCategories.enabledCategories[position].toString());
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return mCategories.enabledCategories.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mCategories.enabledCategories[position].getName();
+        }
+    }
+
 }

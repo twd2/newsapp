@@ -3,11 +3,14 @@ package com.java.a35.newsapp;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
@@ -36,5 +39,14 @@ public class APIUnitTest {
         assertTrue(obj.getInt("pageNo") == 1);
         assertTrue(obj.has("pageSize"));
         assertTrue(obj.getInt("pageSize") == API.DEFAULT_PAGE_SIZE);
+    }
+
+    @Test
+    public void cachedLoaderTest() throws Exception{
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        CachedLoader cachedLoader = new CachedLoader(appContext);
+        String json = cachedLoader.fetch("http://166.111.68.66:2042/news/action/query/latest",
+                "?pageNo=20&pageSize=20", new HashMap<String, String>(), true);
+        Log.i("test", json);
     }
 }
