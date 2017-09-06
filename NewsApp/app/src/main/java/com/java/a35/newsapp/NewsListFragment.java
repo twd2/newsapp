@@ -244,8 +244,12 @@ public class NewsListFragment extends Fragment {
 
             try {
                 holder.mSourceView.setText(mValues.get(position).obj.getString("news_Author"));
-                holder.mDatetimeView.setText(mValues.get(position).obj.getString("news_Time")
-                        .substring(0, 8));
+                String timeString = mValues.get(position).obj.getString("news_Time");
+                if (timeString.length() >= 8) {
+                    holder.mDatetimeView.setText(timeString.substring(0, 8));
+                } else {
+                    holder.mDatetimeView.setText("");
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -120,7 +120,9 @@ public class ItemListActivity extends AppCompatActivity {
                 MenuItem search = toolbar.getMenu().findItem(R.id.app_bar_search);
                 if (search != null) {
                     if (categorySelected == Categories.CategoryType.FAVORITE) {
-                        search.collapseActionView();
+                        if (search.isActionViewExpanded()) {
+                            search.collapseActionView();
+                        }
                         search.setVisible(false);
                     } else {
                         search.setVisible(true);
