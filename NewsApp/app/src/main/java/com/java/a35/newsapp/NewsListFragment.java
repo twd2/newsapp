@@ -107,13 +107,15 @@ public class NewsListFragment extends Fragment {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+        Categories mcategories = ((App)getContext().getApplicationContext()).getCategories();
         recyclerView.setAdapter(new NewsItemRecyclerViewAdapter(
-                Categories.categories.get(categoryType).items
+                mcategories.categories.get(categoryType).items
         ));
     }
 
     private void updateNews(JSONObject obj) {
-        Categories.Category category = Categories.categories.get(categoryType);
+        Categories mcategories = ((App)getContext().getApplicationContext()).getCategories();
+        Categories.Category category = mcategories.categories.get(categoryType);
 
         category.clear();
         try {

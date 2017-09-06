@@ -23,13 +23,12 @@ import java.net.URLEncoder;
 public class PictureAPI {
     public static final String IMAGE_SERVER_URL = "https://api.cognitive.microsoft.com";
     public static final String IMAGE_SIZE = "Medium";   //there are five types of page sizes, Small, Medium, Large, Wallpaper and all
-    public static final String IMAGE_TYPE = "Photo";       //there are six types of pictures, including AnimatedGif, Clipart, Line, Photo, Shopping and Transparent
     public static final int IMAGE_NUM = 1;               //for each of keyword, the number of picture grabbed is IMAGE_NUM
 
     public static final String SEARCH_PLACE = "zh-CN";     //the location of my client(in which country)
     public static final String SEARCH_KEY = "3f6dbf8a32c842cb996577084b329068";           //the key of using bing's api
     public static final String USER_AGENT = "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; NOKIA; Lumia 822)";
-    public static final int KEYWORD_NUM = 2;              //the number of keyword that will be queried
+    public static final int KEYWORD_NUM = 3;              //the number of keyword that will be queried
 
     private JSONObject get(String action, String queryString) throws IOException, JSONException
     {
@@ -62,9 +61,9 @@ public class PictureAPI {
 
     public JSONObject getImages(String queryKeyword) throws IOException, JSONException
     {
-        String queryString = String.format("q=%s&mkt=%s&imageType=%s&count=%d",
+        String queryString = String.format("q=%s&mkt=%s&count=%d",
                 URLEncoder.encode(queryKeyword, "UTF-8"),
-                SEARCH_PLACE, IMAGE_TYPE, IMAGE_NUM);
+                SEARCH_PLACE, IMAGE_NUM);
         JSONObject src = get("/bing/v7.0/images/search", queryString);
         JSONArray imagesArray = src.getJSONArray("value");
         return imagesArray.getJSONObject(0);
@@ -85,5 +84,26 @@ public class PictureAPI {
         }
         Log.d("ImageAPI", images.toString());
         return images;
+    }
+
+    public void addImage(JSONObject inputNews) throws  IOException, JSONException            //if no image in the news, add some images
+    {
+        if(!inputNews.getString("news_Pictures").equals(""))
+        {
+            inputNews.put("searchImage", false);
+            return;
+        }
+        else             //no picture in the news
+        {
+            JSONArray imagePaths =getImageJson(inputNews);
+            String paths = "";
+            for(int i = 0; i < imagePaths.length(); i++)
+            {
+                paths += imagePaths.getJSONObject(i).getString("url");
+                paths += ";";
+            }
+            inputNews.put("news_Pictures", paths);
+            inputNews.put("searchImage", true);
+        }
     }
 }

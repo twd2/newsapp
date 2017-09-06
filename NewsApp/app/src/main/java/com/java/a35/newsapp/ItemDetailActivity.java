@@ -81,7 +81,8 @@ public class ItemDetailActivity extends AppCompatActivity {
         Categories.CategoryType categoryType =
                 Categories.CategoryType.valueOf(
                         getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
-        mItem = Categories.categories.get(categoryType).map
+        Categories mcategories = ((App)getApplicationContext()).getCategories();
+        mItem = mcategories.categories.get(categoryType).map
                 .get(getIntent().getStringExtra(ItemDetailFragment.ARG_NEWS_ID));
 
         if (savedInstanceState == null) {

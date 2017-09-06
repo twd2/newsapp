@@ -1,5 +1,8 @@
 package com.java.a35.newsapp;
 
+import android.app.Application;
+import android.content.Context;
+
 import org.json.JSONObject;
 
 import java.util.*;
@@ -43,7 +46,7 @@ public class Categories {
         }
     }
 
-    public static class Category {
+    public class Category {
         public CategoryType type;
         public boolean enabled;
 
@@ -66,11 +69,15 @@ public class Categories {
         }
     }
 
-    public static LinkedHashMap<CategoryType, Category> categories;
-    public static CategoryType[] enabledCategories;
+    public Context context;
+    public LinkedHashMap<CategoryType, Category> categories;
+    public CategoryType[] enabledCategories;
 
-    static {
+    public Categories(Context context)
+    {
+        this.context = context;
         categories = new LinkedHashMap<>();
+
 
         addCategory(new Category(CategoryType.RECOMMENDED));
         addCategory(new Category(CategoryType.FAVORITE));
@@ -88,14 +95,15 @@ public class Categories {
         addCategory(new Category(CategoryType.HEALTH));
         addCategory(new Category(CategoryType.AUTOMOBILE));
 
+
         updateCategories();
     }
 
-    private static void addCategory(Category c) {
+    private void addCategory(Category c) {
         categories.put(c.type, c);
     }
 
-    public static void updateCategories() {
+    public void updateCategories() {
         int size = 0;
         for (Category c : categories.values()) {
             if (c.enabled) {
@@ -109,6 +117,7 @@ public class Categories {
                 enabledCategories[index] = c.type;
                 index++;
             }
+
         }
     }
 

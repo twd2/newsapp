@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -238,6 +241,34 @@ public class ItemListActivity extends AppCompatActivity {
 
     public String getQuery() {
         return query;
+    }
+    public class CategoryCollectionPagerAdapter extends FragmentStatePagerAdapter {
+        public CategoryCollectionPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            NewsListFragment fragment = new NewsListFragment();
+            Bundle args = new Bundle();
+            Categories mcategories = ((App)getApplicationContext()).getCategories();
+            args.putString(NewsListFragment.ARG_CATEGORY,
+                    mcategories.enabledCategories[position].toString());
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            Categories mcategories = ((App)getApplicationContext()).getCategories();
+            return mcategories.enabledCategories.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Categories mcategories = ((App)getApplicationContext()).getCategories();
+            return mcategories.enabledCategories[position].getName();
+        }
     }
 
 }

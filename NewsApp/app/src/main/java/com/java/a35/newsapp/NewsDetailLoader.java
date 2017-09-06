@@ -36,6 +36,7 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         PictureAPI pictureAPI = new PictureAPI();
         try {
             JSONObject obj = api.getNews(id);
+            pictureAPI.addImage(obj);
             if (!obj.getString("news_Pictures").equals("")) {
                 JSONArray pictures_path = new JSONArray();
                 String pictures[] = obj.getString("news_Pictures").replace(' ', ';').split(";");

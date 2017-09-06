@@ -19,6 +19,8 @@ import android.widget.TableRow;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup.LayoutParams;
 import android.content.res.Configuration;
+import android.content.Context;
+
 
 
 /**
@@ -26,7 +28,6 @@ import android.content.res.Configuration;
  */
 
 public class CategoryActivity extends AppCompatActivity {
-    RelativeLayout[] categories;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +36,6 @@ public class CategoryActivity extends AppCompatActivity {
         TableLayout categoryTableLayout = (TableLayout) findViewById(R.id.categoryTableLayout);
         int childCount = categoryTableLayout.getChildCount();
         int rowChildCount = ((TableRow)categoryTableLayout.getChildAt(0)).getChildCount();
-        categories = new RelativeLayout[childCount * rowChildCount];
 
 
         DisplayMetrics metrics = new DisplayMetrics();
@@ -52,8 +52,9 @@ public class CategoryActivity extends AppCompatActivity {
         width /= rowChildCount;
 
         int counter = 0;
+        Categories mcategories = ((App)getApplicationContext()).getCategories();
         for (final Map.Entry<Categories.CategoryType, Categories.Category> entry
-                : Categories.categories.entrySet()) {
+                : mcategories.categories.entrySet()) {
             if (entry.getKey().getApiId() < 0) {
                 continue;
             }
@@ -61,7 +62,6 @@ public class CategoryActivity extends AppCompatActivity {
             RelativeLayout categoryItem = (RelativeLayout)((TableRow)categoryTableLayout
                     .getChildAt(counter / rowChildCount))
                     .getChildAt(counter % rowChildCount);
-            categories[counter] = categoryItem;
             LayoutParams params = categoryItem.getLayoutParams();
             params.height = height;
             params.width = width;
@@ -122,7 +122,8 @@ public class CategoryActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                Categories.updateCategories();
+                Categories mcategories = ((App)getApplicationContext()).getCategories();
+                mcategories.updateCategories();
                 finish();
                 return true;
         }
@@ -133,7 +134,8 @@ public class CategoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.app_bar_exit) {
-            Categories.updateCategories();
+            Categories mcategories = ((App)getApplicationContext()).getCategories();
+            mcategories.updateCategories();
             finish();
             return true;
         }
