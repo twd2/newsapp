@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -103,15 +105,19 @@ public class NewsListFragment extends Fragment {
         });
         refreshLayout.setRefreshing(true);
 
-        View recyclerView = refreshLayout.findViewById(R.id.newsList);
+        RecyclerView recyclerView = (RecyclerView)refreshLayout.findViewById(R.id.newsList);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView(recyclerView);
         getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(recyclerView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
         // load more
         final LinearLayoutManager linearLayoutManager =
-                (LinearLayoutManager) ((RecyclerView) recyclerView).getLayoutManager();
-        ((RecyclerView) recyclerView).addOnScrollListener(new RecyclerView.OnScrollListener() {
+                (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(final RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -222,7 +228,10 @@ public class NewsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            if (holder.mItem == null){
+
+            if (holder.mItem == null) {
+                holder.mSourceView.setText("");
+                holder.mDatetimeView.setText("");
                 holder.mTitleView.setText("加载更多中...");
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -232,6 +241,15 @@ public class NewsListFragment extends Fragment {
                 });
                 return;
             }
+
+            try {
+                holder.mSourceView.setText(mValues.get(position).obj.getString("news_Author"));
+                holder.mDatetimeView.setText(mValues.get(position).obj.getString("news_Time")
+                        .substring(0, 8));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             holder.mTitleView.setText(mValues.get(position).title);
             // TODO(twd2)
             if (Math.random() > 0.5) {
@@ -265,12 +283,16 @@ public class NewsListFragment extends Fragment {
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final TextView mTitleView;
+            public final TextView mSourceView, mDatetimeView; 
             public Categories.NewsItem mItem;
+            
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mTitleView = (TextView) view.findViewById(R.id.content);
+                mTitleView = (TextView) view.findViewById(R.id.title);
+                mSourceView = (TextView) view.findViewById(R.id.source);
+                mDatetimeView = (TextView) view.findViewById(R.id.datetime);
             }
 
             @Override
