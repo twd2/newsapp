@@ -1,4 +1,4 @@
-package com.java.a35.newsapp.dummy;
+package com.java.a35.newsapp;
 
 import java.io.IOException;
 import java.io.InputStream;

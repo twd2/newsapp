@@ -1,19 +1,10 @@
 package com.java.a35.newsapp;
 
-import android.support.annotation.RequiresPermission;
-import android.util.JsonReader;
 import android.util.Log;
-
-import com.java.a35.newsapp.dummy.Utility;
 
 import org.json.*;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
