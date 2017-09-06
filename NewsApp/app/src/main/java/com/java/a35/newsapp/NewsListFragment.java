@@ -37,6 +37,8 @@ public class NewsListFragment extends Fragment {
     private static final int NEWS_LIST_LOADER_ID = 0;
     private Categories.CategoryType categoryType;
     private boolean isLoadingMore = false;
+    private int loadedPage = 0;
+    private int expectPage = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,18 +51,14 @@ public class NewsListFragment extends Fragment {
                 return new NewsListLoader(getContext(),
                         new NewsListLoader.QueryCallback() {
                             @Override
-                            public String getQuery() {
+                            public NewsListLoader.Query getQuery() {
                                 ItemListActivity activity = (ItemListActivity)getActivity();
                                 if (activity != null) {
-                                    return activity.getQuery();
+                                    return new NewsListLoader.Query(activity.getQuery(),
+                                            loadedPage, expectPage, categoryType);
                                 } else {
-                                    return "";
+                                    return null;
                                 }
-                            }
-
-                            @Override
-                            public Categories.CategoryType getCategory() {
-                                return categoryType;
                             }
                         });
             }
@@ -75,6 +73,11 @@ public class NewsListFragment extends Fragment {
 
             }
         };
+
+        if (savedInstanceState != null) {
+            loadedPage = savedInstanceState.getInt("loadedPage");
+            expectPage = savedInstanceState.getInt("expectPage");
+        }
     }
 
     @Nullable
@@ -94,8 +97,8 @@ public class NewsListFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshLayout.setRefreshing(true);
-                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                Log.d("frag", "1");
+                doRefresh();
             }
         });
         refreshLayout.setRefreshing(true);
@@ -104,18 +107,31 @@ public class NewsListFragment extends Fragment {
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
         getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) ((RecyclerView) recyclerView).getLayoutManager();
+
+        // load more
+        final LinearLayoutManager linearLayoutManager =
+                (LinearLayoutManager) ((RecyclerView) recyclerView).getLayoutManager();
         ((RecyclerView) recyclerView).addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(final RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int totalItemCount = linearLayoutManager.getItemCount();
+                final int totalItemCount = linearLayoutManager.getItemCount();
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-                if (!isLoadingMore && totalItemCount <= (lastVisibleItem + 5)) {
+                if (!isLoadingMore && totalItemCount <= (lastVisibleItem + 5) &&
+                        getActivity() != null) {
                     isLoadingMore = true;
-                    ((NewsItemRecyclerViewAdapter)recyclerView.getAdapter()).mValues.add(null);
-                    recyclerView.getAdapter().notifyItemInserted(totalItemCount);
-                    getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                    ++expectPage;
+                    recyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                                ((NewsItemRecyclerViewAdapter) recyclerView.getAdapter())
+                                        .mValues.add(null);
+                                recyclerView.getAdapter().notifyItemInserted(totalItemCount);
+                                Log.d("frag", "2");
+                                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null,
+                                        newsListCallbacks);
+                        }
+                    });
                 }
             }
         });
@@ -137,6 +153,10 @@ public class NewsListFragment extends Fragment {
         if (getView() == null) {
             return;
         }
+        Log.d("frag", "doRefresh");
+
+        loadedPage = 0;
+        expectPage = 1;
 
         SwipeRefreshLayout refreshLayout =
                 (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
@@ -148,10 +168,11 @@ public class NewsListFragment extends Fragment {
         Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         Categories.Category category = categories.categories.get(categoryType);
 
-        if (!append) {
+        if (loadedPage == 0) {
             category.clear();
         } else {
-            if (category.items.get(category.items.size() - 1) == null) {
+            if (category.items.size() > 0 &&
+                    category.items.get(category.items.size() - 1) == null) {
                 category.items.remove(category.items.size() - 1);
             }
         }
@@ -165,15 +186,21 @@ public class NewsListFragment extends Fragment {
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-            category.addItem(new Categories.NewsItem(";(", "加载失败", null));
         }
 
+        loadedPage = expectPage;
         isLoadingMore = false;
         SwipeRefreshLayout refreshLayout =
                 (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshing(false);
         RecyclerView newsList = (RecyclerView)refreshLayout.findViewById(R.id.newsList);
         newsList.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("loadedPage", loadedPage);
+        outState.putInt("expectPage", expectPage);
     }
 
     public class NewsItemRecyclerViewAdapter
