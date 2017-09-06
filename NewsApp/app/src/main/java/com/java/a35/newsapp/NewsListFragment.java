@@ -113,7 +113,7 @@ public class NewsListFragment extends Fragment {
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 if (!isLoading && totalItemCount <= (lastVisibleItem + 5) ){
                     ((NewsItemRecyclerViewAdapter)recyclerView.getAdapter()).mValues.add(null);
-                    recyclerView.getAdapter().notifyDataSetChanged();
+                    recyclerView.getAdapter().notifyItemInserted(totalItemCount);
                     isLoading = true;
                 }
             }
