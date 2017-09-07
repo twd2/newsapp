@@ -4,10 +4,10 @@
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#FF4081</color>
     <color name="background_holo_light">#FFEEEEEE</color>
-    <color name="categoryEnabledColor">#44000000</color>
-    <color name="categoryEnabledTextColor">#CC000000</color>
-    <color name="categoryDisabledColor">#CC000000</color>
-    <color name="categoryDisabledTextColor">#DDEEEEEE</color>
+    <color name="categoryDisabledColor">#44000000</color>
+    <color name="categoryDisabledTextColor">#CC000000</color>
+    <color name="categoryEnabledColor">#CC000000</color>
+    <color name="categoryEnabledTextColor">#DDEEEEEE</color>
     <color name="primary_text_dark">#FF000000</color>
     <color name="newsTitleRead">#FF606060</color>
 </resources>
