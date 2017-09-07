@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -35,6 +38,9 @@ public class NewsListFragment extends Fragment {
     private LoaderManager.LoaderCallbacks<JSONObject> newsListCallbacks;
     private static final int NEWS_LIST_LOADER_ID = 0;
     private Categories.CategoryType categoryType;
+    private boolean isLoadingMore = false;
+    private int loadedPage = 0;
+    private int expectPage = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,25 +53,21 @@ public class NewsListFragment extends Fragment {
                 return new NewsListLoader(getContext(),
                         new NewsListLoader.QueryCallback() {
                             @Override
-                            public String getQuery() {
+                            public NewsListLoader.Query getQuery() {
                                 ItemListActivity activity = (ItemListActivity)getActivity();
                                 if (activity != null) {
-                                    return activity.getQuery();
+                                    return new NewsListLoader.Query(activity.getQuery(),
+                                            loadedPage, expectPage, categoryType);
                                 } else {
-                                    return "";
+                                    return null;
                                 }
-                            }
-
-                            @Override
-                            public Categories.CategoryType getCategory() {
-                                return categoryType;
                             }
                         });
             }
 
             @Override
             public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-                updateNews(data);
+                updateNews(data, isLoadingMore);
             }
 
             @Override
@@ -73,6 +75,11 @@ public class NewsListFragment extends Fragment {
 
             }
         };
+
+        if (savedInstanceState != null) {
+            loadedPage = savedInstanceState.getInt("loadedPage");
+            expectPage = savedInstanceState.getInt("expectPage");
+        }
     }
 
     @Nullable
@@ -92,16 +99,48 @@ public class NewsListFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshLayout.setRefreshing(true);
-                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+                Log.d("frag", "1");
+                doRefresh();
             }
         });
         refreshLayout.setRefreshing(true);
 
-        View recyclerView = refreshLayout.findViewById(R.id.newsList);
+        RecyclerView recyclerView = (RecyclerView)refreshLayout.findViewById(R.id.newsList);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView(recyclerView);
         getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(recyclerView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        // load more
+        final LinearLayoutManager linearLayoutManager =
+                (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(final RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                final int totalItemCount = linearLayoutManager.getItemCount();
+                int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                if (!isLoadingMore && totalItemCount <= (lastVisibleItem + 5) &&
+                        getActivity() != null) {
+                    isLoadingMore = true;
+                    ++expectPage;
+                    recyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                                ((NewsItemRecyclerViewAdapter) recyclerView.getAdapter())
+                                        .mValues.add(null);
+                                recyclerView.getAdapter().notifyItemInserted(totalItemCount);
+                                Log.d("frag", "2");
+                                getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null,
+                                        newsListCallbacks);
+                        }
+                    });
+                }
+            }
+        });
 
         // TODO(twd2): strange code
         Log.d("frag", "" + (ItemListActivity)getActivity());
@@ -120,6 +159,10 @@ public class NewsListFragment extends Fragment {
         if (getView() == null) {
             return;
         }
+        Log.d("frag", "doRefresh");
+
+        loadedPage = 0;
+        expectPage = 1;
 
         SwipeRefreshLayout refreshLayout =
                 (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
@@ -127,11 +170,19 @@ public class NewsListFragment extends Fragment {
         getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
     }
 
-    private void updateNews(JSONObject obj) {
+    private void updateNews(JSONObject obj, boolean append) {
         Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         Categories.Category category = categories.categories.get(categoryType);
 
-        category.clear();
+        if (loadedPage == 0) {
+            category.clear();
+        } else {
+            if (category.items.size() > 0 &&
+                    category.items.get(category.items.size() - 1) == null) {
+                category.items.remove(category.items.size() - 1);
+            }
+        }
+
         try {
             JSONArray newsList = obj.getJSONArray("list");
             for (int i = 0; i < newsList.length(); ++i) {
@@ -141,14 +192,21 @@ public class NewsListFragment extends Fragment {
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-            category.addItem(new Categories.NewsItem(";(", "加载失败", null));
         }
 
+        loadedPage = expectPage;
+        isLoadingMore = false;
         SwipeRefreshLayout refreshLayout =
                 (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshing(false);
         RecyclerView newsList = (RecyclerView)refreshLayout.findViewById(R.id.newsList);
         newsList.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("loadedPage", loadedPage);
+        outState.putInt("expectPage", expectPage);
     }
 
     public class NewsItemRecyclerViewAdapter
@@ -170,6 +228,32 @@ public class NewsListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
+
+            if (holder.mItem == null) {
+                holder.mSourceView.setText("");
+                holder.mDatetimeView.setText("");
+                holder.mTitleView.setText("加载更多中...");
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+                return;
+            }
+
+            try {
+                holder.mSourceView.setText(mValues.get(position).obj.getString("news_Author"));
+                String timeString = mValues.get(position).obj.getString("news_Time");
+                if (timeString.length() >= 8) {
+                    holder.mDatetimeView.setText(timeString.substring(0, 8));
+                } else {
+                    holder.mDatetimeView.setText("");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             holder.mTitleView.setText(mValues.get(position).title);
             // TODO(twd2)
             if (Math.random() > 0.5) {
@@ -203,12 +287,16 @@ public class NewsListFragment extends Fragment {
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final TextView mTitleView;
+            public final TextView mSourceView, mDatetimeView; 
             public Categories.NewsItem mItem;
+            
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mTitleView = (TextView) view.findViewById(R.id.content);
+                mTitleView = (TextView) view.findViewById(R.id.title);
+                mSourceView = (TextView) view.findViewById(R.id.source);
+                mDatetimeView = (TextView) view.findViewById(R.id.datetime);
             }
 
             @Override

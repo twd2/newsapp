@@ -4,6 +4,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,9 +16,23 @@ import java.io.IOException;
 
 public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
+    public static class Query {
+        public String query = "";
+        public int loadedPage = 0;
+        public int expectPage = 1;
+        public Categories.CategoryType category;
+
+        public Query(String query, int loadedPage, int expectPage,
+                     Categories.CategoryType category) {
+            this.query = query;
+            this.loadedPage = loadedPage;
+            this.expectPage = expectPage;
+            this.category = category;
+        }
+    }
+
     interface QueryCallback {
-        String getQuery();
-        Categories.CategoryType getCategory();
+        Query getQuery();
     }
     private QueryCallback queryCallback;
 
@@ -32,30 +47,48 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
         API api = ((App) getContext().getApplicationContext()).getApi();
         RecommendAPI recommendAPI = new RecommendAPI(getContext());
 
-        String query = queryCallback.getQuery();
-        Categories.CategoryType categoryType = queryCallback.getCategory();
-        int category = categoryType.getApiId();
-        try {
-            if (query != null && query.length() > 0) {
-                if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
-                    return api.searchNews(category, query);
-                } else {
-                    return api.searchAllNews(query);
-                }
-            } else {
-                if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
-                    return api.getListNews(category);
-                } else if (categoryType == Categories.CategoryType.RECOMMENDED) {
+        Query query = queryCallback.getQuery();
+        Log.d("loader", "loading... " + query);
 
-                    return recommendAPI.getRecommendNews();
-                } else if (categoryType == Categories.CategoryType.FAVORITE) {
-                    // TODO(twd2): list favorite
-                    return api.getListNews(category);
+        if (query == null) {
+            return null;
+        }
+
+        int category = query.category.getApiId();
+        try {
+            JSONObject obj = new JSONObject();
+            JSONArray list = new JSONArray();
+            obj.put("list", list);
+            Log.d("loading", query.loadedPage + "/" + query.expectPage);
+            for (int page = query.loadedPage + 1; page <= query.expectPage; ++page) {
+                JSONObject subObj;
+                if (query.query != null && query.query.length() > 0) {
+                    if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
+                        subObj = api.searchNews(category, query.query, page);
+                    } else {
+                        // search recommended
+                        subObj = api.searchAllNews(query.query, page);
+                    }
                 } else {
-                    // ???
-                    return null;
+                    if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
+                        subObj = api.getListNews(category, page);
+                    } else if (query.category == Categories.CategoryType.RECOMMENDED) {
+                        // TODO(wuhaozhe): list recommended
+                        subObj = recommendAPI.getRecommendNews(page);
+                    } else if (query.category == Categories.CategoryType.FAVORITE) {
+                        // TODO(twd2): list favorite
+                        subObj = api.getListNews(category, page);
+                    } else {
+                        // ???
+                        return null;
+                    }
+                }
+                JSONArray subList = subObj.getJSONArray("list");
+                for (int i = 0; i < subList.length(); ++i) {
+                    list.put(subList.get(i));
                 }
             }
+            return obj;
         } catch (IOException | JSONException e) {
             return null;
         }

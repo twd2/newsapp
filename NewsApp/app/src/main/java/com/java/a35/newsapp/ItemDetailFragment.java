@@ -124,7 +124,7 @@ public class ItemDetailFragment extends Fragment {
                 StringBuilder sb = new StringBuilder();
                 JSONArray picturesPath = obj.getJSONArray("pictures_path");
                 for (int i = 0; i < picturesPath.length(); i++) {
-                    sb.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"width: 100%%\" /></p>",
+                    sb.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
                                             picturesPath.getString(i)));
                 }
                 sb.append(

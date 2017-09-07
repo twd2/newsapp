@@ -95,9 +95,12 @@ public class RecommendAPI {
         }
 
     }
-    public JSONObject getRecommendNews() throws  IOException, JSONException{                           //返回推荐的新闻
+    public JSONObject getRecommendNews(int page) throws  IOException, JSONException{                           //返回推荐的新闻
         //TODO:(wuhaozhe) 根据参数解析得到阅读新闻的总数，关键字与分数的map，用户最经常浏览的关键词
-
+        if(page >= 2)
+        {
+            return new JSONObject();
+        }
         int readNewsNum = 10;
         Hashtable<String, Float> wordScoreMap = new Hashtable<String, Float>()
         {{
