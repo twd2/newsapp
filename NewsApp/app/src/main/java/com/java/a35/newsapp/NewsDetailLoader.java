@@ -30,10 +30,12 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
 
     @Override
     public JSONObject loadInBackground() {
-        API api = ((App) getContext().getApplicationContext()).getApi();
-        CachedLoader cachedLoader = ((App) getContext().getApplicationContext()).getCachedLoader();
+        App app = (App) getContext().getApplicationContext();
+        CachedLoader cachedLoader = app.getCachedLoader();
+        API api = app.getApi();
+        PictureAPI pictureAPI = app.getPictureApi();
+
         String id = queryCallback.getId();
-        PictureAPI pictureAPI = new PictureAPI();
         try {
             JSONObject obj = api.getNews(id);
             boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
@@ -44,14 +46,20 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
                 JSONArray pictures_path = new JSONArray();
                 String pictures[] = obj.getString("news_Pictures").replace(' ', ';').split(";");
                 for (String picture : pictures) {
-                    pictures_path.put(
-                            cachedLoader.fetch(picture, "", new HashMap<String, String>(), false));
+                    try {
+                        pictures_path.put(
+                                cachedLoader.fetch(picture, "",
+                                        new HashMap<String, String>(), false));
+                    } catch (IOException e) {
+                        Log.d("loader", "picture load failed");
+                        e.printStackTrace();
+                    }
                 }
                 obj.put("pictures_path", pictures_path);
             } else {
                 obj.put("pictures_path", new JSONArray());
             }
-            Log.d("test", obj.get("pictures_path").toString());
+            Log.d("loader", "pictures_path" + obj.get("pictures_path").toString());
             return obj;
         } catch (IOException | JSONException e) {
             e.printStackTrace();

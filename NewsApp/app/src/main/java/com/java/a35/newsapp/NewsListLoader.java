@@ -47,6 +47,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
         API api = ((App) getContext().getApplicationContext()).getApi();
 
         Query query = queryCallback.getQuery();
+        Log.d("loader", "loading... " + query);
 
         if (query == null) {
             return null;
@@ -84,6 +85,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
                 JSONArray subList = subObj.getJSONArray("list");
                 for (int i = 0; i < subList.length(); ++i) {
+                    // TODO(twd2): ban keywords
                     list.put(subList.get(i));
                 }
             }
