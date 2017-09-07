@@ -25,12 +25,12 @@
                     android:id="@+id/tabLayout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/category_height"
-                    android:background="#ffeeeeee"
+                    android:background="@color/background_holo_light"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:elevation="4dp"
                     app:tabIndicatorColor="@color/colorPrimary"
                     app:tabIndicatorHeight="5dp"
-                    app:tabTextColor="#ff000000"
+                    app:tabTextColor="@color/primary_text_dark"
                     app:tabSelectedTextColor="@color/colorPrimary"
                     app:tabMode="scrollable" />
 
@@ -42,7 +42,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:scaleType="fitCenter"
-                    android:background="#eeeeeeee"
+                    android:background="@color/background_holo_light"
                     app:srcCompat="@drawable/category" />
         </RelativeLayout>
     </android.support.design.widget.AppBarLayout>

@@ -4,6 +4,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import com.java.a35.newsapp.storage.StorageDbHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +47,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
     public JSONObject loadInBackground() {
         Log.d("loader", "loading... " + toString());
         API api = ((App) getContext().getApplicationContext()).getApi();
+        StorageDbHelper db = ((App) getContext().getApplicationContext()).getDb();
 
         Query query = queryCallback.getQuery();
         Log.d("loader", "loading... " + query);
@@ -75,8 +78,8 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                         // TODO(twd2): list recommended
                         subObj = api.getListNews(category, page);
                     } else if (query.category == Categories.CategoryType.FAVORITE) {
-                        // TODO(twd2): list favorite
-                        subObj = api.getListNews(category, page);
+                        // list favorite
+                        subObj = db.getListFavorite(page);
                     } else {
                         // ???
                         return null;
@@ -85,7 +88,9 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
                 JSONArray subList = subObj.getJSONArray("list");
                 for (int i = 0; i < subList.length(); ++i) {
-                    list.put(subList.get(i));
+                    JSONObject news = subList.getJSONObject(i);
+                    news.put("read", db.getHistory(news.getString("news_ID")) != null);
+                    list.put(news);
                 }
             }
             return obj;
