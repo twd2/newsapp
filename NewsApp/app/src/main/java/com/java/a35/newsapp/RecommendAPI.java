@@ -3,16 +3,14 @@ package com.java.a35.newsapp;
 import android.content.Context;
 import android.util.Log;
 
+import com.java.a35.newsapp.storage.StorageDbHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by wuhaozhe on 2017/9/5.
@@ -36,7 +34,7 @@ public class RecommendAPI {
     }
 
     private int randomNewsNum(int readNewsNum){                 //完全随机的新闻占推荐新闻的比重(输入为阅读的新闻数量，随着新闻数量的增加，比重越来越低)
-        int randomNum = (int)(recommendSize * (1 / Math.sqrt(readNewsNum)));
+        int randomNum = (int)(recommendSize * (1 / Math.pow(2.0, readNewsNum)));
         randomNum = Math.max(randomNum, RANDOM_MIN);
         return randomNum;
     }
@@ -63,8 +61,8 @@ public class RecommendAPI {
             if(!newsIDSet.contains(newsID)){
                 newsIDSet.add(newsID);
                 array.put(currentListNews.getJSONObject(randomIndex));
+                counter++;
             }
-            counter++;
         }
         return array;
     }
@@ -80,6 +78,7 @@ public class RecommendAPI {
         }
         return sum;
     }
+
     public class newsAndScore implements Comparable<newsAndScore>{
         public JSONObject newsSketch;             //新闻
         public float score;                       //新闻的得分
@@ -95,22 +94,49 @@ public class RecommendAPI {
         }
 
     }
+
+    private Hashtable<String, Float> generateWordScoreTable(JSONArray historyNews) throws JSONException{
+        Hashtable<String, Float> table = new Hashtable<String, Float>();
+        for(int i = 0; i < historyNews.length(); i++){
+            JSONArray keyWords = (historyNews.getJSONObject(i)).getJSONArray("Keywords");
+            for(int j = 0; j < keyWords.length(); j++){
+                String word = keyWords.getJSONObject(i).getString("word");
+                float score = (float) keyWords.getJSONObject(i).getDouble("score");
+                if(table.containsKey(word)){
+                    Float last = table.get(word);
+                    table.put(word, last + score);
+                }
+                else{
+                    table.put(word, score);
+                }
+            }
+        }
+        return table;
+    }
+
     public JSONObject getRecommendNews(int page) throws  IOException, JSONException{                           //返回推荐的新闻
         //TODO:(wuhaozhe) 根据参数解析得到阅读新闻的总数，关键字与分数的map，用户最经常浏览的关键词
-        if(page >= 2)
-        {
+        if(page >= 2) {
             return new JSONObject();
         }
-        int readNewsNum = 10;
-        Hashtable<String, Float> wordScoreMap = new Hashtable<String, Float>() {{
-            put("习近平", 100.0f);
-            put("中央", 200.0f);
-            put("湖人", 150.0f);
-            put("NBA", 200.0f);
-            put("反腐", 50.0f);
-        }};
-        String[] topWords = {"习近平", "中央", "湖人"};
+
         API api = ((App) context).getApi();
+        StorageDbHelper storageDbHelper = ((App) context).getDb();
+        JSONArray historyNews = (storageDbHelper.getListHistory(1)).getJSONArray("list");
+
+        int readNewsNum = historyNews.length();
+        Hashtable<String, Float> wordScoreMap = generateWordScoreTable(historyNews);
+        ArrayList<Map.Entry<String, Float>> arrayList = new ArrayList(wordScoreMap.entrySet());
+        Collections.sort(arrayList, new Comparator<Map.Entry<String, Float>>(){
+            public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }});
+        String[] topWords = new String[Math.min(KEYWORDS_NUM, wordScoreMap.size())];
+
+        for(int i = 0; i < Math.min(KEYWORDS_NUM, wordScoreMap.size()); i++){
+            topWords[i] = (String)(arrayList.get(i).getKey());
+        }
+
         ArrayList<newsAndScore> array = new ArrayList<newsAndScore>();
 
         for(int i = 0; i < topWords.length; i++) {
