@@ -41,4 +41,8 @@ public class App extends Application {
     public PictureAPI getPictureApi() {
         return pictureApi;
     }
+
+    public StorageDbHelper getDb() {
+        return db;
+    }
 }
