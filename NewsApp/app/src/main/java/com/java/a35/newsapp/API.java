@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -35,13 +37,18 @@ public class API {
     public static final int DEFAULT_PAGE_SIZE = 20;
 
     private final String server;
+    private CachedLoader cachedLoader;
+    private Map<String, String> headers;
 
-    public API(String server) {
+    public API(String server, CachedLoader cachedLoader) {
         this.server = server;
+        this.cachedLoader = cachedLoader;
+        headers = new HashMap<>();
+        headers.put("User-Agent", "NewsApp/0.0");
     }
 
     private JSONObject get(String action, String queryString) throws IOException, JSONException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(server);
         sb.append(action);
         if (queryString != null && queryString.length() > 0) {
@@ -50,9 +57,25 @@ public class API {
         }
         URL url = new URL(sb.toString());
         URLConnection conn = url.openConnection();
-        conn.setRequestProperty("User-Agent", "NewsApp/0.0");
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            conn.setRequestProperty(entry.getKey(), entry.getValue());
+        }
         String jsonString = Utility.readAllString(conn.getInputStream());
         Log.d("API", jsonString);
+        return new JSONObject(jsonString);
+    }
+
+    private JSONObject cachedGet(String action, String queryString)
+            throws IOException, JSONException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(server);
+        sb.append(action);
+        if (queryString != null && queryString.length() > 0) {
+            sb.append("?");
+            sb.append(queryString);
+        }
+        String jsonString = cachedLoader.fetch(sb.toString(), "", headers, true);
+        Log.d("API", "from cache: " + jsonString);
         return new JSONObject(jsonString);
     }
 
@@ -73,7 +96,11 @@ public class API {
 
     public JSONObject getNews(String newsId) throws IOException, JSONException {
         String queryString = String.format("newsId=%s", newsId);
-        return get("/news/action/query/detail", queryString);
+        if (cachedLoader == null) {
+            return get("/news/action/query/detail", queryString);
+        } else {
+            return cachedGet("/news/action/query/detail", queryString);
+        }
     }
 
     public JSONObject searchNews(int category, String query, int page, int pageSize)
