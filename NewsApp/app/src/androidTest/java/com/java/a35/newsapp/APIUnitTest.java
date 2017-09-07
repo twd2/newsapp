@@ -24,7 +24,9 @@ public class APIUnitTest {
     private API api;
 
     public APIUnitTest() {
-        api = new API(API.SERVER_URL);
+        super();
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        api = new API(API.SERVER_URL, null);
     }
 
     @Test
@@ -42,11 +44,20 @@ public class APIUnitTest {
     }
 
     @Test
-    public void cachedLoaderTest() throws Exception{
+    public void cachedLoaderTest() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
+
+        final String url = "http://166.111.68.66:2042/news/action/query/latest" +
+        "?pageNo=20&pageSize=20&t=" + System.currentTimeMillis();
+
         CachedLoader cachedLoader = new CachedLoader(appContext);
-        String json = cachedLoader.fetch("http://166.111.68.66:2042/news/action/query/latest",
-                "?pageNo=20&pageSize=20", new HashMap<String, String>(), true);
-        Log.i("test", json);
+        String json = cachedLoader.fetch(url, "", new HashMap<String, String>(), true);
+        JSONObject obj = new JSONObject(json);
+        assertTrue(obj.has("list"));
+        assertTrue(obj.get("list") instanceof JSONArray);
+        assertTrue(obj.has("pageNo"));
+        assertTrue(obj.getInt("pageNo") == 20);
+        assertTrue(obj.has("pageSize"));
+        assertTrue(obj.getInt("pageSize") == 20);
     }
 }
