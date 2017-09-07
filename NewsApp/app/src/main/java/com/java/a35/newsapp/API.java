@@ -57,7 +57,9 @@ public class API {
         }
         URL url = new URL(sb.toString());
         URLConnection conn = url.openConnection();
-        conn.setRequestProperty("User-Agent", "NewsApp/0.0");
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            conn.setRequestProperty(entry.getKey(), entry.getValue());
+        }
         String jsonString = Utility.readAllString(conn.getInputStream());
         Log.d("API", jsonString);
         return new JSONObject(jsonString);

@@ -9,8 +9,18 @@ import android.app.Application;
 public class App extends Application {
 
     private API api = null;
+    private PictureAPI pictureApi = null;
     private CachedLoader cachedLoader = null;
     private Categories categories = null;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        cachedLoader = new CachedLoader(this.getApplicationContext());
+        categories = new Categories(this.getApplicationContext());
+        api = new API(API.SERVER_URL, cachedLoader);
+        pictureApi = new PictureAPI(cachedLoader);
+    }
 
     public API getApi() {
         return api;
@@ -24,12 +34,7 @@ public class App extends Application {
         return categories;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        cachedLoader = new CachedLoader(this.getApplicationContext());
-        categories = new Categories(this.getApplicationContext());
-        api = new API(API.SERVER_URL, cachedLoader);
+    public PictureAPI getPictureApi() {
+        return pictureApi;
     }
-    // TODO
 }
