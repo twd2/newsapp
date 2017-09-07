@@ -100,8 +100,8 @@ public class RecommendAPI {
         for(int i = 0; i < historyNews.length(); i++){
             JSONArray keyWords = (historyNews.getJSONObject(i)).getJSONArray("Keywords");
             for(int j = 0; j < keyWords.length(); j++){
-                String word = keyWords.getJSONObject(i).getString("word");
-                float score = (float) keyWords.getJSONObject(i).getDouble("score");
+                String word = keyWords.getJSONObject(j).getString("word");
+                float score = (float) keyWords.getJSONObject(j).getDouble("score");
                 if(table.containsKey(word)){
                     Float last = table.get(word);
                     table.put(word, last + score);
@@ -115,7 +115,7 @@ public class RecommendAPI {
     }
 
     public JSONObject getRecommendNews(int page) throws  IOException, JSONException{                           //返回推荐的新闻
-        //TODO:(wuhaozhe) 根据参数解析得到阅读新闻的总数，关键字与分数的map，用户最经常浏览的关键词
+
         if(page >= 2) {
             return new JSONObject();
         }
