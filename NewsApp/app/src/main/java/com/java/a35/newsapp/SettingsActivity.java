@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
@@ -118,6 +119,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,7 +183,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_appearance);
             setHasOptionsMenu(true);
-            //bindPreferenceSummaryToValue(findPreference("night_mode"));
+            findPreference("night_mode").setOnPreferenceChangeListener(
+                new Preference.OnPreferenceChangeListener() {
+                   @Override
+                   public boolean onPreferenceChange(Preference preference, Object newValue) {
+                   if ((Boolean) newValue)
+                       AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                   else
+                       AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                   //getDelegate().applyDayNight();
+                   return true;
+                   }
+               }
+            );
             //bindPreferenceSummaryToValue(findPreference("show_pictures"));
         }
 

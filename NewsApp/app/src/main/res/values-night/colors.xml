@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <color name="colorPrimary">#D48872</color>
+    <color name="colorPrimaryDark">#FCBFAD</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="background_holo_light">#FF142634</color>
+    <color name="categoryEnabledColor">#44000000</color>
+    <color name="categoryEnabledTextColor">#FFBDC7C1</color>
+    <color name="categoryDisabledColor">#FFBDC7C1</color>
+    <color name="categoryDisabledTextColor">#FF142634</color>
+    <color name="primary_text_dark">#FFBDC7C1</color>
+    <color name="newsTitleRead">#FF7E8889</color>
+</resources>

@@ -1,7 +1,10 @@
 package com.java.a35.newsapp;
 
 import android.app.Activity;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorInt;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.graphics.Color;
@@ -10,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -132,14 +136,20 @@ public class ItemDetailFragment extends Fragment {
                                 picturesPath.getString(i)));
                     }
                 }
+                Resources.Theme theme = getContext().getTheme();
+                String styleString = "a {text-decoration: none; color:"
+                        + Integer.toHexString(getResources().getColor(R.color.colorPrimaryDark) - 0xff000000)
+                        + "; font-size: 20px;}\n"
+                        + "p {font-size: 20px; line-height: 150%%}\n"
+                        + "html {color:"
+                        + Integer.toHexString(getResources().getColor(R.color.primary_text_dark) - 0xff000000)
+                        + "}";
                 sb.append(
-                        String.format("<style>\n" +
-                                      "a {text-decoration: none; color: darkblue; font-size: 20px;}\n" +
-                                      "p {font-size: 20px; line-height: 150%%}" +
-                                      "</style>" +
+                        String.format("<style>\n%s</style>" +
                                       "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
                                       "<h1>%s</h1>\n<p>%s</p>\n" +
                                       "<a href=\"%s\" target=\"_blank\">查看原文</a>",
+                                styleString,
                                 TextUtils.htmlEncode(mItem.title),
                                 TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
                                 obj.getString("news_URL")));
