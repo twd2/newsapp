@@ -127,15 +127,18 @@ public class ItemDetailFragment extends Fragment {
                 // TODO(twd2): !!!
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
                 StringBuilder sb = new StringBuilder();
+
+                StringBuilder pictureHtml = new StringBuilder();
                 boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
-                        .getBoolean("show_pictures", true));
+                        .getBoolean("show_pictures", true)); // TODO(twd2): default value?
                 if (show_picture) {
                     JSONArray picturesPath = obj.getJSONArray("pictures_path");
                     for (int i = 0; i < picturesPath.length(); i++) {
-                        sb.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
+                        pictureHtml.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
                                 picturesPath.getString(i)));
                     }
                 }
+
                 Resources.Theme theme = getContext().getTheme();
                 String styleString = "a {text-decoration: none; color:"
                         + Integer.toHexString(getResources().getColor(R.color.colorPrimaryDark) - 0xff000000)
@@ -146,11 +149,13 @@ public class ItemDetailFragment extends Fragment {
                         + "}";
                 sb.append(
                         String.format("<style>\n%s</style>" +
-                                      "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
-                                      "<h1>%s</h1>\n<p>%s</p>\n" +
+                                      "<h1>%s</h1>\n" +
+                                      "%s\n" +
+                                      "<p>%s</p>\n" +
                                       "<a href=\"%s\" target=\"_blank\">查看原文</a>",
                                 styleString,
                                 TextUtils.htmlEncode(mItem.title),
+                                pictureHtml.toString(),
                                 TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
                                 obj.getString("news_URL")));
 

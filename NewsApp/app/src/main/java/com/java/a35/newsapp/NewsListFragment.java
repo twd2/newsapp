@@ -90,7 +90,8 @@ public class NewsListFragment extends Fragment {
 
         if (savedInstanceState != null) {
             Log.d("frag " + categoryType, "onCreateView, restoring saved state");
-            loadedPage = savedInstanceState.getInt("loadedPage");
+            // loadedPage = savedInstanceState.getInt("loadedPage");
+            loadedPage = 0; // TODO(twd2)
             expectPage = savedInstanceState.getInt("expectPage");
             Log.d("frag " + categoryType, "saved state = " + loadedPage + "/" + expectPage);
         }
