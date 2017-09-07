@@ -4,26 +4,26 @@ import android.content.Context;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Scanner;
 
 public class CachedLoader {
+    private Context context;
     private MessageDigest messageDigest = null;
     private File cacheDir;
     private Map<String, String> memoryCachedData = new HashMap<>();
+    private static final int BUFFER_SIZE = 4096;
 
     public CachedLoader(Context context) {
+        this.context = context;
         cacheDir = context.getCacheDir();
         if (!cacheDir.exists()) {
             cacheDir.mkdirs();
@@ -36,29 +36,19 @@ public class CachedLoader {
         }
     }
 
-    private static String byteArrayToHexString(byte[] data) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : data) {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-        return sb.toString();
-    }
-
     private String getUuid(String targetUrl, String queryString,
                            Map<String, String> headerPayload) {
         StringBuilder sb = new StringBuilder();
         sb.append(targetUrl);
         sb.append(queryString);
         sb.append("\n");
-        for (Iterator<Map.Entry<String, String>> it = headerPayload.entrySet().iterator();
-             it.hasNext(); ) {
-            Map.Entry<String, String> pair = it.next();
-            sb.append(pair.getKey());
-            sb.append(":");
-            sb.append(pair.getValue());
+        for (Map.Entry<String, String> entry : headerPayload.entrySet()) {
+            sb.append(entry.getKey());
+            sb.append(": ");
+            sb.append(entry.getValue());
             sb.append("\n");
         }
-        return byteArrayToHexString(messageDigest.digest(sb.toString().getBytes()));
+        return Utility.byteArrayToHexString(messageDigest.digest(sb.toString().getBytes()));
     }
 
     public String fetch(String targetURL, String queryString, Map<String, String> headerPayload,
@@ -75,34 +65,37 @@ public class CachedLoader {
 
         File cacheFile = new File(cacheDir, uuid);
         if (!cacheFile.exists()) {
-            URL url = new URL(targetURL + queryString);
-            URLConnection conn = url.openConnection();
-            for (Iterator<Map.Entry<String, String>> it = headerPayload.entrySet().iterator();
-                 it.hasNext(); ) {
-                Map.Entry<String, String> pair = it.next();
-                conn.addRequestProperty(pair.getKey(), pair.getValue());
+            try {
+                URL url = new URL(targetURL + queryString);
+                URLConnection conn = url.openConnection();
+                for (Map.Entry<String, String> entry : headerPayload.entrySet()) {
+                    conn.addRequestProperty(entry.getKey(), entry.getValue());
+                }
+                BufferedInputStream ins = new BufferedInputStream(conn.getInputStream());
+                BufferedOutputStream fos = new BufferedOutputStream(
+                        new FileOutputStream(cacheFile), BUFFER_SIZE);
+                byte[] data = new byte[BUFFER_SIZE];
+                int len;
+                while ((len = ins.read(data, 0, data.length)) >= 0){
+                    fos.write(data, 0, len);
+                }
+                fos.flush();
+                fos.close();
+                ins.close();
+            } catch (IOException e) {
+                cacheFile.delete();
+                throw e;
             }
-            BufferedInputStream ins = new BufferedInputStream(conn.getInputStream());
-            BufferedOutputStream fos = new BufferedOutputStream(
-                    new FileOutputStream(cacheFile), 4096);
-            byte[] data = new byte[4096];
-            int len;
-            while ((len = ins.read(data, 0, data.length)) >= 0){
-                fos.write(data, 0, len);
-            }
-            fos.flush();
-            fos.close();
-            ins.close();
         }
 
         if (!asString) {
             return cacheFile.getAbsolutePath();
         }
 
-        Scanner scanner = new Scanner(
-                new BufferedReader(new FileReader(cacheFile.getAbsolutePath())));
-        scanner.useDelimiter("\\Z"); // FIXME(twd2): strange code
-        String data = scanner.next();
+        FileInputStream fin = new FileInputStream(cacheFile);
+        String data = Utility.readAllString(fin);
+        fin.close();
+        memoryCachedData.put(uuid, data);
         return data;
     }
 
