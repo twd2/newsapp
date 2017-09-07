@@ -47,6 +47,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
     public JSONObject loadInBackground() {
         Log.d("loader", "loading... " + toString());
         API api = ((App) getContext().getApplicationContext()).getApi();
+        StorageDbHelper db = ((App) getContext().getApplicationContext()).getDb();
 
         Query query = queryCallback.getQuery();
         Log.d("loader", "loading... " + query);
@@ -78,7 +79,6 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                         subObj = api.getListNews(category, page);
                     } else if (query.category == Categories.CategoryType.FAVORITE) {
                         // list favorite
-                        StorageDbHelper db = ((App) getContext().getApplicationContext()).getDb();
                         subObj = db.getListFavorite(page);
                     } else {
                         // ???
@@ -88,7 +88,9 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
                 JSONArray subList = subObj.getJSONArray("list");
                 for (int i = 0; i < subList.length(); ++i) {
-                    list.put(subList.get(i));
+                    JSONObject news = subList.getJSONObject(i);
+                    news.put("read", db.getHistory(news.getString("news_ID")) != null);
+                    list.put(news);
                 }
             }
             return obj;
