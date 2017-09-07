@@ -102,8 +102,7 @@ public class RecommendAPI {
             return new JSONObject();
         }
         int readNewsNum = 10;
-        Hashtable<String, Float> wordScoreMap = new Hashtable<String, Float>()
-        {{
+        Hashtable<String, Float> wordScoreMap = new Hashtable<String, Float>() {{
             put("习近平", 100.0f);
             put("中央", 200.0f);
             put("湖人", 150.0f);
@@ -115,7 +114,8 @@ public class RecommendAPI {
         ArrayList<newsAndScore> array = new ArrayList<newsAndScore>();
 
         for(int i = 0; i < topWords.length; i++) {
-            JSONArray allWordNews = (api.searchAllNews(topWords[i], 1, KEYWORD_SEARCH_SAMPLE)).getJSONArray("list");
+            JSONArray allWordNews = (api.searchAllNews(topWords[i],
+                    1, KEYWORD_SEARCH_SAMPLE)).getJSONArray("list");
             for(int j = 0; j < allWordNews.length(); j++){
                 JSONObject newsSketch = allWordNews.getJSONObject(j);
                 JSONObject newsDetail = api.getNews(newsSketch.getString("news_ID"));

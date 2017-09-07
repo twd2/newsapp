@@ -18,7 +18,7 @@ import java.util.Map;
 public class PictureAPI {
     public static final String IMAGE_SERVER_URL = "https://api.cognitive.microsoft.com";
     public static final String IMAGE_SIZE = "Medium";   //there are five types of page sizes, Small, Medium, Large, Wallpaper and all
-    public static final int IMAGE_NUM = 2;               //for each of keyword, the number of picture grabbed is IMAGE_NUM
+    public static final int IMAGE_NUM = 3;               //for each of keyword, the number of picture grabbed is IMAGE_NUM
 
     public static final String SEARCH_PLACE = "zh-CN";     //the location of my client(in which country)
     public static final String SEARCH_KEY = "3f6dbf8a32c842cb996577084b329068";           //the key of using bing's api
@@ -79,6 +79,11 @@ public class PictureAPI {
         String query = inputNews.getString("news_Title");
         JSONArray images = new JSONArray();
         JSONArray src = getImages(query);
+        if(src.length() == 0)
+        {
+            query = inputNews.getJSONArray("Keywords").getJSONObject(0).getString("word");
+            src = getImages(query);
+        }
         for(int i = 0; i < src.length(); i++) {
             JSONObject dst = new JSONObject();
             dst.put("url", src.getJSONObject(i).getString("contentUrl"));
