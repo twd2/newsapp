@@ -150,11 +150,13 @@ public class Categories {
         public final String id;
         public final String title;
         public String detail = "";
+        public boolean read = false;
         public final JSONObject obj;
 
-        public NewsItem(String id, String title, JSONObject obj) {
+        public NewsItem(String id, String title, boolean read, JSONObject obj) {
             this.id = id;
             this.title = title;
+            this.read = read;
             this.obj = obj;
         }
 

@@ -3,6 +3,11 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
+        android:fragment="com.java.a35.newsapp.SettingsActivity$AppearancePreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="Appearance" />
+
+    <header
         android:fragment="com.java.a35.newsapp.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general" />
