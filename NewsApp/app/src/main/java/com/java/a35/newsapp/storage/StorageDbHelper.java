@@ -87,7 +87,6 @@ public class StorageDbHelper extends SQLiteOpenHelper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        db.close();
     }
 
     public void setHistory(JSONObject news) {
@@ -102,7 +101,6 @@ public class StorageDbHelper extends SQLiteOpenHelper {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        db.close();
     }
 
     public JSONObject getHistory(String newsId) {
@@ -135,8 +133,6 @@ public class StorageDbHelper extends SQLiteOpenHelper {
             }
         } catch (JSONException e) {
             return null;
-        } finally {
-            db.close();
         }
     }
 
@@ -170,8 +166,6 @@ public class StorageDbHelper extends SQLiteOpenHelper {
             }
         } catch (JSONException e) {
             return null;
-        } finally {
-            db.close();
         }
     }
 
@@ -209,8 +203,6 @@ public class StorageDbHelper extends SQLiteOpenHelper {
             return obj;
         } catch (JSONException e) {
             return null;
-        } finally {
-            db.close();
         }
     }
 
@@ -252,8 +244,6 @@ public class StorageDbHelper extends SQLiteOpenHelper {
             return obj;
         } catch (JSONException e) {
             return null;
-        } finally {
-            db.close();
         }
     }
 

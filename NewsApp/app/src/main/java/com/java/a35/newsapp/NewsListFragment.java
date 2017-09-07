@@ -130,12 +130,14 @@ public class NewsListFragment extends Fragment {
                     recyclerView.post(new Runnable() {
                         @Override
                         public void run() {
+                            if (getActivity() != null) {
                                 ((NewsItemRecyclerViewAdapter) recyclerView.getAdapter())
                                         .mValues.add(null);
                                 recyclerView.getAdapter().notifyItemInserted(totalItemCount);
                                 Log.d("frag", "2");
                                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null,
                                         newsListCallbacks);
+                            }
                         }
                     });
                 }
@@ -171,6 +173,10 @@ public class NewsListFragment extends Fragment {
     }
 
     private void updateNews(JSONObject obj, boolean append) {
+        if (getContext() == null) {
+            return;
+        }
+
         Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         Categories.Category category = categories.categories.get(categoryType);
 
@@ -188,7 +194,7 @@ public class NewsListFragment extends Fragment {
             for (int i = 0; i < newsList.length(); ++i) {
                 JSONObject news = newsList.getJSONObject(i);
                 category.addItem(new Categories.NewsItem(news.getString("news_ID"),
-                        news.getString("news_Title"), news));
+                        news.getString("news_Title"), news.getBoolean("read"), news));
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
@@ -255,8 +261,7 @@ public class NewsListFragment extends Fragment {
             }
 
             holder.mTitleView.setText(mValues.get(position).title);
-            // TODO(twd2)
-            if (Math.random() > 0.5) {
+            if (!mValues.get(position).read) {
                 holder.mTitleView.setTextColor(ResourcesCompat.getColor(
                         getResources(),
                         R.color.newsTitleUnread,
