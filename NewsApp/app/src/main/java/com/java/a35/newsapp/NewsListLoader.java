@@ -4,6 +4,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import com.java.a35.newsapp.storage.StorageDbHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,8 +77,9 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                         // TODO(twd2): list recommended
                         subObj = api.getListNews(category, page);
                     } else if (query.category == Categories.CategoryType.FAVORITE) {
-                        // TODO(twd2): list favorite
-                        subObj = api.getListNews(category, page);
+                        // list favorite
+                        StorageDbHelper db = ((App) getContext().getApplicationContext()).getDb();
+                        subObj = db.getListFavorite(page);
                     } else {
                         // ???
                         return null;
