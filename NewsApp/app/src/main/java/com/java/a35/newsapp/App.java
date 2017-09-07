@@ -8,7 +8,7 @@ import android.app.Application;
 
 public class App extends Application {
 
-    private API api = new API(API.SERVER_URL);
+    private API api = null;
     private CachedLoader cachedLoader = null;
     private Categories categories = null;
 
@@ -29,6 +29,7 @@ public class App extends Application {
         super.onCreate();
         cachedLoader = new CachedLoader(this.getApplicationContext());
         categories = new Categories(this.getApplicationContext());
+        api = new API(API.SERVER_URL, cachedLoader);
     }
     // TODO
 }

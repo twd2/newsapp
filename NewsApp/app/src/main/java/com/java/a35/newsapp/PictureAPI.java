@@ -24,7 +24,7 @@ public class PictureAPI {
     public static final int KEYWORD_NUM = 3;              //the number of keyword that will be queried
 
     private JSONObject get(String action, String queryString) throws IOException, JSONException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(IMAGE_SERVER_URL);
         sb.append(action);
         if (queryString != null && queryString.length() > 0) {
