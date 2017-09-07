@@ -1,8 +1,11 @@
 package com.java.a35.newsapp;
 
+import android.preference.PreferenceManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
+
+import com.java.a35.newsapp.storage.StorageDbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,10 +36,15 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         CachedLoader cachedLoader = app.getCachedLoader();
         API api = app.getApi();
         PictureAPI pictureAPI = app.getPictureApi();
+        StorageDbHelper db = app.getDb();
 
         String id = queryCallback.getId();
         try {
             JSONObject obj = api.getNews(id);
+            db.setHistory(obj);
+            boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .getBoolean("show_pictures", true)); // TODO(twd2): default value?
+            if (!show_picture) return obj;
             pictureAPI.checkAndAddImage(obj);
             if (!obj.getString("news_Pictures").equals("")) {
                 JSONArray pictures_path = new JSONArray();
