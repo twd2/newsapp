@@ -62,7 +62,7 @@ public class ItemListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             boolean nightMode = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .getBoolean("night_mode", false);
             if (nightMode) {
@@ -73,6 +73,7 @@ public class ItemListActivity extends AppCompatActivity {
             }
             getDelegate().applyDayNight();
         }
+
         if (savedInstanceState != null) {
             query = savedInstanceState.getString("query");
         }

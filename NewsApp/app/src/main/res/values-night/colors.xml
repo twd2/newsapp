@@ -5,10 +5,10 @@
     <color name="colorPrimaryDark">#FCBFAD</color>
     <color name="colorAccent">#FF4081</color>
     <color name="background_holo_light">#FF142634</color>
-    <color name="categoryEnabledColor">#44000000</color>
-    <color name="categoryEnabledTextColor">#FFBDC7C1</color>
-    <color name="categoryDisabledColor">#FFBDC7C1</color>
-    <color name="categoryDisabledTextColor">#FF142634</color>
+    <color name="categoryDisabledColor">#44000000</color>
+    <color name="categoryDisabledTextColor">#CC000000</color>
+    <color name="categoryEnabledColor">#CC000000</color>
+    <color name="categoryEnabledTextColor">#DDEEEEEE</color>
     <color name="primary_text_dark">#FFBDC7C1</color>
     <color name="newsTitleRead">#FF7E8889</color>
 </resources>
