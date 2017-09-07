@@ -2,15 +2,29 @@ package com.java.a35.newsapp;
 
 import android.app.Application;
 
+import com.java.a35.newsapp.storage.StorageDbHelper;
+
 /**
  * Created by twd2 on 17/8/30.
  */
 
 public class App extends Application {
 
-    private API api = new API(API.SERVER_URL);
+    private API api = null;
+    private PictureAPI pictureApi = null;
     private CachedLoader cachedLoader = null;
     private Categories categories = null;
+    private StorageDbHelper db = null;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        cachedLoader = new CachedLoader(this);
+        categories = new Categories(this);
+        api = new API(API.SERVER_URL, cachedLoader);
+        pictureApi = new PictureAPI(cachedLoader);
+        db = new StorageDbHelper(this);
+    }
 
     public API getApi() {
         return api;
@@ -24,11 +38,11 @@ public class App extends Application {
         return categories;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        cachedLoader = new CachedLoader(this.getApplicationContext());
-        categories = new Categories(this.getApplicationContext());
+    public PictureAPI getPictureApi() {
+        return pictureApi;
     }
-    // TODO
+
+    public StorageDbHelper getDb() {
+        return db;
+    }
 }

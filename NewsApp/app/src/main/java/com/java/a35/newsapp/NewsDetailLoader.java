@@ -5,6 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import com.java.a35.newsapp.storage.StorageDbHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,28 +32,38 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
 
     @Override
     public JSONObject loadInBackground() {
-        API api = ((App) getContext().getApplicationContext()).getApi();
-        CachedLoader cachedLoader = ((App) getContext().getApplicationContext()).getCachedLoader();
+        App app = (App) getContext().getApplicationContext();
+        CachedLoader cachedLoader = app.getCachedLoader();
+        API api = app.getApi();
+        PictureAPI pictureAPI = app.getPictureApi();
+        StorageDbHelper db = app.getDb();
+
         String id = queryCallback.getId();
-        PictureAPI pictureAPI = new PictureAPI();
         try {
             JSONObject obj = api.getNews(id);
+            db.setHistory(obj);
             boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
-                    .getBoolean("show_pictures", true));
+                    .getBoolean("show_pictures", true)); // TODO(twd2): default value?
             if (!show_picture) return obj;
             pictureAPI.checkAndAddImage(obj);
             if (!obj.getString("news_Pictures").equals("")) {
                 JSONArray pictures_path = new JSONArray();
                 String pictures[] = obj.getString("news_Pictures").replace(' ', ';').split(";");
                 for (String picture : pictures) {
-                    pictures_path.put(
-                            cachedLoader.fetch(picture, "", new HashMap<String, String>(), false));
+                    try {
+                        pictures_path.put(
+                                cachedLoader.fetch(picture, "",
+                                        new HashMap<String, String>(), false));
+                    } catch (IOException e) {
+                        Log.d("loader", "picture load failed");
+                        e.printStackTrace();
+                    }
                 }
                 obj.put("pictures_path", pictures_path);
             } else {
                 obj.put("pictures_path", new JSONArray());
             }
-            Log.d("test", obj.get("pictures_path").toString());
+            Log.d("loader", "pictures_path" + obj.get("pictures_path").toString());
             return obj;
         } catch (IOException | JSONException e) {
             e.printStackTrace();

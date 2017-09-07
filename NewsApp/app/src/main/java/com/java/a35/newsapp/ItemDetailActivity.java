@@ -22,6 +22,7 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
+import com.java.a35.newsapp.storage.StorageDbHelper;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -51,11 +52,14 @@ public class ItemDetailActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.app_bar_favorite:
-                        // TODO(twd2): favorite
+                        // TODO(twd2): async?
+                        final StorageDbHelper db = ((App)getApplicationContext()).getDb();
+                        db.setFavorite(mItem.obj, true);
                         Snackbar.make(getCurrentFocus(), "已收藏", Snackbar.LENGTH_LONG)
                                 .setAction("取消", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
+                                        db.setFavorite(mItem.obj, false);
                                         Toast.makeText(ItemDetailActivity.this,
                                                 "已取消收藏", Toast.LENGTH_SHORT).show();
                                     }
