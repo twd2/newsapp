@@ -85,6 +85,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
                 JSONArray subList = subObj.getJSONArray("list");
                 for (int i = 0; i < subList.length(); ++i) {
+                    // TODO(twd2): ban keywords
                     list.put(subList.get(i));
                 }
             }
