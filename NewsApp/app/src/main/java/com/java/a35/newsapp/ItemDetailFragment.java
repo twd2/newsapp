@@ -1,6 +1,7 @@
 package com.java.a35.newsapp;
 
 import android.app.Activity;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.graphics.Color;
@@ -122,10 +123,14 @@ public class ItemDetailFragment extends Fragment {
                 // TODO(twd2): !!!
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
                 StringBuilder sb = new StringBuilder();
-                JSONArray picturesPath = obj.getJSONArray("pictures_path");
-                for (int i = 0; i < picturesPath.length(); i++) {
-                    sb.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
-                                            picturesPath.getString(i)));
+                boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
+                        .getBoolean("show_pictures", true));
+                if (show_picture) {
+                    JSONArray picturesPath = obj.getJSONArray("pictures_path");
+                    for (int i = 0; i < picturesPath.length(); i++) {
+                        sb.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
+                                picturesPath.getString(i)));
+                    }
                 }
                 sb.append(
                         String.format("<style>\n" +

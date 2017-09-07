@@ -1,5 +1,6 @@
 package com.java.a35.newsapp;
 
+import android.preference.PreferenceManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
@@ -35,6 +36,9 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         PictureAPI pictureAPI = new PictureAPI();
         try {
             JSONObject obj = api.getNews(id);
+            boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .getBoolean("show_pictures", true));
+            if (!show_picture) return obj;
             pictureAPI.checkAndAddImage(obj);
             if (!obj.getString("news_Pictures").equals("")) {
                 JSONArray pictures_path = new JSONArray();

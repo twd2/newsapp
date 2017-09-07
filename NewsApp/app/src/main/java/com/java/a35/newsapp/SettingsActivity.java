@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
@@ -157,6 +158,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
+                || AppearancePreferenceFragment.class.getName().equals(fragmentName)
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName);
@@ -170,6 +172,29 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class AppearancePreferenceFragment extends PreferenceFragment{
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_appearance);
+            setHasOptionsMenu(true);
+            //bindPreferenceSummaryToValue(findPreference("night_mode"));
+            //bindPreferenceSummaryToValue(findPreference("show_pictures"));
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                getActivity().finish();
+                // startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
