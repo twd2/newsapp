@@ -130,12 +130,14 @@ public class NewsListFragment extends Fragment {
                     recyclerView.post(new Runnable() {
                         @Override
                         public void run() {
+                            if (getActivity() != null) {
                                 ((NewsItemRecyclerViewAdapter) recyclerView.getAdapter())
                                         .mValues.add(null);
                                 recyclerView.getAdapter().notifyItemInserted(totalItemCount);
                                 Log.d("frag", "2");
                                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null,
                                         newsListCallbacks);
+                            }
                         }
                     });
                 }
@@ -171,6 +173,10 @@ public class NewsListFragment extends Fragment {
     }
 
     private void updateNews(JSONObject obj, boolean append) {
+        if (getContext() == null) {
+            return;
+        }
+
         Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         Categories.Category category = categories.categories.get(categoryType);
 
