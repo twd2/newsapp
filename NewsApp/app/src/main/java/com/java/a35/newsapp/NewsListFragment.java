@@ -22,7 +22,6 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -264,7 +263,7 @@ public class NewsListFragment extends Fragment {
             if (!mValues.get(position).read) {
                 holder.mTitleView.setTextColor(ResourcesCompat.getColor(
                         getResources(),
-                        R.color.newsTitleUnread,
+                        R.color.primary_text_dark,
                         getContext().getTheme()));
             } else {
                 holder.mTitleView.setTextColor(ResourcesCompat.getColor(
