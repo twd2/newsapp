@@ -19,6 +19,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
 /**
  * A fragment representing a single Item detail screen.
  * This fragment is either contained in a {@link ItemListActivity}
@@ -114,6 +121,33 @@ public class ItemDetailFragment extends Fragment {
         return rootView;
     }
 
+    protected String wordToLink(String str, JSONArray array) throws JSONException, IOException{        //将word替换为超链接
+        String result = str;
+        for(int i = 0; i < array.length(); i++){
+            String word = array.getJSONObject(i).getString("word");
+            Pattern p = Pattern.compile(word);
+            Matcher m = p.matcher(result);
+            String dst = String.format(
+                    "<a href=\"https://baike.baidu.com/item/%s\" target=\"_blank\">%s</a>",
+                    URLEncoder.encode(word, "UTF-8"),
+                    word);
+            result = m.replaceFirst(dst);
+        }
+        return result;
+    }
+
+    protected String linkToEncyclopedia(String str, JSONObject obj) throws JSONException, IOException{                     //人物地点链接
+        ArrayList<String> keyWords = new ArrayList<String>();
+        JSONArray locations = obj.getJSONArray("locations");
+        JSONArray organizations = obj.getJSONArray("organizations");
+        JSONArray persons = obj.getJSONArray("persons");
+        String result = str;
+        result = wordToLink(result, locations);
+        result = wordToLink(result, organizations);
+        result = wordToLink(result, persons);
+        return result;
+    }
+
     protected void showDetail(JSONObject obj) {
         WebView webView = (WebView) getView().findViewById(R.id.item_web);
         webView.setBackgroundColor(Color.TRANSPARENT);
@@ -121,6 +155,8 @@ public class ItemDetailFragment extends Fragment {
             try {
                 // TODO(twd2): !!!
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
+                String htmlDetail = TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>");
+                htmlDetail = linkToEncyclopedia(htmlDetail, obj);
                 StringBuilder sb = new StringBuilder();
                 JSONArray picturesPath = obj.getJSONArray("pictures_path");
                 for (int i = 0; i < picturesPath.length(); i++) {
@@ -136,13 +172,15 @@ public class ItemDetailFragment extends Fragment {
                                       "<h1>%s</h1>\n<p>%s</p>\n" +
                                       "<a href=\"%s\" target=\"_blank\">查看原文</a>",
                                 TextUtils.htmlEncode(mItem.title),
-                                TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
+                                htmlDetail,
                                 obj.getString("news_URL")));
 
                 webView.loadDataWithBaseURL(null,
                         sb.toString(),
                         "text/html", "UTF-8", null);
             } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
