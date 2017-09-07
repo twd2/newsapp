@@ -28,8 +28,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -114,6 +117,16 @@ public class ItemListActivity extends AppCompatActivity {
                     case R.id.app_bar_settings: {
                         Intent intent = new Intent(ItemListActivity.this, SettingsActivity.class);
                         startActivity(intent);
+                        break;
+                    }
+                    case R.id.app_bar_block_list:{
+                        Intent intent = new Intent(ItemListActivity.this, SetBlockListActivity.class);
+                        Set<String> blockSet =
+                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .getStringSet("block_list", new HashSet<String>());
+                        intent.putExtra("keywords", new ArrayList<String>(blockSet));
+                        startActivity(intent);
+                        break;
                     }
                 }
                 return true;

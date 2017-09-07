@@ -84,6 +84,7 @@ public class ItemDetailFragment extends Fragment {
 
                 @Override
                 public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
+                    ((ItemDetailActivity)getActivity()).mDetail = data;
                     showDetail(data);
                 }
 

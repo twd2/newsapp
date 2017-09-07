@@ -1,6 +1,9 @@
 package com.java.a35.newsapp;
 
 import android.app.Application;
+import android.util.Log;
+
+import java.util.Arrays;
 
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
@@ -24,6 +27,13 @@ public class App extends Application {
         api = new API(API.SERVER_URL, cachedLoader);
         pictureApi = new PictureAPI(cachedLoader);
         db = new StorageDbHelper(this);
+        Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                Log.e("test", Log.getStackTraceString(e));
+            }
+        });
     }
 
     public API getApi() {

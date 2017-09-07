@@ -14,5 +14,8 @@
         android:id="@+id/app_bar_settings"
         android:title="设置"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/app_bar_block_list"
+        android:title="@string/setBlockList" />
 
 </menu>

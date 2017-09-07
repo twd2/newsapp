@@ -1,5 +1,6 @@
 package com.java.a35.newsapp;
 
+import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -24,6 +26,14 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 /**
  * An activity representing a single Item detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
@@ -37,6 +47,8 @@ public class ItemDetailActivity extends AppCompatActivity {
     private SpeechSynthesizer mTts;
 
     private Categories.NewsItem mItem;
+
+    protected JSONObject mDetail = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +82,36 @@ public class ItemDetailActivity extends AppCompatActivity {
                         break;
                     case R.id.app_bar_share:
                         doShare();
+                        break;
+                    case R.id.app_bar_block:
+                        if (mDetail == null) break;
+                        Intent intent = new Intent(ItemDetailActivity.this, SetBlockListActivity.class);
+                        ArrayList<String> keywordsList = new ArrayList<String>();
+                        try {
+                            ArrayList<Pair<Double, String> > candidatesList = new ArrayList<Pair<Double, String> >();
+                            Log.i("test", mDetail.toString());
+                            JSONArray keywords = mDetail.getJSONArray("Keywords");
+                            for (int i = 0; i < keywords.length(); ++ i){
+                                JSONObject kw = keywords.getJSONObject(i);
+                                candidatesList.add(Pair.create(kw.getDouble("score"), kw.getString("word")));
+                            }
+                            Collections.sort(candidatesList, new Comparator<Pair<Double, String>>() {
+                                @Override
+                                public int compare(Pair<Double, String> o1, Pair<Double, String> o2) {
+                                    if (o1.first > o2.first) return -1;
+                                    if (o1.first.equals(o2.first)) return 0;
+                                    if (o1.first < o2.first) return 1;
+                                    return 0;
+                                }
+                            });
+                            for (int i = 0; i < candidatesList.size() && i < 10; ++ i)
+                                keywordsList.add(candidatesList.get(i).second);
+                        } catch (JSONException e){
+                            Log.e("test", Log.getStackTraceString(e));
+                        }
+                        //for (int i = 0; i < keywordsList.size(); ++ i)
+                        intent.putExtra("keywords", keywordsList);
+                        startActivity(intent);
                         break;
                 }
                 return true;

@@ -22,4 +22,10 @@
         android:title="分享"
         support:showAsAction="always" />
 
+    <item
+        android:id="@+id/app_bar_block"
+        android:icon="@drawable/ic_block"
+        android:title="@string/blocking_setting"
+        support:showAsAction="always" />
+
 </menu>
