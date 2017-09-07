@@ -43,10 +43,11 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:scaleType="fitCenter"
                     android:background="@color/background_holo_light"
-                    app:srcCompat="@drawable/ic_add_circle_outline_black_24dp"
-                    />
+                    app:srcCompat="@drawable/category" />
         </LinearLayout>
+                    
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
