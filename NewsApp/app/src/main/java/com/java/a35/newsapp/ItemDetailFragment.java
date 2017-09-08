@@ -112,7 +112,9 @@ public class ItemDetailFragment extends Fragment {
         if (mItem != null) {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);
             webView.setBackgroundColor(Color.TRANSPARENT);
-            webView.loadDataWithBaseURL(null, "<p>正在加载...</p>",
+            webView.loadDataWithBaseURL(null, "<p>" +
+                            getString(R.string.now_loading) +
+                            "</p>",
                     "text/html", "UTF-8", null);
         }
 
@@ -144,15 +146,22 @@ public class ItemDetailFragment extends Fragment {
                         + "html {color:"
                         + Integer.toHexString(getResources().getColor(R.color.primary_text_dark) - 0xff000000)
                         + "}";
-                sb.append(
-                        String.format("<style>\n%s</style>" +
-                                      "<h1>广告位招租</h1>\n<h2>联系：13000000000</h2>\n" +
-                                      "<h1>%s</h1>\n<p>%s</p>\n" +
-                                      "<a href=\"%s\" target=\"_blank\">查看原文</a>",
-                                styleString,
-                                TextUtils.htmlEncode(mItem.title),
-                                TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
-                                obj.getString("news_URL")));
+                String formatString = "<style>\n%s</style>" +
+                        "<h1>" +
+                        getString(R.string.ads_space_for_rent) +
+                        "</h1>\n<h2>" +
+                        getString(R.string.contracts) +
+                        "13000000000</h2>\n" +
+                        "<h1>%s</h1>\n<p>%s</p>\n" +
+                        "<a href=\"%s\" target=\"_blank\">" +
+                        getString(R.string.view_source) +
+                        "</a>";
+                sb.append(String.format(
+                        formatString,
+                        styleString,
+                        TextUtils.htmlEncode(mItem.title),
+                        TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
+                        obj.getString("news_URL")));
 
                 webView.loadDataWithBaseURL(null,
                         sb.toString(),
@@ -161,7 +170,9 @@ public class ItemDetailFragment extends Fragment {
                 e.printStackTrace();
             }
         } else {
-            webView.loadDataWithBaseURL(null, "<h1>加载失败 :(</h1>", "text/html", "UTF-8", null);
+            webView.loadDataWithBaseURL(null, "<h1>" +
+                    getString(R.string.loading_failed) +
+                    " :(</h1>", "text/html", "UTF-8", null);
         }
     }
 

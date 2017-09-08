@@ -23,10 +23,10 @@
         android:layout_marginRight="@dimen/category_right_margin"
         android:layout_marginTop="@dimen/category_upper_margin"
         android:layout_marginBottom="@dimen/category_upper_margin"
-        android:text="国际"
-        android:textSize="30dp"
+        android:text=""
+        android:textSize="30sp"
         android:textColor="#cc000000"
-        android:gravity="top|left"
+        android:gravity="top|start"
         android:paddingTop="3dp"
         android:paddingLeft="30dp"
         />

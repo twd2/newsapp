@@ -13,18 +13,17 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
-        android:text="Title"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:orientation="horizontal">
 
         <TextView
@@ -32,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Source"
+            android:text=""
             android:textSize="14sp" />
 
         <TextView
@@ -40,8 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Date"
+            android:text=""
             android:textAlignment="viewEnd"
+            android:layout_gravity="end"
             android:textSize="14sp" />
     </LinearLayout>
 

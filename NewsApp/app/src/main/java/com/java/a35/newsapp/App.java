@@ -4,6 +4,10 @@ import android.app.Application;
 
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
+import java.util.Locale;
+import android.content.res.Configuration;
+
+
 /**
  * Created by twd2 on 17/8/30.
  */
@@ -24,6 +28,13 @@ public class App extends Application {
         api = new API(API.SERVER_URL, cachedLoader);
         pictureApi = new PictureAPI(cachedLoader);
         db = new StorageDbHelper(this);
+        String languageToLoad  = "en"; // your language
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
     }
 
     public API getApi() {

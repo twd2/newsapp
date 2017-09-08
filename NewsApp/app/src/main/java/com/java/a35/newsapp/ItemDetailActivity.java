@@ -156,8 +156,8 @@ public class ItemDetailActivity extends AppCompatActivity {
         // share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
         // extra for WeChat
         share.putExtra("Kdescription", "测试描述 ——发自我的 NewsApp");
-        share.putExtra(Intent.EXTRA_TEXT, mItem.title + " ——发自我的 NewsApp");
-        startActivity(Intent.createChooser(share, "分享到社交网络"));
+        share.putExtra(Intent.EXTRA_TEXT, mItem.title + getString(R.string.from_my_newsapp));
+        startActivity(Intent.createChooser(share, getString(R.string.share_to_sns)));
     }
 
     // TTS interfaces
@@ -178,12 +178,12 @@ public class ItemDetailActivity extends AppCompatActivity {
                 int code = mTts.startSpeaking(mItem.detail, mTtsListener);
                 if (code != ErrorCode.SUCCESS) {
                     Toast.makeText(ItemDetailActivity.this,
-                            "语音合成失败，错误码: " + code,
+                            getString(R.string.tts_failed) + code,
                             Toast.LENGTH_SHORT).show();
                 } else {
                     isTtsPlaying = true;
                     Toast.makeText(ItemDetailActivity.this,
-                            "朗读中...", Toast.LENGTH_SHORT).show();
+                            R.string.reading, Toast.LENGTH_SHORT).show();
                 }
             } else {
                 isTtsPlaying = false;
@@ -191,7 +191,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(ItemDetailActivity.this,
-                    "语音合成初始化失败", Toast.LENGTH_SHORT).show();
+                    R.string.TTS_engine_init_fail, Toast.LENGTH_SHORT).show();
         }
     }
 

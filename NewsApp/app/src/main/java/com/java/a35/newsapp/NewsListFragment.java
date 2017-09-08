@@ -237,7 +237,7 @@ public class NewsListFragment extends Fragment {
             if (holder.mItem == null) {
                 holder.mSourceView.setText("");
                 holder.mDatetimeView.setText("");
-                holder.mTitleView.setText("加载更多中...");
+                holder.mTitleView.setText(R.string.loading_more);
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
