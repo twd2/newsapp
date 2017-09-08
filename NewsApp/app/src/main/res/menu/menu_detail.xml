@@ -7,19 +7,19 @@
     <item
         android:id="@+id/app_bar_favorite"
         android:icon="@drawable/ic_favorite_white_24dp"
-        android:title="收藏"
+        android:title="@string/favorite"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/app_bar_tts"
         android:icon="@drawable/ic_play_white_24dp"
-        android:title="朗读"
+        android:title="@string/read"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/app_bar_share"
         android:icon="@drawable/ic_share_white_24dp"
-        android:title="分享"
+        android:title="@string/share"
         support:showAsAction="always" />
 
 </menu>

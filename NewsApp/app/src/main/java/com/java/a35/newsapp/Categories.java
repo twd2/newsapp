@@ -1,6 +1,5 @@
 package com.java.a35.newsapp;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -13,28 +12,28 @@ public class Categories {
     public static final String PREFERENCES_CATEGORY = "categories";
 
     public enum CategoryType {
-        RECOMMENDED(-1, "推荐", -1),
-        FAVORITE(-1, "收藏", -1),
+        RECOMMENDED(-1, R.string.category_short_recommended, -1),
+        FAVORITE(-1, R.string.category_short_favorited, -1),
 
-        CHINA(API.CATEGORY_CHINA, "国内", R.drawable.category_china),
-        INTERNATIONAL(API.CATEGORY_INTERNATIONAL, "国际", R.drawable.category_international),
-        SOCIAL(API.CATEGORY_SOCIAL, "社会", R.drawable.category_social),
-        CULTURE(API.CATEGORY_CULTURE, "文化", R.drawable.category_culture),
-        SPORTS(API.CATEGORY_SPORTS, "体育", R.drawable.category_sports),
-        TECHNOLOGY(API.CATEGORY_TECHNOLOGY, "科技", R.drawable.category_technology),
-        ENTERTAINMENT(API.CATEGORY_ENTERTAINMENT, "娱乐", R.drawable.category_entertainment),
-        EDUCATION(API.CATEGORY_EDUCATION, "教育", R.drawable.category_education),
-        MILITARY(API.CATEGORY_MILITARY, "军事", R.drawable.category_military),
-        FINANCIAL(API.CATEGORY_FINANCIAL, "财经", R.drawable.category_financial),
-        HEALTH(API.CATEGORY_HEALTH, "健康", R.drawable.category_health),
-        AUTOMOBILE(API.CATEGORY_AUTOMOBILE, "汽车", R.drawable.category_automobile);
+        CHINA(API.CATEGORY_CHINA, R.string.category_short_china, R.drawable.category_china),
+        INTERNATIONAL(API.CATEGORY_INTERNATIONAL, R.string.category_short_international, R.drawable.category_international),
+        SOCIAL(API.CATEGORY_SOCIAL, R.string.category_short_social, R.drawable.category_social),
+        CULTURE(API.CATEGORY_CULTURE, R.string.category_short_culture, R.drawable.category_culture),
+        SPORTS(API.CATEGORY_SPORTS, R.string.category_short_sports, R.drawable.category_sports),
+        TECHNOLOGY(API.CATEGORY_TECHNOLOGY, R.string.category_short_technology, R.drawable.category_technology),
+        ENTERTAINMENT(API.CATEGORY_ENTERTAINMENT, R.string.category_short_entertainment, R.drawable.category_entertainment),
+        EDUCATION(API.CATEGORY_EDUCATION, R.string.category_short_education, R.drawable.category_education),
+        MILITARY(API.CATEGORY_MILITARY, R.string.category_short_military, R.drawable.category_military),
+        FINANCIAL(API.CATEGORY_FINANCIAL, R.string.category_short_financial, R.drawable.category_financial),
+        HEALTH(API.CATEGORY_HEALTH, R.string.category_short_health, R.drawable.category_health),
+        AUTOMOBILE(API.CATEGORY_AUTOMOBILE, R.string.category_short_automobile, R.drawable.category_automobile);
 
         private final int apiId;
-        private final String name;
+        private final int nameId;
         private final int uiId;
-        private CategoryType(int apiId, String name, int uiId) {
+        private CategoryType(int apiId, int nameId, int uiId) {
             this.apiId = apiId;
-            this.name = name;
+            this.nameId = nameId;
             this.uiId = uiId;
         }
 
@@ -42,8 +41,8 @@ public class Categories {
             return apiId;
         }
 
-        public String getName() {
-            return name;
+        public int getNameId() {
+            return nameId;
         }
 
         public int getUiId() {

@@ -114,7 +114,9 @@ public class ItemDetailFragment extends Fragment {
         if (mItem != null) {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);
             webView.setBackgroundColor(Color.TRANSPARENT);
-            webView.loadDataWithBaseURL(null, "<p>正在加载...</p>",
+            webView.loadDataWithBaseURL(null, "<p>" +
+                            getString(R.string.loading) +
+                            "</p>",
                     "text/html", "UTF-8", null);
         }
 
@@ -171,7 +173,8 @@ public class ItemDetailFragment extends Fragment {
                 if (show_picture) {
                     JSONArray picturesPath = obj.getJSONArray("pictures_path");
                     for (int i = 0; i < picturesPath.length(); i++) {
-                        pictureHtml.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
+                        pictureHtml.append(String.format(
+                                "<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
                                 picturesPath.getString(i)));
                     }
                 }
@@ -189,12 +192,13 @@ public class ItemDetailFragment extends Fragment {
                                       "<h1>%s</h1>\n" +
                                       "%s\n" +
                                       "<p>%s</p>\n" +
-                                      "<a href=\"%s\" target=\"_blank\">查看原文</a>",
+                                      "<a href=\"%s\" target=\"_blank\">%s</a>",
                                 styleString,
                                 TextUtils.htmlEncode(mItem.title),
                                 pictureHtml.toString(),
                                 htmlDetail,
-                                obj.getString("news_URL")));
+                                obj.getString("news_URL"),
+                                getString(R.string.view_source)));
 
                 webView.loadDataWithBaseURL(null,
                         sb.toString(),
@@ -203,7 +207,9 @@ public class ItemDetailFragment extends Fragment {
                 e.printStackTrace();
             }
         } else {
-            webView.loadDataWithBaseURL(null, "<h1>加载失败 :(</h1>", "text/html", "UTF-8", null);
+            webView.loadDataWithBaseURL(null, "<h1>" +
+                    getString(R.string.load_failed) +
+                    " :(</h1>", "text/html", "UTF-8", null);
         }
     }
 

@@ -1,11 +1,9 @@
 package com.java.a35.newsapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import java.util.*;
 
 import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,9 +16,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup.LayoutParams;
-import android.content.res.Configuration;
-import android.content.Context;
-
 
 
 /**
@@ -36,7 +31,6 @@ public class CategoryActivity extends AppCompatActivity {
         TableLayout categoryTableLayout = (TableLayout) findViewById(R.id.categoryTableLayout);
         int childCount = categoryTableLayout.getChildCount();
         int rowChildCount = ((TableRow)categoryTableLayout.getChildAt(0)).getChildCount();
-
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -69,7 +63,7 @@ public class CategoryActivity extends AppCompatActivity {
             // get the button and set its color
             final Button button = (Button)categoryItem.getChildAt(1);
             final ImageView flag = (ImageView)categoryItem.getChildAt(2);
-            button.setText(entry.getKey().getName());
+            button.setText(entry.getKey().getNameId());
 
             // TODO (wuhaozhe): add shadow to button
 //            button.setTranslationZ(10);
