@@ -113,8 +113,9 @@ public class StorageDbHelper extends SQLiteOpenHelper {
 
         String[] args = { newsId };
 
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(
+            cursor = db.query(
                     HistoryData.HistoryEntry.TABLE_NAME,
                     cols,
                     HistoryData.HistoryEntry.COLUMN_NAME_NEWS_ID + " = ?",
@@ -133,6 +134,10 @@ public class StorageDbHelper extends SQLiteOpenHelper {
             }
         } catch (JSONException e) {
             return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 
@@ -146,8 +151,9 @@ public class StorageDbHelper extends SQLiteOpenHelper {
 
         String[] args = { newsId };
 
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(
+            cursor = db.query(
                     FavoriteData.FavoriteEntry.TABLE_NAME,
                     cols,
                     FavoriteData.FavoriteEntry.COLUMN_NAME_NEWS_ID + " = ?",
@@ -166,6 +172,10 @@ public class StorageDbHelper extends SQLiteOpenHelper {
             }
         } catch (JSONException e) {
             return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 
@@ -179,8 +189,9 @@ public class StorageDbHelper extends SQLiteOpenHelper {
 
         String[] args = { };
 
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(
+            cursor = db.query(
                     FavoriteData.FavoriteEntry.TABLE_NAME,
                     cols,
                     null, // no WHERE
@@ -203,6 +214,10 @@ public class StorageDbHelper extends SQLiteOpenHelper {
             return obj;
         } catch (JSONException e) {
             return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 
@@ -220,8 +235,9 @@ public class StorageDbHelper extends SQLiteOpenHelper {
 
         String[] args = { };
 
+        Cursor cursor = null;
         try {
-            Cursor cursor = db.query(
+            cursor = db.query(
                     HistoryData.HistoryEntry.TABLE_NAME,
                     cols,
                     null, // no WHERE
@@ -244,6 +260,10 @@ public class StorageDbHelper extends SQLiteOpenHelper {
             return obj;
         } catch (JSONException e) {
             return null;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 

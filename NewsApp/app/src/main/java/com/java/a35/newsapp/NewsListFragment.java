@@ -38,13 +38,15 @@ public class NewsListFragment extends Fragment {
     private static final int NEWS_LIST_LOADER_ID = 0;
     private Categories.CategoryType categoryType;
     private boolean isLoadingMore = false;
+    private boolean noMore = false;
     private int loadedPage = 0;
     private int expectPage = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("frag", "NewsListFragment.onCreate " + categoryType);
+
+        Log.d("frag", "NewsListFragment.onCreate");
 
         newsListCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
             @Override
@@ -58,6 +60,7 @@ public class NewsListFragment extends Fragment {
                                     return new NewsListLoader.Query(activity.getQuery(),
                                             loadedPage, expectPage, categoryType);
                                 } else {
+                                    Log.d("cb", "activity == null");
                                     return null;
                                 }
                             }
@@ -74,11 +77,6 @@ public class NewsListFragment extends Fragment {
 
             }
         };
-
-        if (savedInstanceState != null) {
-            loadedPage = savedInstanceState.getInt("loadedPage");
-            expectPage = savedInstanceState.getInt("expectPage");
-        }
     }
 
     @Nullable
@@ -90,6 +88,14 @@ public class NewsListFragment extends Fragment {
         Log.d("onCreateView", type);
         categoryType = Categories.CategoryType.valueOf(type);
 
+        if (savedInstanceState != null) {
+            Log.d("frag " + categoryType, "onCreateView, restoring saved state");
+            // loadedPage = savedInstanceState.getInt("loadedPage");
+            loadedPage = 0; // TODO(twd2)
+            expectPage = savedInstanceState.getInt("expectPage");
+            Log.d("frag " + categoryType, "saved state = " + loadedPage + "/" + expectPage);
+        }
+
         final SwipeRefreshLayout refreshLayout =
                 (SwipeRefreshLayout)inflater.inflate(R.layout.news_list, container, false);
         refreshLayout.setColorSchemeResources(R.color.colorAccent,
@@ -98,7 +104,7 @@ public class NewsListFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d("frag", "1");
+                Log.d("frag " + categoryType, "OnRefresh");
                 doRefresh();
             }
         });
@@ -107,7 +113,7 @@ public class NewsListFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView)refreshLayout.findViewById(R.id.newsList);
         assert recyclerView != null;
         setupRecyclerView(recyclerView);
-        getLoaderManager().initLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(recyclerView.getContext(),
@@ -122,7 +128,7 @@ public class NewsListFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 final int totalItemCount = linearLayoutManager.getItemCount();
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-                if (!isLoadingMore && totalItemCount <= (lastVisibleItem + 5) &&
+                if (!isLoadingMore && !noMore && totalItemCount <= (lastVisibleItem + 5) &&
                         getActivity() != null) {
                     isLoadingMore = true;
                     ++expectPage;
@@ -133,7 +139,7 @@ public class NewsListFragment extends Fragment {
                                 ((NewsItemRecyclerViewAdapter) recyclerView.getAdapter())
                                         .mValues.add(null);
                                 recyclerView.getAdapter().notifyItemInserted(totalItemCount);
-                                Log.d("frag", "2");
+                                Log.d("frag" + categoryType, "onScrolled");
                                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null,
                                         newsListCallbacks);
                             }
@@ -176,6 +182,14 @@ public class NewsListFragment extends Fragment {
             return;
         }
 
+        Log.d("frag " + categoryType, "update = " + obj);
+
+        if (obj == null) {
+            Log.d("frag " + categoryType, "loader returned null, retrying");
+            getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+            return;
+        }
+
         Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         Categories.Category category = categories.categories.get(categoryType);
 
@@ -190,6 +204,13 @@ public class NewsListFragment extends Fragment {
 
         try {
             JSONArray newsList = obj.getJSONArray("list");
+
+            if (loadedPage != expectPage && newsList.length() == 0) {
+                noMore = true;
+            } else {
+                noMore = false;
+            }
+
             for (int i = 0; i < newsList.length(); ++i) {
                 JSONObject news = newsList.getJSONObject(i);
                 category.addItem(new Categories.NewsItem(news.getString("news_ID"),
@@ -198,6 +219,8 @@ public class NewsListFragment extends Fragment {
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
         }
+
+        Log.d("frag " + categoryType, "list.size = " + category.items.size());
 
         loadedPage = expectPage;
         isLoadingMore = false;
@@ -210,8 +233,12 @@ public class NewsListFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.d("frag " + categoryType, "onSaveInstanceState");
         outState.putInt("loadedPage", loadedPage);
         outState.putInt("expectPage", expectPage);
+        outState.putString("category", categoryType.toString());
     }
 
     public class NewsItemRecyclerViewAdapter
@@ -231,13 +258,13 @@ public class NewsListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mItem = mValues.get(position);
 
             if (holder.mItem == null) {
                 holder.mSourceView.setText("");
                 holder.mDatetimeView.setText("");
-                holder.mTitleView.setText("加载更多中...");
+                holder.mTitleView.setText(R.string.loading_more);
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -274,6 +301,8 @@ public class NewsListFragment extends Fragment {
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    holder.mItem.read = true;
+                    notifyItemChanged(position);
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_CATEGORY, categoryType.toString());

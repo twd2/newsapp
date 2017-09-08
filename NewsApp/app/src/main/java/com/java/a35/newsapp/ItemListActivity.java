@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,19 +13,15 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -177,12 +172,6 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        doRefresh();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
@@ -191,7 +180,7 @@ public class ItemListActivity extends AppCompatActivity {
         final SearchView searchView = (SearchView) search.getActionView();
         SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
         searchView.setSearchableInfo(info);
-        searchView.setQueryHint("搜索新闻");
+        searchView.setQueryHint(getString(R.string.search_news));
         searchView.setIconifiedByDefault(true);
 
         if (mViewPager != null) {
@@ -209,6 +198,12 @@ public class ItemListActivity extends AppCompatActivity {
         if (query != null && query.length() > 0) {
             search.expandActionView();
             searchView.setQuery(query, false);
+            InputMethodManager imm =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+            }
+            searchView.clearFocus();
         }
 
         MenuItemCompat.setOnActionExpandListener(search, new MenuItemCompat.OnActionExpandListener() {
@@ -227,10 +222,9 @@ public class ItemListActivity extends AppCompatActivity {
             }
         });
 
-        mSearchView = searchView;
-        mSearchView.onActionViewExpanded();
-        mSearchView.setIconifiedByDefault(true);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.onActionViewExpanded();
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String queryText) {
                 Log.d("search", queryText);
@@ -243,17 +237,19 @@ public class ItemListActivity extends AppCompatActivity {
                 query = queryText;
                 doRefresh();
 
-                if (mSearchView != null) {
+                if (searchView != null) {
                     InputMethodManager imm =
                             (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {
-                        imm.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
+                        imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
                     }
-                    mSearchView.clearFocus();
+                    searchView.clearFocus();
                 }
                 return true;
             }
         });
+
+        mSearchView = searchView;
 
         return true;
     }
@@ -261,12 +257,16 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CATEGORY) {
+            Log.d("list", "notifyDataSetChanged");
             mViewPager.getAdapter().notifyDataSetChanged();
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Log.d("list", "onSaveInstanceState");
         outState.putString("query", query);
         outState.putInt("tab_id", mViewPager.getCurrentItem());
     }
@@ -312,7 +312,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return mCategories.enabledCategories[position].getName();
+            return getString(mCategories.enabledCategories[position].getNameId());
         }
     }
 

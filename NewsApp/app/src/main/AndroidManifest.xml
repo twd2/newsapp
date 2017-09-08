@@ -43,7 +43,7 @@
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".CategoryActivity"
-            android:label="分类" />
+            android:label="@string/categories" />
         <activity
             android:name=".SetBlockListActivity"
             android:label="@string/setBlockList" />

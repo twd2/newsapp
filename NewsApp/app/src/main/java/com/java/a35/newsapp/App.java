@@ -7,6 +7,10 @@ import java.util.Arrays;
 
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
+import java.util.Locale;
+import android.content.res.Configuration;
+
+
 /**
  * Created by twd2 on 17/8/30.
  */
