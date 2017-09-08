@@ -2,9 +2,7 @@ package com.java.a35.newsapp;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorInt;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.graphics.Color;
@@ -12,8 +10,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,24 +121,29 @@ public class ItemDetailFragment extends Fragment {
         return rootView;
     }
 
-    protected String wordToLink(String str, JSONArray array) throws JSONException, IOException {
+    protected String wordToLink(String str, JSONArray array) throws JSONException {
         String result = str;
         for (int i = 0; i < array.length(); i++) {
             String word = array.getJSONObject(i).getString("word");
             // TODO(twd2): String.replace?
             Pattern p = Pattern.compile(word);
             Matcher m = p.matcher(result);
+            String urlPart = "";
+            try {
+                urlPart = URLEncoder.encode(word, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             String dst = String.format(
                     "<a href=\"https://baike.baidu.com/item/%s\" target=\"_blank\">%s</a>",
-                    URLEncoder.encode(word, "UTF-8"),
+                    urlPart,
                     word);
             result = m.replaceFirst(dst);
         }
         return result;
     }
 
-    protected String linkToEncyclopedia(String str, JSONObject obj)
-            throws JSONException, IOException {
+    protected String linkToEncyclopedia(String str, JSONObject obj) throws JSONException {
         JSONArray locations = obj.getJSONArray("locations");
         JSONArray organizations = obj.getJSONArray("organizations");
         JSONArray persons = obj.getJSONArray("persons");
@@ -195,8 +195,6 @@ public class ItemDetailFragment extends Fragment {
                         sb.toString(),
                         "text/html", "UTF-8", null);
             } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
