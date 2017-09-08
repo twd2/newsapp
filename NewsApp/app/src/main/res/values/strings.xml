@@ -78,7 +78,6 @@
     <string name="keyword">keyword</string>
     <string name="block">Block</string>
     <string name="unblock">Unblock</string>
-    <string name="save_and_exit">Save and Exit</string>
     <string name="blocking_setting">Blocking Setting</string>
     <string name="setBlockList">Set BlockList</string>
 
