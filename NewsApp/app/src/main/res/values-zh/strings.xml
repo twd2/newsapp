@@ -11,7 +11,7 @@
     <string name="save_and_exit">保存并退出</string>
     <string name="share">分享</string>
     <string name="search_news">搜索新闻</string>
-    <string name="share_to_sns">分享到SNS</string>
+    <string name="share_to_sns">分享到社交网络</string>
     <string name="tts_failed">语音合成失败。错误代码：</string>
     <string name="TTS_engine_init_fail">语音合成引擎初始化失败。</string>
     <string name="from_my_newsapp">来自我的NewsApp</string>
@@ -35,6 +35,4 @@
     <string name="category_short_health">健康</string>
     <string name="category_short_international">国际</string>
     <string name="category_short_military">军事</string>
-    <string name="ads_space_for_rent">广告位招租</string>
-    <string name="contracts">联系：</string>
 </resources>
