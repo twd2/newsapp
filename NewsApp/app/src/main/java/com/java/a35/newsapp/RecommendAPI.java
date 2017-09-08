@@ -57,9 +57,9 @@ public class RecommendAPI {
         int counter = 0;
         while (counter < newsNum) {
             int randomCategory = rn.nextInt(API.CATEGORY_MAX - API.CATEGORY_MIN + 1);
-            JSONArray currentListNews = (all.getJSONObject(randomCategory)).getJSONArray("list");
+            JSONArray currentListNews = all.getJSONObject(randomCategory).getJSONArray("list");
             int randomIndex = rn.nextInt(currentListNews.length());
-            String newsID = (currentListNews.getJSONObject(randomIndex)).getString("news_ID");
+            String newsID = currentListNews.getJSONObject(randomIndex).getString("news_ID");
             if (!newsIdSet.contains(newsID)) {
                 newsIdSet.add(newsID);
                 array.put(currentListNews.getJSONObject(randomIndex));
@@ -73,9 +73,9 @@ public class RecommendAPI {
             throws JSONException {
         float sum = 0;
         for (int i = 0; i < target.length(); i++) {
-                String keyword = (target.getJSONObject(i)).getString("word");
+                String keyword = target.getJSONObject(i).getString("word");
                 if (history.containsKey(keyword)) {
-                    sum += (history.get(keyword) * (target.getJSONObject(i)).getDouble("score"));
+                    sum += history.get(keyword) * target.getJSONObject(i).getDouble("score");
                 }
         }
         return sum;
@@ -100,7 +100,7 @@ public class RecommendAPI {
             throws JSONException {
         Hashtable<String, Float> table = new Hashtable<>();
         for (int i = 0; i < historyNews.length(); i++) {
-            JSONArray keyWords = (historyNews.getJSONObject(i)).getJSONArray("Keywords");
+            JSONArray keyWords = historyNews.getJSONObject(i).getJSONArray("Keywords");
             for (int j = 0; j < keyWords.length(); j++) {
                 String word = keyWords.getJSONObject(j).getString("word");
                 float score = (float) keyWords.getJSONObject(j).getDouble("score");
@@ -121,8 +121,8 @@ public class RecommendAPI {
         }
 
         API api = app.getApi();
-        StorageDbHelper storageDbHelper = app.getDb();
-        JSONArray historyNews = (storageDbHelper.getListHistory(1, HISTORY_NEWS_NUM)).getJSONArray("list");
+        StorageDbHelper db = app.getDb();
+        JSONArray historyNews = db.getListHistory(1, HISTORY_NEWS_NUM).getJSONArray("list");
 
         int readNewsNum = historyNews.length();
         Hashtable<String, Float> wordScoreMap = generateWordScoreTable(historyNews);
@@ -139,13 +139,13 @@ public class RecommendAPI {
 
         ArrayList<NewsAndScore> array = new ArrayList<>();
 
-        for(int i = 0; i < topWords.length; i++) {
-            JSONArray allWordNews = (api.searchAllNews(topWords[i], 1, KEYWORD_SEARCH_SAMPLE))
+        for (int i = 0; i < topWords.length; i++) {
+            JSONArray allWordNews = api.searchAllNews(topWords[i], 1, KEYWORD_SEARCH_SAMPLE)
                     .getJSONArray("list");
             for (int j = 0; j < allWordNews.length(); j++) {
                 JSONObject newsIntro = allWordNews.getJSONObject(j);
                 String newsID = newsIntro.getString("news_ID");
-                if (storageDbHelper.getHistory(newsID) == null) {
+                if (db.getHistory(newsID) == null) {
                     JSONObject newsDetail = api.getNews(newsIntro.getString("news_ID"));
                     float score = getScore(wordScoreMap, newsDetail.getJSONArray("Keywords"));
                     array.add(new NewsAndScore(newsIntro, score));
