@@ -4,6 +4,7 @@ import android.os.Bundle;
 import java.util.*;
 
 import android.support.v4.content.res.ResourcesCompat;
+import android.text.Html;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup.LayoutParams;
+import android.graphics.Color;
+import android.widget.TextView;
 
 
 /**
