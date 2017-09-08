@@ -32,7 +32,6 @@ public class CategoryActivity extends AppCompatActivity {
         int childCount = categoryTableLayout.getChildCount();
         int rowChildCount = ((TableRow)categoryTableLayout.getChildAt(0)).getChildCount();
 
-
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int width = metrics.widthPixels;

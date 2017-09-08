@@ -79,13 +79,13 @@
     <string name="share">Share</string>
     <string name="save_and_exit">Save and Exit</string>
     <string name="view_source">View Source</string>
-    <string name="now_loading">Loading...</string>
-    <string name="loading_failed">Load failed :(</string>
+    <string name="loading">Loading...</string>
+    <string name="load_failed">Load failed :(</string>
     <string name="share_to_sns">Share to SNS</string>
     <string name="from_my_newsapp">from my NewsApp</string>
     <string name="tts_failed">"Text to Speech failed. Error code: "</string>
     <string name="reading">Reading...</string>
-    <string name="TTS_engine_init_fail">Text to Speech Engine initialize failed.</string>
+    <string name="tts_engine_init_failed">Text to Speech Engine initialize failed.</string>
     <string name="search_news">Search News</string>
     <string name="loading_more">Loading more...</string>
     <string name="show_pictures">Show Pictures</string>
@@ -106,4 +106,9 @@
     <string name="category_short_financial">Finance</string>
     <string name="category_short_health">Health</string>
     <string name="category_short_automobile">Auto</string>
+    <string name="read_completed">Read Completed</string>
+    <string name="cancel">Cancel</string>
+    <string name="marked_as_favorite">Marked as favorite.</string>
+    <string name="canceled">Canceled</string>
+    <string name="categories">Categories</string>
 </resources>

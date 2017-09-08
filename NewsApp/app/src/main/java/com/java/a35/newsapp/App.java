@@ -28,13 +28,6 @@ public class App extends Application {
         api = new API(API.SERVER_URL, cachedLoader);
         pictureApi = new PictureAPI(cachedLoader);
         db = new StorageDbHelper(this);
-        String languageToLoad  = "en"; // your language
-        Locale locale = new Locale(languageToLoad);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config,
-                getBaseContext().getResources().getDisplayMetrics());
     }
 
     public API getApi() {

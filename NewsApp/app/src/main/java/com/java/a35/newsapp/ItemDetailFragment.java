@@ -115,7 +115,7 @@ public class ItemDetailFragment extends Fragment {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);
             webView.setBackgroundColor(Color.TRANSPARENT);
             webView.loadDataWithBaseURL(null, "<p>" +
-                            getString(R.string.now_loading) +
+                            getString(R.string.loading) +
                             "</p>",
                     "text/html", "UTF-8", null);
         }
@@ -173,7 +173,8 @@ public class ItemDetailFragment extends Fragment {
                 if (show_picture) {
                     JSONArray picturesPath = obj.getJSONArray("pictures_path");
                     for (int i = 0; i < picturesPath.length(); i++) {
-                        pictureHtml.append(String.format("<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
+                        pictureHtml.append(String.format(
+                                "<p><img src=\"file://%s\" alt=\"xxx\" style=\"max-width: 100%%\" /></p>",
                                 picturesPath.getString(i)));
                     }
                 }
@@ -207,7 +208,7 @@ public class ItemDetailFragment extends Fragment {
             }
         } else {
             webView.loadDataWithBaseURL(null, "<h1>" +
-                    getString(R.string.loading_failed) +
+                    getString(R.string.load_failed) +
                     " :(</h1>", "text/html", "UTF-8", null);
         }
     }

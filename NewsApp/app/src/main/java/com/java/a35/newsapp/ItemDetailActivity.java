@@ -55,13 +55,14 @@ public class ItemDetailActivity extends AppCompatActivity {
                         // TODO(twd2): async?
                         final StorageDbHelper db = ((App)getApplicationContext()).getDb();
                         db.setFavorite(mItem.obj, true);
-                        Snackbar.make(getCurrentFocus(), "已收藏", Snackbar.LENGTH_LONG)
-                                .setAction("取消", new View.OnClickListener() {
+                        Snackbar.make(getCurrentFocus(),
+                                R.string.marked_as_favorite, Snackbar.LENGTH_LONG)
+                                .setAction(R.string.cancel, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         db.setFavorite(mItem.obj, false);
                                         Toast.makeText(ItemDetailActivity.this,
-                                                "已取消收藏", Toast.LENGTH_SHORT).show();
+                                                R.string.canceled, Toast.LENGTH_SHORT).show();
                                     }
                                 }).show();
                         break;
@@ -155,8 +156,10 @@ public class ItemDetailActivity extends AppCompatActivity {
         // TODO(twd2): image
         // share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
         // extra for WeChat
-        share.putExtra("Kdescription", "测试描述 ——发自我的 NewsApp");
-        share.putExtra(Intent.EXTRA_TEXT, mItem.title + getString(R.string.from_my_newsapp));
+        share.putExtra("Kdescription", "测试描述" +
+                " -- " + getString(R.string.from_my_newsapp));
+        share.putExtra(Intent.EXTRA_TEXT, mItem.title +
+                " -- " + getString(R.string.from_my_newsapp));
         startActivity(Intent.createChooser(share, getString(R.string.share_to_sns)));
     }
 
@@ -191,7 +194,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(ItemDetailActivity.this,
-                    R.string.TTS_engine_init_fail, Toast.LENGTH_SHORT).show();
+                    R.string.tts_engine_init_failed, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -238,7 +241,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             if (error == null) {
                 Log.d("tts", "播放完成");
                 Toast.makeText(ItemDetailActivity.this,
-                        "播放完成", Toast.LENGTH_SHORT).show();
+                        R.string.read_completed, Toast.LENGTH_SHORT).show();
             } else {
                 Log.d("tts", error.getPlainDescription(true));
                 Toast.makeText(ItemDetailActivity.this,
