@@ -126,10 +126,11 @@ public class ItemDetailFragment extends Fragment {
         return rootView;
     }
 
-    protected String wordToLink(String str, JSONArray array) throws JSONException, IOException{        //将word替换为超链接
+    protected String wordToLink(String str, JSONArray array) throws JSONException, IOException {
         String result = str;
-        for(int i = 0; i < array.length(); i++){
+        for (int i = 0; i < array.length(); i++) {
             String word = array.getJSONObject(i).getString("word");
+            // TODO(twd2): String.replace?
             Pattern p = Pattern.compile(word);
             Matcher m = p.matcher(result);
             String dst = String.format(
@@ -141,8 +142,8 @@ public class ItemDetailFragment extends Fragment {
         return result;
     }
 
-    protected String linkToEncyclopedia(String str, JSONObject obj) throws JSONException, IOException{                     //人物地点链接
-        ArrayList<String> keyWords = new ArrayList<String>();
+    protected String linkToEncyclopedia(String str, JSONObject obj)
+            throws JSONException, IOException {
         JSONArray locations = obj.getJSONArray("locations");
         JSONArray organizations = obj.getJSONArray("organizations");
         JSONArray persons = obj.getJSONArray("persons");
