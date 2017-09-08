@@ -20,8 +20,9 @@ public class RecommendAPI {
 
     static final int RANDOM_SAMPLE_NUM = 10;              //每次各个种类中随机抽样的数量
     static final int KEYWORD_SEARCH_SAMPLE = 10;          //每次根据KEY_WORD进行一次Search（不限category）,得到样本的数量
-    static final int KEYWORDS_NUM = 3;                      //每次进行search的keyword的数量
+    static final int KEYWORDS_NUM = 5;                      //每次进行search的keyword的数量
     static final int RANDOM_MIN = 2;                         //完全随机新闻最小数量
+    static final int HISTORY_NEWS_NUM = 5;                //与推荐相关的最近的历史记录
     //进行推荐的方法大致如下：每次分别从完全随机的新闻和根据关键字搜索的新闻选出一部分进行推荐
 
 
@@ -122,7 +123,7 @@ public class RecommendAPI {
 
         API api = ((App) context).getApi();
         StorageDbHelper storageDbHelper = ((App) context).getDb();
-        JSONArray historyNews = (storageDbHelper.getListHistory(1)).getJSONArray("list");
+        JSONArray historyNews = (storageDbHelper.getListHistory(1, HISTORY_NEWS_NUM)).getJSONArray("list");
 
         int readNewsNum = historyNews.length();
         Hashtable<String, Float> wordScoreMap = generateWordScoreTable(historyNews);
@@ -144,15 +145,18 @@ public class RecommendAPI {
                     1, KEYWORD_SEARCH_SAMPLE)).getJSONArray("list");
             for(int j = 0; j < allWordNews.length(); j++){
                 JSONObject newsSketch = allWordNews.getJSONObject(j);
-                JSONObject newsDetail = api.getNews(newsSketch.getString("news_ID"));
-                float score = get_score(wordScoreMap, newsDetail.getJSONArray("Keywords"));
-                array.add(new newsAndScore(newsSketch, score));
+                String newsID = newsSketch.getString("news_ID");
+                if(storageDbHelper.getHistory(newsID) == null) {
+                    JSONObject newsDetail = api.getNews(newsSketch.getString("news_ID"));
+                    float score = get_score(wordScoreMap, newsDetail.getJSONArray("Keywords"));
+                    array.add(new newsAndScore(newsSketch, score));
+                }
             }
         }
 
         JSONArray recommendArray = new JSONArray();
         Collections.sort(array);             //从大到小排序
-        int randomNewsNum = randomNewsNum(readNewsNum);
+        int randomNewsNum = Math.min(randomNewsNum(readNewsNum), array.size());
         JSONArray randomNewsArray = getRandomNews(randomNewsNum);
 
         for(int i = 0; i < recommendSize - randomNewsNum; i++){
