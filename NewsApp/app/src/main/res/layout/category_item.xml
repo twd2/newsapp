@@ -8,15 +8,11 @@
 
     <ImageView
         android:id="@+id/categoryImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/category_sports"
+        android:layout_width="@dimen/category_image_length"
+        android:layout_height="@dimen/category_image_length"
         android:scaleType="fitCenter"
-        android:layout_marginLeft="@dimen/category_right_margin"
-        android:layout_marginRight="@dimen/category_right_margin"
-        android:layout_marginTop="@dimen/category_upper_margin"
-        android:layout_marginBottom="@dimen/category_upper_margin"
-        />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/categoryButton"
@@ -39,10 +35,9 @@
         android:layout_height="30dp"
         app:srcCompat="@drawable/ic_check_black_24dp"
         android:elevation="10dp"
-        android:layout_alignTop="@+id/categoryImage"
-        android:layout_alignLeft="@+id/categoryImage"
-        android:layout_alignStart="@+id/categoryImage"
         android:layout_marginTop="9dp"
-        android:layout_marginLeft="2dp"/>
+        android:layout_alignTop="@+id/categoryButton"
+        android:layout_alignLeft="@+id/categoryButton"
+        android:layout_alignStart="@+id/categoryButton" />
 
 </RelativeLayout>

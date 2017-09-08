@@ -8,7 +8,8 @@
     <color name="categoryDisabledColor">#44000000</color>
     <color name="categoryDisabledTextColor">#CC000000</color>
     <color name="categoryEnabledColor">#CC000000</color>
-    <color name="categoryEnabledTextColor">#DDEEEEEE</color>
+    <color name="categoryEnabledTextColor">#FFBDC7C1</color>
     <color name="primary_text_dark">#FFBDC7C1</color>
     <color name="newsTitleRead">#FF7E8889</color>
+    <color name="icon_color">#FFBDC7C1</color>
 </resources>
