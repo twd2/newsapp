@@ -11,21 +11,19 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/app_bar_tts"
-        android:icon="@drawable/ic_play_white_24dp"
-        android:title="朗读"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/app_bar_share"
         android:icon="@drawable/ic_share_white_24dp"
         android:title="分享"
         support:showAsAction="always" />
-
+    <item
+        android:id="@+id/app_bar_tts"
+        android:icon="@drawable/ic_play_white_24dp"
+        android:title="朗读"
+        support:showAsAction="ifRoom" />
     <item
         android:id="@+id/app_bar_block"
         android:icon="@drawable/ic_block"
         android:title="@string/blocking_setting"
-        support:showAsAction="always" />
+        support:showAsAction="ifRoom" />
 
 </menu>

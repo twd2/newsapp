@@ -86,7 +86,7 @@ public class SetBlockListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id){
-            case R.id.home:
+            case android.R.id.home:
                 finish();
                 return true;
             case R.id.app_bar_exit:
