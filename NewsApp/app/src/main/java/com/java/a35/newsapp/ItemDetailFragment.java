@@ -2,9 +2,7 @@ package com.java.a35.newsapp;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorInt;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.graphics.Color;
@@ -12,8 +10,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +19,12 @@ import android.webkit.WebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * A fragment representing a single Item detail screen.
@@ -119,6 +121,39 @@ public class ItemDetailFragment extends Fragment {
         return rootView;
     }
 
+    protected String wordToLink(String str, JSONArray array) throws JSONException {
+        String result = str;
+        for (int i = 0; i < array.length(); i++) {
+            String word = array.getJSONObject(i).getString("word");
+            // TODO(twd2): String.replace?
+            Pattern p = Pattern.compile(word);
+            Matcher m = p.matcher(result);
+            String urlPart = "";
+            try {
+                urlPart = URLEncoder.encode(word, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String dst = String.format(
+                    "<a href=\"https://baike.baidu.com/item/%s\" target=\"_blank\">%s</a>",
+                    urlPart,
+                    word);
+            result = m.replaceFirst(dst);
+        }
+        return result;
+    }
+
+    protected String linkToEncyclopedia(String str, JSONObject obj) throws JSONException {
+        JSONArray locations = obj.getJSONArray("locations");
+        JSONArray organizations = obj.getJSONArray("organizations");
+        JSONArray persons = obj.getJSONArray("persons");
+        String result = str;
+        result = wordToLink(result, locations);
+        result = wordToLink(result, organizations);
+        result = wordToLink(result, persons);
+        return result;
+    }
+
     protected void showDetail(JSONObject obj) {
         WebView webView = (WebView) getView().findViewById(R.id.item_web);
         webView.setBackgroundColor(Color.TRANSPARENT);
@@ -126,6 +161,8 @@ public class ItemDetailFragment extends Fragment {
             try {
                 // TODO(twd2): !!!
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
+                String htmlDetail = TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>");
+                htmlDetail = linkToEncyclopedia(htmlDetail, obj);
                 StringBuilder sb = new StringBuilder();
                 boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
                         .getBoolean("show_pictures", true));
@@ -151,7 +188,7 @@ public class ItemDetailFragment extends Fragment {
                                       "<a href=\"%s\" target=\"_blank\">查看原文</a>",
                                 styleString,
                                 TextUtils.htmlEncode(mItem.title),
-                                TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>"),
+                                htmlDetail,
                                 obj.getString("news_URL")));
 
                 webView.loadDataWithBaseURL(null,

@@ -47,6 +47,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
     public JSONObject loadInBackground() {
         Log.d("loader", "loading... " + toString());
         API api = ((App) getContext().getApplicationContext()).getApi();
+        RecommendAPI recommendAPI = new RecommendAPI(getContext());
         StorageDbHelper db = ((App) getContext().getApplicationContext()).getDb();
 
         Query query = queryCallback.getQuery();
@@ -75,8 +76,8 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                     if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
                         subObj = api.getListNews(category, page);
                     } else if (query.category == Categories.CategoryType.RECOMMENDED) {
-                        // TODO(twd2): list recommended
-                        subObj = api.getListNews(category, page);
+                        // list recommended
+                        subObj = recommendAPI.getRecommendNews(page);
                     } else if (query.category == Categories.CategoryType.FAVORITE) {
                         // list favorite
                         subObj = db.getListFavorite(page);
