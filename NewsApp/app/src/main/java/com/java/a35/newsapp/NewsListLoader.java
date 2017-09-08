@@ -45,14 +45,16 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
     @Override
     public JSONObject loadInBackground() {
-        Log.d("loader", "loading... " + toString());
+        Log.d("loader", "this = " + toString());
         API api = ((App) getContext().getApplicationContext()).getApi();
+        RecommendAPI recommendAPI = new RecommendAPI(getContext());
         StorageDbHelper db = ((App) getContext().getApplicationContext()).getDb();
 
         Query query = queryCallback.getQuery();
-        Log.d("loader", "loading... " + query);
+        Log.d("loader", "query = " + query);
 
         if (query == null) {
+            Log.d("loader", "query == null, returning");
             return null;
         }
 
@@ -61,7 +63,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
             JSONObject obj = new JSONObject();
             JSONArray list = new JSONArray();
             obj.put("list", list);
-            Log.d("loading", query.loadedPage + "/" + query.expectPage);
+            Log.d("loader", "page = " + query.loadedPage + "/" + query.expectPage);
             for (int page = query.loadedPage + 1; page <= query.expectPage; ++page) {
                 JSONObject subObj;
                 if (query.query != null && query.query.length() > 0) {
@@ -75,8 +77,8 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                     if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
                         subObj = api.getListNews(category, page);
                     } else if (query.category == Categories.CategoryType.RECOMMENDED) {
-                        // TODO(twd2): list recommended
-                        subObj = api.getListNews(category, page);
+                        // list recommended
+                        subObj = recommendAPI.getRecommendNews(page);
                     } else if (query.category == Categories.CategoryType.FAVORITE) {
                         // list favorite
                         subObj = db.getListFavorite(page);
@@ -95,6 +97,8 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
             }
             return obj;
         } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            Log.d("loader", "an exception occurred, returning");
             return null;
         }
     }

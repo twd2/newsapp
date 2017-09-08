@@ -18,12 +18,11 @@ import java.util.Map;
 public class PictureAPI {
     public static final String IMAGE_SERVER_URL = "https://api.cognitive.microsoft.com";
     public static final String IMAGE_SIZE = "Medium";   //there are five types of page sizes, Small, Medium, Large, Wallpaper and all
-    public static final int IMAGE_NUM = 1;               //for each of keyword, the number of picture grabbed is IMAGE_NUM
+    public static final int IMAGE_NUM = 3;               //for each of keyword, the number of picture grabbed is IMAGE_NUM
 
     public static final String SEARCH_PLACE = "zh-CN";     //the location of my client(in which country)
     public static final String SEARCH_KEY = "3f6dbf8a32c842cb996577084b329068";           //the key of using bing's api
     public static final String USER_AGENT = "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; NOKIA; Lumia 822)";
-    public static final int KEYWORD_NUM = 3;              //the number of keyword that will be queried
 
     private CachedLoader cachedLoader;
     private Map<String, String> headers;
@@ -67,37 +66,29 @@ public class PictureAPI {
         return new JSONObject(jsonString);
     }
 
-    private String[] getQueries(JSONObject inputNews) throws IOException, JSONException {
-        JSONArray keywordsArray = inputNews.getJSONArray("Keywords");
-        int length = Math.min(KEYWORD_NUM, keywordsArray.length());
-        String[] keywords = new String[length];
-        for (int i = 0; i < length; i++) {
-            keywords[i] = keywordsArray.getJSONObject(i).getString("word");
-        }
-        return keywords;
-    }
-
-    public JSONObject getImages(String queryKeyword) throws IOException, JSONException {
+    public JSONArray getImages(String queryKeyword) throws IOException, JSONException {
         String queryString = String.format("q=%s&mkt=%s&count=%d",
                 URLEncoder.encode(queryKeyword, "UTF-8"),
                 SEARCH_PLACE, IMAGE_NUM);
         JSONObject src = cachedGet("/bing/v7.0/images/search", queryString);
         JSONArray imagesArray = src.getJSONArray("value");
-        return imagesArray.getJSONObject(0);
+        return imagesArray;
     }
 
     public JSONArray getImageJson(JSONObject inputNews) throws IOException, JSONException {
-        String[] queries = getQueries(inputNews);
+        String query = inputNews.getString("news_Title");
         JSONArray images = new JSONArray();
-        for (int i = 0; i < queries.length; i++) {
-            JSONObject src = getImages(queries[i]);
+        JSONArray src = getImages(query);
+        if (src.length() == 0) {
+            query = inputNews.getJSONArray("Keywords").getJSONObject(0).getString("word");
+            src = getImages(query);
+        }
+        for (int i = 0; i < src.length(); i++) {
             JSONObject dst = new JSONObject();
-            dst.put("url", src.getString("contentUrl"));
-            dst.put("encodingFormat", src.getString("encodingFormat"));
-            dst.put("keyword", queries[i]);
+            dst.put("url", src.getJSONObject(i).getString("contentUrl"));
+            dst.put("encodingFormat", src.getJSONObject(i).getString("encodingFormat"));
             images.put(dst);
         }
-        Log.d("ImageAPI", images.toString());
         return images;
     }
 
