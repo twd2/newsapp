@@ -155,13 +155,13 @@ public class RecommendAPI {
         JSONArray recommendArray = new JSONArray();
 
         Collections.sort(array); //从大到小排序
-        int randomNewsNum = Math.min(randomNewsNum(readNewsNum), array.size());
+        int randomNewsNum = Math.max(randomNewsNum(readNewsNum), recommendSize - array.size());
         JSONArray randomNewsArray = getRandomNews(randomNewsNum);
 
         for (int i = 0; i < recommendSize - randomNewsNum; i++) {
             recommendArray.put(array.get(i).newsIntro);
         }
-        for (int i = 0; i < randomNewsNum; i++) {
+        for (int i = 0; i < randomNewsArray.length(); i++) {
             recommendArray.put(randomNewsArray.get(i));
         }
 
