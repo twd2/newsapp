@@ -245,7 +245,8 @@ public class ItemListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CATEGORY) {
             Log.d("list", "notifyDataSetChanged");
-            mViewPager.getAdapter().notifyDataSetChanged();
+            // reset adaptor
+            mViewPager.setAdapter(mViewPager.getAdapter());
         }
     }
 

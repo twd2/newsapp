@@ -177,6 +177,10 @@ public class NewsListFragment extends Fragment {
         getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
     }
 
+    public void setCategoryType(Categories.CategoryType categoryType) {
+        this.categoryType = categoryType;
+    }
+
     private void updateNews(JSONObject obj, boolean append) {
         if (getContext() == null) {
             return;
@@ -238,7 +242,7 @@ public class NewsListFragment extends Fragment {
         Log.d("frag " + categoryType, "onSaveInstanceState");
         outState.putInt("loadedPage", loadedPage);
         outState.putInt("expectPage", expectPage);
-        outState.putString("category", categoryType.toString());
+        // outState.putString("category", categoryType.toString());
     }
 
     public class NewsItemRecyclerViewAdapter
