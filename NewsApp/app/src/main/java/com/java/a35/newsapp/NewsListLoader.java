@@ -76,7 +76,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                     if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
                         subObj = api.getListNews(category, page);
                     } else if (query.category == Categories.CategoryType.RECOMMENDED) {
-                        // TODO(wuhaozhe): list recommended
+                        // list recommended
                         subObj = recommendAPI.getRecommendNews(page);
                     } else if (query.category == Categories.CategoryType.FAVORITE) {
                         // list favorite
@@ -86,6 +86,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                         return null;
                     }
                 }
+
                 JSONArray subList = subObj.getJSONArray("list");
                 for (int i = 0; i < subList.length(); ++i) {
                     JSONObject news = subList.getJSONObject(i);

@@ -79,12 +79,11 @@ public class PictureAPI {
         String query = inputNews.getString("news_Title");
         JSONArray images = new JSONArray();
         JSONArray src = getImages(query);
-        if(src.length() == 0)
-        {
+        if (src.length() == 0) {
             query = inputNews.getJSONArray("Keywords").getJSONObject(0).getString("word");
             src = getImages(query);
         }
-        for(int i = 0; i < src.length(); i++) {
+        for (int i = 0; i < src.length(); i++) {
             JSONObject dst = new JSONObject();
             dst.put("url", src.getJSONObject(i).getString("contentUrl"));
             dst.put("encodingFormat", src.getJSONObject(i).getString("encodingFormat"));
