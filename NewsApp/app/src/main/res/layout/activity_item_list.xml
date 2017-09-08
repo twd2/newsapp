@@ -17,7 +17,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,13 +39,14 @@
 
                 <ImageButton
                     android:id="@+id/addCategory"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/category_width"
                     android:layout_height="@dimen/category_height"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:scaleType="fitCenter"
+                    android:scaleType="center"
                     android:background="@color/background_holo_light"
+                    android:elevation="10dp"
                     app:srcCompat="@drawable/category" />
         </LinearLayout>
                     
@@ -62,29 +64,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <!--<android.support.v4.widget.SwipeRefreshLayout-->
-            <!--android:id="@+id/refreshLayout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-            <!--<include-->
-                <!--layout="@layout/item_list"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content" />-->
-
-        <!--</android.support.v4.widget.SwipeRefreshLayout>-->
     </FrameLayout>
-
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="top|left"-->
-        <!--android:layout_margin="@dimen/fab_margin"-->
-        <!--app:backgroundTint="@color/colorPrimaryDark"-->
-        <!--app:layout_anchor="@+id/refreshLayout"-->
-        <!--app:layout_anchorGravity="bottom|right"-->
-        <!--app:srcCompat="@android:drawable/ic_menu_sort_by_size" />-->
-
 
 </android.support.design.widget.CoordinatorLayout>
