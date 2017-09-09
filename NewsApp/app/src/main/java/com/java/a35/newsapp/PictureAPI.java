@@ -94,7 +94,7 @@ public class PictureAPI {
 
     public void checkAndAddImage(JSONObject inputNews) throws IOException, JSONException {
         if (!inputNews.getString("news_Pictures").equals("")) {
-            inputNews.put("searchImage", false);
+            inputNews.put("isSearchedImages", false);
         } else {
             Log.d("picture", "searching images");
             JSONArray imagePaths = getImageJson(inputNews);
@@ -104,7 +104,7 @@ public class PictureAPI {
                 sb.append(";");
             }
             inputNews.put("news_Pictures", sb.toString());
-            inputNews.put("searchImage", true);
+            inputNews.put("isSearchedImages", true);
         }
     }
 }

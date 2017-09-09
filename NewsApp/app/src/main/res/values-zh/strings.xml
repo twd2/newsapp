@@ -46,4 +46,5 @@
     <string name="unblock">取消屏蔽</string>
     <string name="keyword">关键字</string>
     <string name="news_blocked">此新闻已被屏蔽</string>
+    <string name="searched_images">图片来自网络</string>
 </resources>
