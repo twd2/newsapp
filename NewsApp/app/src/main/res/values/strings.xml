@@ -75,11 +75,11 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
-    <string name="keyword">keyword</string>
+    <string name="keyword">Keyword</string>
     <string name="block">Block</string>
     <string name="unblock">Unblock</string>
-    <string name="blocking_setting">Blocking Setting</string>
-    <string name="setBlockList">Set BlockList</string>
+    <string name="block_settings">Block Settings</string>
+    <string name="title_block_settings">Block Settings</string>
 
     <string name="favorite">Favorite</string>
     <string name="read">Read</string>

@@ -1,6 +1,5 @@
 package com.java.a35.newsapp;
 
-import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -86,27 +85,26 @@ public class ItemDetailActivity extends AppCompatActivity {
                         break;
                     case R.id.app_bar_block:
                         if (mDetail == null) break;
-                        Intent intent = new Intent(ItemDetailActivity.this, SetBlockListActivity.class);
-                        ArrayList<String> keywordsList = new ArrayList<String>();
+                        Intent intent =
+                                new Intent(ItemDetailActivity.this, BlockSettingsActivity.class);
+                        ArrayList<String> keywordsList = new ArrayList<>();
                         try {
-                            ArrayList<Pair<Double, String> > candidatesList = new ArrayList<Pair<Double, String> >();
+                            ArrayList<Pair<Double, String> > candidatesList = new ArrayList<>();
                             Log.i("test", mDetail.toString());
                             JSONArray keywords = mDetail.getJSONArray("Keywords");
-                            for (int i = 0; i < keywords.length(); ++ i){
+                            for (int i = 0; i < keywords.length(); ++ i) {
                                 JSONObject kw = keywords.getJSONObject(i);
                                 candidatesList.add(Pair.create(kw.getDouble("score"), kw.getString("word")));
                             }
                             Collections.sort(candidatesList, new Comparator<Pair<Double, String>>() {
                                 @Override
                                 public int compare(Pair<Double, String> o1, Pair<Double, String> o2) {
-                                    if (o1.first > o2.first) return -1;
-                                    if (o1.first.equals(o2.first)) return 0;
-                                    if (o1.first < o2.first) return 1;
-                                    return 0;
+                                    return o1.first.compareTo(o2.first);
                                 }
                             });
-                            for (int i = 0; i < candidatesList.size() && i < 10; ++ i)
+                            for (int i = 0; i < candidatesList.size() && i < 10; ++ i) {
                                 keywordsList.add(candidatesList.get(i).second);
+                            }
                         } catch (JSONException e){
                             Log.e("test", Log.getStackTraceString(e));
                         }

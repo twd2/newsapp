@@ -1,12 +1,12 @@
 package com.java.a35.newsapp;
 
-
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -23,37 +23,46 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class SetBlockListActivity extends AppCompatActivity {
-    TreeMap<String, Boolean> mBlockMap;
-    ArrayList<String> mBlockList;
+public class BlockSettingsActivity extends AppCompatActivity {
+    public static final String PREFERENCES_BLOCK = "block";
 
-    void loadBlockListStatus(){
+    TreeMap<String, Boolean> mBlockMap;
+    ArrayList<String> mKeywords;
+
+    void loadBlockListStatus() {
         Set<String> blockSet =
-            PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-            .getStringSet("block_list", new HashSet<String>());
-        for (String blockSetItem : blockSet)
-            if (mBlockMap.containsKey(blockSetItem))
+                getSharedPreferences(PREFERENCES_BLOCK, Context.MODE_PRIVATE)
+                        .getStringSet("block_list", new HashSet<String>());
+        for (String blockSetItem : blockSet) {
+            if (mBlockMap.containsKey(blockSetItem)) {
                 mBlockMap.put(blockSetItem, true);
+            }
+        }
     }
 
-    void writeBlockListStatus(){
+    void writeBlockListStatus() {
         Set<String> blockSet =
-            PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-            .getStringSet("block_list", new HashSet<String>());
-        for (Map.Entry<String, Boolean> blockListItem: mBlockMap.entrySet()){
-            if (blockListItem.getValue())
-                blockSet.add(blockListItem.getKey());
-            else
-                blockSet.remove(blockListItem.getKey());
+                getSharedPreferences(PREFERENCES_BLOCK, Context.MODE_PRIVATE)
+                        .getStringSet("block_list", new HashSet<String>());
+        /* Note that you must not modify the set instance returned by this call.
+           The consistency of the stored data is not guaranteed if you do, nor is
+           your ability to modify the instance at all. */
+        Set<String> newSet = new HashSet<>(blockSet); // copy
+        for (Map.Entry<String, Boolean> blockListItem : mBlockMap.entrySet()) {
+            if (blockListItem.getValue()) {
+                newSet.add(blockListItem.getKey());
+            } else {
+                newSet.remove(blockListItem.getKey());
+            }
         }
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-            .edit().putStringSet("block_list", blockSet).apply();
+        getSharedPreferences(PREFERENCES_BLOCK, Context.MODE_PRIVATE)
+                .edit().putStringSet("block_list", newSet).apply();
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setblocklist);
+        setContentView(R.layout.activity_block_settings);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -62,23 +71,23 @@ public class SetBlockListActivity extends AppCompatActivity {
 
         ArrayList<String> keywordsList =
             (ArrayList<String>) getIntent().getSerializableExtra("keywords");
-        mBlockMap = new TreeMap<String, Boolean>();
-        for (String key: keywordsList)
+        mBlockMap = new TreeMap<>();
+        for (String key: keywordsList) {
             mBlockMap.put(key, false);
+        }
         loadBlockListStatus();
-        mBlockList = new ArrayList<String>();
-        for (Map.Entry<String, Boolean> entry: mBlockMap.entrySet())
-            mBlockList.add(entry.getKey());
+        mKeywords = new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry : mBlockMap.entrySet()) {
+            mKeywords.add(entry.getKey());
+        }
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.blockListView);
         assert recyclerView != null;
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new KeywordsRecyclerViewAdapter());
-        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_banlist, menu);
+        getMenuInflater().inflate(R.menu.menu_block_settings, menu);
         return true;
     }
 
@@ -109,27 +118,27 @@ public class SetBlockListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            final String keyWord = mBlockList.get(position);
+            final String keyWord = mKeywords.get(position);
             holder.mKeyword = keyWord;
             holder.mKeywordView.setText(keyWord);
             holder.setButtonStatus(mBlockMap.get(keyWord));
             holder.mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean current_status = mBlockMap.get(keyWord);
-                    mBlockMap.put(keyWord, !current_status);
-                    holder.setButtonStatus(!current_status);
+                    boolean newStatus = !mBlockMap.get(keyWord);
+                    mBlockMap.put(keyWord, newStatus);
+                    holder.setButtonStatus(newStatus);
                 }
             });
         }
 
         @Override
         public int getItemCount() {
-            return mBlockList.size();
+            return mKeywords.size();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder{
-            final Pair<String, Boolean> mItem = new Pair<String, Boolean>("", false);
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final Pair<String, Boolean> mItem = new Pair<>("", false);
             final View mView;
             final TextView mKeywordView;
             final Button mButton;
@@ -138,15 +147,15 @@ public class SetBlockListActivity extends AppCompatActivity {
                 super(itemView);
                 mView = itemView;
                 mKeywordView = (TextView) mView.findViewById(R.id.keywordView);
-                mButton = (Button) mView.findViewById(R.id.banButton);
+                mButton = (Button) mView.findViewById(R.id.blockButton);
             }
-            void setButtonStatus(Boolean status){
-                if (status){
+
+            void setButtonStatus(Boolean status) {
+                if (status) {
                     mButton.setText(R.string.unblock);
                     //mButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     //mButton.setTextColor(getResources().getColor(R.color.background_holo_light));
-                }
-                else {
+                } else {
                     mButton.setText(R.string.block);
                     //mButton.setBackgroundColor(getResources().getColor(R.color.background_holo_light));
                     //mButton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));

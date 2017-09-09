@@ -113,12 +113,13 @@ public class ItemListActivity extends AppCompatActivity {
                         Intent intent = new Intent(ItemListActivity.this, SettingsActivity.class);
                         startActivity(intent);
                         break;
-                    }
-                    case R.id.app_bar_block_list:{
-                        Intent intent = new Intent(ItemListActivity.this, SetBlockListActivity.class);
+                    } case R.id.app_bar_block_list: {
+                        Intent intent =
+                                new Intent(ItemListActivity.this, BlockSettingsActivity.class);
                         Set<String> blockSet =
-                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                            .getStringSet("block_list", new HashSet<String>());
+                                getSharedPreferences(BlockSettingsActivity.PREFERENCES_BLOCK,
+                                        Context.MODE_PRIVATE)
+                                        .getStringSet("block_list", new HashSet<String>());
                         intent.putExtra("keywords", new ArrayList<String>(blockSet));
                         startActivity(intent);
                         break;

@@ -40,4 +40,9 @@
     <string name="marked_as_favorite">已标记为收藏</string>
     <string name="canceled">已取消</string>
     <string name="categories">分类</string>
+    <string name="block">屏蔽</string>
+    <string name="block_settings">屏蔽设置</string>
+    <string name="title_block_settings">屏蔽设置</string>
+    <string name="unblock">取消屏蔽</string>
+    <string name="keyword">关键字</string>
 </resources>

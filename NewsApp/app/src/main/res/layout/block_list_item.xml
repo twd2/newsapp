@@ -30,7 +30,7 @@
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/banButton"
+        android:id="@+id/blockButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/block" />
