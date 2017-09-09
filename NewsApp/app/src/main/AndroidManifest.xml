@@ -44,6 +44,9 @@
         <activity
             android:name=".CategoryActivity"
             android:label="@string/categories" />
+        <activity
+            android:name=".BlockSettingsActivity"
+            android:label="@string/title_block_settings" />
     </application>
 
 </manifest>

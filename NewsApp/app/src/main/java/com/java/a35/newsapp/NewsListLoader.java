@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by twd2 on 17/8/30.
@@ -63,6 +65,11 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
             JSONObject obj = new JSONObject();
             JSONArray list = new JSONArray();
             obj.put("list", list);
+            obj.put("noMore", true);
+            Set<String> blockSet =
+                    getContext().getSharedPreferences(BlockSettingsActivity.PREFERENCES_BLOCK,
+                                                      Context.MODE_PRIVATE)
+                            .getStringSet("block_list", new HashSet<String>());
             Log.d("loader", "page = " + query.loadedPage + "/" + query.expectPage);
             for (int page = query.loadedPage + 1; page <= query.expectPage; ++page) {
                 JSONObject subObj;
@@ -90,7 +97,23 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
                 JSONArray subList = subObj.getJSONArray("list");
                 for (int i = 0; i < subList.length(); ++i) {
+                    obj.put("noMore", false);
                     JSONObject news = subList.getJSONObject(i);
+                    // block keywords
+                    boolean blocked = false;
+                    String newsTitle = news.getString("news_Title").toLowerCase();
+                    String newsIntro = news.getString("news_Intro").toLowerCase();
+                    for (String keyword : blockSet) {
+                        String lowerCaseKeyword = keyword.toLowerCase();
+                        if (newsTitle.contains(lowerCaseKeyword) ||
+                            newsIntro.contains(lowerCaseKeyword)) {
+                            blocked = true;
+                            break;
+                        }
+                    }
+                    if (blocked) {
+                        continue;
+                    }
                     news.put("read", db.getHistory(news.getString("news_ID")) != null);
                     list.put(news);
                 }

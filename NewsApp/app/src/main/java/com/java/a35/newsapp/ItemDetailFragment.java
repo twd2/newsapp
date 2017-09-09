@@ -1,6 +1,7 @@
 package com.java.a35.newsapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
@@ -22,6 +23,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +44,7 @@ public class ItemDetailFragment extends Fragment {
     private static final int NEWS_DETAIL_LOADER_ID = 0;
 
     private Categories.NewsItem mItem;
+    private String styleString;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -53,6 +57,14 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        styleString = "<style>\na {text-decoration: none; color:"
+                + Integer.toHexString(getResources().getColor(R.color.colorPrimaryDark) - 0xff000000)
+                + "; font-size: 20px;}\n"
+                + "p {font-size: 20px; line-height: 150%%}\n"
+                + "html {color:"
+                + Integer.toHexString(getResources().getColor(R.color.primary_text_dark) - 0xff000000)
+                + "}\n</style>";
 
         Bundle args = getArguments();
 
@@ -86,6 +98,7 @@ public class ItemDetailFragment extends Fragment {
 
                 @Override
                 public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
+                    ((ItemDetailActivity)getActivity()).mDetail = data;
                     showDetail(data);
                 }
 
@@ -114,7 +127,7 @@ public class ItemDetailFragment extends Fragment {
         if (mItem != null) {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);
             webView.setBackgroundColor(Color.TRANSPARENT);
-            webView.loadDataWithBaseURL(null, "<p>" +
+            webView.loadDataWithBaseURL(null, styleString + "<p>" +
                             getString(R.string.loading) +
                             "</p>",
                     "text/html", "UTF-8", null);
@@ -163,6 +176,27 @@ public class ItemDetailFragment extends Fragment {
             try {
                 // TODO(twd2): !!!
                 mItem.detail = obj.getString("news_Content").replace("　　", "\n　　");
+                Set<String> blockSet =
+                        getContext().getSharedPreferences(BlockSettingsActivity.PREFERENCES_BLOCK,
+                                                          Context.MODE_PRIVATE)
+                                .getStringSet("block_list", new HashSet<String>());
+                // block keywords
+                boolean blocked = false;
+                for (String keyword : blockSet) {
+                    String lowerCaseKeyword = keyword.toLowerCase();
+                    if (mItem.detail.toLowerCase().contains(lowerCaseKeyword)) {
+                        blocked = true;
+                        break;
+                    }
+                }
+
+                if (blocked) {
+                    webView.loadDataWithBaseURL(null, styleString + "<h1>" +
+                            getString(R.string.news_blocked) +
+                            "</h1>", "text/html", "UTF-8", null);
+                    return;
+                }
+
                 String htmlDetail = TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>");
                 htmlDetail = linkToEncyclopedia(htmlDetail, obj);
                 StringBuilder sb = new StringBuilder();
@@ -180,15 +214,8 @@ public class ItemDetailFragment extends Fragment {
                 }
 
                 Resources.Theme theme = getContext().getTheme();
-                String styleString = "a {text-decoration: none; color:"
-                        + Integer.toHexString(getResources().getColor(R.color.colorPrimaryDark) - 0xff000000)
-                        + "; font-size: 20px;}\n"
-                        + "p {font-size: 20px; line-height: 150%%}\n"
-                        + "html {color:"
-                        + Integer.toHexString(getResources().getColor(R.color.primary_text_dark) - 0xff000000)
-                        + "}";
                 sb.append(
-                        String.format("<style>\n%s</style>" +
+                        String.format("%s" +
                                       "<h1>%s</h1>\n" +
                                       "%s\n" +
                                       "<p>%s</p>\n" +
@@ -207,9 +234,9 @@ public class ItemDetailFragment extends Fragment {
                 e.printStackTrace();
             }
         } else {
-            webView.loadDataWithBaseURL(null, "<h1>" +
+            webView.loadDataWithBaseURL(null, styleString + "<h1>" +
                     getString(R.string.load_failed) +
-                    " :(</h1>", "text/html", "UTF-8", null);
+                    "</h1>", "text/html", "UTF-8", null);
         }
     }
 
