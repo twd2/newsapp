@@ -3,6 +3,7 @@ package com.java.a35.newsapp;
 import android.app.Application;
 import android.util.Log;
 
+import java.io.File;
 import java.util.Arrays;
 
 import com.java.a35.newsapp.storage.StorageDbHelper;
@@ -22,6 +23,7 @@ public class App extends Application {
     private CachedLoader cachedLoader = null;
     private Categories categories = null;
     private StorageDbHelper db = null;
+    private File sharedDir = null;
 
     @Override
     public void onCreate() {
@@ -38,6 +40,10 @@ public class App extends Application {
                 Log.e("test", Log.getStackTraceString(e));
             }
         });
+        sharedDir = new File(getCacheDir(), "shared");
+        if (!sharedDir.exists()) {
+            sharedDir.mkdirs();
+        }
     }
 
     public API getApi() {
@@ -58,5 +64,9 @@ public class App extends Application {
 
     public StorageDbHelper getDb() {
         return db;
+    }
+
+    public File getSharedDir() {
+        return sharedDir;
     }
 }

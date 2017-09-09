@@ -116,8 +116,10 @@ public class RecommendAPI {
 
     public JSONObject getRecommendNews(int page) throws IOException, JSONException { // 返回推荐的新闻
         if (page >= 2) {
-            // FIXME
-            return new JSONObject();
+            JSONObject obj = new JSONObject();
+            obj.put("list", new JSONArray());
+            obj.put("noMore", true);
+            return obj;
         }
 
         API api = app.getApi();
