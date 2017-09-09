@@ -209,7 +209,7 @@ public class NewsListFragment extends Fragment {
         try {
             JSONArray newsList = obj.getJSONArray("list");
 
-            if (loadedPage != expectPage && newsList.length() == 0) {
+            if (loadedPage != expectPage && obj.getBoolean("noMore")) {
                 noMore = true;
             } else {
                 noMore = false;

@@ -74,6 +74,13 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="keyword">Keyword</string>
+    <string name="block">Block</string>
+    <string name="unblock">Unblock</string>
+    <string name="block_settings">Block Settings</string>
+    <string name="title_block_settings">Block Settings</string>
+
     <string name="favorite">Favorite</string>
     <string name="read">Read</string>
     <string name="share">Share</string>
@@ -111,4 +118,5 @@
     <string name="marked_as_favorite">Marked as favorite.</string>
     <string name="canceled">Canceled</string>
     <string name="categories">Categories</string>
+    <string name="news_blocked">This news has been blocked.</string>
 </resources>

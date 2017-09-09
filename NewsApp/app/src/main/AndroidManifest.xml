@@ -40,11 +40,13 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
         <activity
             android:name=".CategoryActivity"
-            android:label="@string/categories"
-             ></activity>
+            android:label="@string/categories" />
+        <activity
+            android:name=".BlockSettingsActivity"
+            android:label="@string/title_block_settings" />
     </application>
 
 </manifest>
