@@ -48,9 +48,9 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         try {
             JSONObject obj = api.getNews(id);
             db.setHistory(obj);
-            boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
+            boolean showPictures = (PreferenceManager.getDefaultSharedPreferences(getContext())
                     .getBoolean("show_pictures", true)); // TODO(twd2): default value?
-            if (!show_picture) return obj;
+            if (!showPictures) return obj;
             pictureAPI.checkAndAddImage(obj);
             if (!obj.getString("news_Pictures").equals("")) {
                 JSONArray pictures_path = new JSONArray();

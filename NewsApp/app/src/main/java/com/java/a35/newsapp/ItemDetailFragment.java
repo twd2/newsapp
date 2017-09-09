@@ -197,14 +197,13 @@ public class ItemDetailFragment extends Fragment {
                     return;
                 }
 
+                // prepare detail html
                 String htmlDetail = TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>");
                 htmlDetail = linkToEncyclopedia(htmlDetail, obj);
-                StringBuilder sb = new StringBuilder();
 
+                // prepare picture html
                 StringBuilder pictureHtml = new StringBuilder();
-                boolean show_picture = (PreferenceManager.getDefaultSharedPreferences(getContext())
-                        .getBoolean("show_pictures", true)); // TODO(twd2): default value?
-                if (show_picture) {
+                if (obj.has("pictures_path")) {
                     JSONArray picturesPath = obj.getJSONArray("pictures_path");
                     for (int i = 0; i < picturesPath.length(); i++) {
                         pictureHtml.append(String.format(
@@ -213,6 +212,8 @@ public class ItemDetailFragment extends Fragment {
                     }
                 }
 
+                // build whole html
+                StringBuilder sb = new StringBuilder();
                 Resources.Theme theme = getContext().getTheme();
                 sb.append(
                         String.format("%s" +

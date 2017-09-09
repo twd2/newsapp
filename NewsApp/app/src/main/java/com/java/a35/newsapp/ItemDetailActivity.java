@@ -2,8 +2,11 @@ package com.java.a35.newsapp;
 
 import android.content.Intent;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -108,7 +113,6 @@ public class ItemDetailActivity extends AppCompatActivity {
                         } catch (JSONException e){
                             Log.e("test", Log.getStackTraceString(e));
                         }
-                        //for (int i = 0; i < keywordsList.size(); ++ i)
                         intent.putExtra("keywords", keywordsList);
                         startActivity(intent);
                         break;
@@ -191,16 +195,47 @@ public class ItemDetailActivity extends AppCompatActivity {
     }
 
     protected void doShare() {
-        Intent share = new Intent(Intent.ACTION_SEND);
-        share.setType("text/plain");
-        // TODO(twd2): image
-        // share.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://twd2.me/smile_photo.jpg"));
-        // extra for WeChat
-        share.putExtra("Kdescription", "测试描述" +
-                " -- " + getString(R.string.from_my_newsapp));
-        share.putExtra(Intent.EXTRA_TEXT, mItem.title +
-                " -- " + getString(R.string.from_my_newsapp));
-        startActivity(Intent.createChooser(share, getString(R.string.share_to_sns)));
+        if (mDetail == null) {
+            return;
+        }
+        try {
+            Intent share = new Intent(Intent.ACTION_SEND);
+            if (!mDetail.has("pictures_path")) {
+                share.setType("text/plain");
+            } else {
+                JSONArray pictures = mDetail.getJSONArray("pictures_path");
+                share.setType("image/*");
+                File pictureFile = new File(pictures.getString(0));
+                File tempFile = new File(((App)getApplicationContext()).getSharedDir(),
+                        pictureFile.getName() + ".jpg");
+                try {
+                    Utility.copyFileUsingFileChannels(pictureFile, tempFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Uri uri = FileProvider.getUriForFile(this, "com.java.a35.newsapp", tempFile);
+
+                share.putExtra(Intent.EXTRA_STREAM, uri);
+                share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Log.d("detail", "doShare: " + tempFile);
+                Log.d("detail", "doShare: " + uri);
+            }
+
+            share.putExtra(Intent.EXTRA_TEXT, String.format("【%s】%s 原文链接：%s -- %s",
+                    mItem.title, mItem.obj.getString("news_Intro"),
+                    mItem.obj.getString("news_URL"),
+                    getString(R.string.from_my_newsapp)));
+
+            share.putExtra(Intent.EXTRA_TITLE, mItem.title);
+            share.putExtra(Intent.EXTRA_SUBJECT, mItem.title);
+
+            // extra for WeChat
+            share.putExtra("Kdescription", share.getStringExtra(Intent.EXTRA_TEXT));
+            startActivity(Intent.createChooser(share, getString(R.string.share_to_sns)));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     // TTS interfaces
@@ -216,6 +251,9 @@ public class ItemDetailActivity extends AppCompatActivity {
     }
 
     protected void playTts() {
+        if (mItem.detail.equals("")) {
+            return;
+        }
         if (mTts != null) {
             if (!isTtsPlaying) {
                 int code = mTts.startSpeaking(mItem.detail, mTtsListener);
