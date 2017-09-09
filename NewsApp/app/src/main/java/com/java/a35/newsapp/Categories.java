@@ -151,12 +151,18 @@ public class Categories {
         public String detail = "";
         public boolean read = false;
         public final JSONObject obj;
+        public boolean special = false;
 
         public NewsItem(String id, String title, boolean read, JSONObject obj) {
             this.id = id;
             this.title = title;
             this.read = read;
             this.obj = obj;
+        }
+
+        public NewsItem(String title) {
+            this("", title, false, null);
+            special = true;
         }
 
         @Override
