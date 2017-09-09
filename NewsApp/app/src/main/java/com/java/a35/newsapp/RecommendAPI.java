@@ -138,17 +138,19 @@ public class RecommendAPI {
         }
 
         ArrayList<NewsAndScore> array = new ArrayList<>();
-
+        HashSet<String> newsTitleArray = new HashSet<>();
         for (int i = 0; i < topWords.length; i++) {
             JSONArray allWordNews = api.searchAllNews(topWords[i], 1, KEYWORD_SEARCH_SAMPLE)
                     .getJSONArray("list");
             for (int j = 0; j < allWordNews.length(); j++) {
                 JSONObject newsIntro = allWordNews.getJSONObject(j);
+                String newsTitle = newsIntro.getString("news_Title");
                 String newsID = newsIntro.getString("news_ID");
-                if (db.getHistory(newsID) == null) {
+                if (db.getHistory(newsID) == null && (!newsTitleArray.contains(newsTitle))) {
                     JSONObject newsDetail = api.getNews(newsIntro.getString("news_ID"));
                     float score = getScore(wordScoreMap, newsDetail.getJSONArray("Keywords"));
                     array.add(new NewsAndScore(newsIntro, score));
+                    newsTitleArray.add(newsTitle);
                 }
             }
         }
