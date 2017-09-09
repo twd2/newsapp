@@ -102,7 +102,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                                     return o1.first.compareTo(o2.first);
                                 }
                             });
-                            for (int i = 0; i < candidatesList.size() && i < 10; ++ i) {
+                            for (int i = 0; i < candidatesList.size() && i < 30; ++ i) {
                                 keywordsList.add(candidatesList.get(i).second);
                             }
                         } catch (JSONException e){

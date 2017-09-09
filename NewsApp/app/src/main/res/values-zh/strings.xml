@@ -45,4 +45,5 @@
     <string name="title_block_settings">屏蔽设置</string>
     <string name="unblock">取消屏蔽</string>
     <string name="keyword">关键字</string>
+    <string name="news_blocked">此新闻已被屏蔽</string>
 </resources>
