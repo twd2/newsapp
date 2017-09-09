@@ -12,13 +12,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by twd2 on 17/9/3.
  */
 
 public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
+
+    private Map<String, String> headers;
 
     interface QueryCallback {
         String getId();
@@ -28,6 +32,8 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
     public NewsDetailLoader(Context context, QueryCallback callback) {
         super(context);
         queryCallback = callback;
+        headers = new HashMap<>();
+        headers.put("User-Agent", "NewsApp/0.0");
     }
 
     @Override
@@ -51,9 +57,10 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
                 String pictures[] = obj.getString("news_Pictures").replace(' ', ';').split(";");
                 for (String picture : pictures) {
                     try {
-                        pictures_path.put(
-                                cachedLoader.fetch(picture, "",
-                                        new HashMap<String, String>(), false));
+                        // combine
+                        URL url = new URL(new URL(obj.getString("news_URL")), picture);
+                        Log.d("loader", "downloading " + url);
+                        pictures_path.put(cachedLoader.fetch(url.toString(), "", headers, false));
                     } catch (IOException e) {
                         Log.d("loader", "picture load failed");
                         e.printStackTrace();
