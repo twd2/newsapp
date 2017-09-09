@@ -96,6 +96,7 @@ public class PictureAPI {
         if (!inputNews.getString("news_Pictures").equals("")) {
             inputNews.put("searchImage", false);
         } else {
+            Log.d("picture", "searching images");
             JSONArray imagePaths = getImageJson(inputNews);
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < imagePaths.length(); i++) {
