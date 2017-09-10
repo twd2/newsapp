@@ -119,4 +119,7 @@
     <string name="canceled">Canceled</string>
     <string name="categories">Categories</string>
     <string name="news_blocked">This news has been blocked.</string>
+    <string name="searched_images">Images are from the internet.</string>
+    <string name="no_more">No more, click to refresh.</string>
+    <string name="network_error">Network error</string>
 </resources>

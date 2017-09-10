@@ -207,8 +207,11 @@ public class ItemDetailFragment extends Fragment {
                     JSONArray picturesPath = obj.getJSONArray("pictures_path");
                     for (int i = 0; i < picturesPath.length(); i++) {
                         pictureHtml.append(String.format(
-                                "<p><img src=\"file://%s\" alt=\"\" style=\"max-width: 100%%\" /></p>",
+                            "<p><img src=\"file://%s\" alt=\"\" style=\"max-width: 100%%\" /></p>\n",
                                 picturesPath.getString(i)));
+                    }
+                    if (obj.getBoolean("isSearchedImages")) {
+                        pictureHtml.append("<p>(" + getString(R.string.searched_images) + ")</p>\n");
                     }
                 }
 

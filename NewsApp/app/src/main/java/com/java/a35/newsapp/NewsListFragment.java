@@ -137,7 +137,8 @@ public class NewsListFragment extends Fragment {
                         public void run() {
                             if (getActivity() != null) {
                                 ((NewsItemRecyclerViewAdapter) recyclerView.getAdapter())
-                                        .mValues.add(null);
+                                        .mValues.add(new Categories.NewsItem(
+                                                getString(R.string.loading_more)));
                                 recyclerView.getAdapter().notifyItemInserted(totalItemCount);
                                 Log.d("frag" + categoryType, "onScrolled");
                                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null,
@@ -177,18 +178,16 @@ public class NewsListFragment extends Fragment {
         getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
     }
 
+    public void setCategoryType(Categories.CategoryType categoryType) {
+        this.categoryType = categoryType;
+    }
+
     private void updateNews(JSONObject obj, boolean append) {
         if (getContext() == null) {
             return;
         }
 
         Log.d("frag " + categoryType, "update = " + obj);
-
-        if (obj == null) {
-            Log.d("frag " + categoryType, "loader returned null, retrying");
-            getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-            return;
-        }
 
         Categories categories = ((App)getContext().getApplicationContext()).getCategories();
         Categories.Category category = categories.categories.get(categoryType);
@@ -197,9 +196,17 @@ public class NewsListFragment extends Fragment {
             category.clear();
         } else {
             if (category.items.size() > 0 &&
-                    category.items.get(category.items.size() - 1) == null) {
+                    category.items.get(category.items.size() - 1).special) {
                 category.items.remove(category.items.size() - 1);
             }
+        }
+
+        if (obj == null) {
+            Log.d("frag " + categoryType, "loader returned null, // retrying");
+            noMore = true;
+            category.addItem(new Categories.NewsItem(getString(R.string.network_error)));
+            // getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+            return;
         }
 
         try {
@@ -207,6 +214,7 @@ public class NewsListFragment extends Fragment {
 
             if (loadedPage != expectPage && obj.getBoolean("noMore")) {
                 noMore = true;
+                category.addItem(new Categories.NewsItem(getString(R.string.no_more)));
             } else {
                 noMore = false;
             }
@@ -238,7 +246,7 @@ public class NewsListFragment extends Fragment {
         Log.d("frag " + categoryType, "onSaveInstanceState");
         outState.putInt("loadedPage", loadedPage);
         outState.putInt("expectPage", expectPage);
-        outState.putString("category", categoryType.toString());
+        // outState.putString("category", categoryType.toString());
     }
 
     public class NewsItemRecyclerViewAdapter
@@ -258,17 +266,17 @@ public class NewsListFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
 
-            if (holder.mItem == null) {
+            if (holder.mItem.special) {
                 holder.mSourceView.setText("");
                 holder.mDatetimeView.setText("");
-                holder.mTitleView.setText(R.string.loading_more);
+                holder.mTitleView.setText(holder.mItem.title);
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        // nothing
                     }
                 });
                 return;
@@ -302,7 +310,7 @@ public class NewsListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     holder.mItem.read = true;
-                    notifyItemChanged(position);
+                    notifyItemChanged(holder.getAdapterPosition());
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ItemDetailActivity.class);
                     intent.putExtra(ItemDetailFragment.ARG_CATEGORY, categoryType.toString());
