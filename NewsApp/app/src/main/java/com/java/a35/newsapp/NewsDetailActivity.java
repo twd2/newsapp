@@ -99,11 +99,34 @@ public class NewsDetailActivity extends AppCompatActivity {
                             Collections.sort(candidatesList, new Comparator<Pair<Double, String>>() {
                                 @Override
                                 public int compare(Pair<Double, String> o1, Pair<Double, String> o2) {
-                                    return o1.first.compareTo(o2.first);
+                                    return o2.first.compareTo(o1.first);
                                 }
                             });
-                            for (int i = 0; i < candidatesList.size() && i < 30; ++ i) {
-                                keywordsList.add(candidatesList.get(i).second);
+                            ArrayList<String> candidates = new ArrayList<String>();
+                            JSONArray arrayOfEntries;
+                            arrayOfEntries = mDetail.getJSONArray("persons");
+                            for (int i = 0; i < arrayOfEntries.length(); ++ i) {
+                                candidates.add(arrayOfEntries.getJSONObject(i).getString("word"));
+                            }
+                            arrayOfEntries = mDetail.getJSONArray("locations");
+                            for (int i = 0; i < arrayOfEntries.length(); ++ i) {
+                                candidates.add(arrayOfEntries.getJSONObject(i).getString("word"));
+                            }
+                            arrayOfEntries = mDetail.getJSONArray("organizations");
+                            for (int i = 0; i < arrayOfEntries.length(); ++ i) {
+                                candidates.add(arrayOfEntries.getJSONObject(i).getString("word"));
+                            }
+                            for (int i = 0; i < candidatesList.size(); ++ i) {
+                                candidates.add(candidatesList.get(i).second);
+                            }
+                            String introText = mItem.obj.getString("news_Title") + "|" +
+                                    mItem.obj.getString("news_Intro");
+                            introText = introText.toLowerCase();
+                            for (int i = 0; i < candidates.size() && keywordsList.size() < 20; ++ i) {
+                                String candidate = candidates.get(i);
+                                if (introText.contains(candidate.toLowerCase())) {
+                                    keywordsList.add(candidate);
+                                }
                             }
                         } catch (JSONException e){
                             Log.e("test", Log.getStackTraceString(e));
