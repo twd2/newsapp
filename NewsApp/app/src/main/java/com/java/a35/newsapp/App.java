@@ -4,12 +4,8 @@ import android.app.Application;
 import android.util.Log;
 
 import java.io.File;
-import java.util.Arrays;
 
 import com.java.a35.newsapp.storage.StorageDbHelper;
-
-import java.util.Locale;
-import android.content.res.Configuration;
 
 
 /**
@@ -18,7 +14,7 @@ import android.content.res.Configuration;
 
 public class App extends Application {
 
-    private API api = null;
+    private NewsAPI newsApi = null;
     private PictureAPI pictureApi = null;
     private CachedLoader cachedLoader = null;
     private Categories categories = null;
@@ -30,7 +26,7 @@ public class App extends Application {
         super.onCreate();
         cachedLoader = new CachedLoader(this);
         categories = new Categories(this);
-        api = new API(API.SERVER_URL, cachedLoader);
+        newsApi = new NewsAPI(NewsAPI.SERVER_URL, cachedLoader);
         pictureApi = new PictureAPI(cachedLoader);
         db = new StorageDbHelper(this);
         Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -46,8 +42,8 @@ public class App extends Application {
         }
     }
 
-    public API getApi() {
-        return api;
+    public NewsAPI getNewsApi() {
+        return newsApi;
     }
 
     public CachedLoader getCachedLoader() {

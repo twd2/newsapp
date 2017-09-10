@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.java.a35.newsapp.ItemListActivity">
+    tools:context="com.java.a35.newsapp.NewsListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -47,7 +47,7 @@
                     android:scaleType="center"
                     android:background="@color/background_holo_light"
                     android:elevation="10dp"
-                    app:srcCompat="@drawable/category" />
+                    app:srcCompat="@drawable/ic_add" />
         </LinearLayout>
                     
     </android.support.design.widget.AppBarLayout>

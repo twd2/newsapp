@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  */
 
 public final class HistoryData {
-    private HistoryData() {}
+    private HistoryData() { }
 
     public static class HistoryEntry implements BaseColumns {
         public static final String TABLE_NAME = "history";

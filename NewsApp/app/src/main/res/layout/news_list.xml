@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.java.a35.newsapp.ItemListActivity"
+        tools:context="com.java.a35.newsapp.NewsListActivity"
         tools:listitem="@layout/news_list_item" />
 
 </android.support.v4.widget.SwipeRefreshLayout>

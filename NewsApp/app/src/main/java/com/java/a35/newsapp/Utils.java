@@ -12,7 +12,7 @@ import java.nio.channels.FileChannel;
  * Created by wuhaozhe on 2017/9/5.
  */
 
-public class Utility {
+public class Utils {
 
     private static final int BUFFER_SIZE = 4096;
 

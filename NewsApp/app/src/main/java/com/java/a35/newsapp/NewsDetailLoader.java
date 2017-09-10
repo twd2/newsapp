@@ -40,13 +40,13 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
     public JSONObject loadInBackground() {
         App app = (App) getContext().getApplicationContext();
         CachedLoader cachedLoader = app.getCachedLoader();
-        API api = app.getApi();
+        NewsAPI newsApi = app.getNewsApi();
         PictureAPI pictureAPI = app.getPictureApi();
         StorageDbHelper db = app.getDb();
 
         String id = queryCallback.getId();
         try {
-            JSONObject obj = api.getNews(id);
+            JSONObject obj = newsApi.getNews(id);
             db.setHistory(obj);
             boolean showPictures = (PreferenceManager.getDefaultSharedPreferences(getContext())
                     .getBoolean("show_pictures", true)); // TODO(twd2): default value?

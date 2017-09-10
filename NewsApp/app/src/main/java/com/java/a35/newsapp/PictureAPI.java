@@ -47,7 +47,7 @@ public class PictureAPI {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             conn.setRequestProperty(entry.getKey(), entry.getValue());
         }
-        String jsonString = Utility.readAllString(conn.getInputStream());
+        String jsonString = Utils.readAllString(conn.getInputStream());
         Log.d("PictureAPI", jsonString);
         return new JSONObject(jsonString);
     }

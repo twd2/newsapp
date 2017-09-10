@@ -3,7 +3,6 @@ package com.java.a35.newsapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.graphics.Color;
@@ -31,11 +30,11 @@ import java.util.regex.Pattern;
 
 /**
  * A fragment representing a single Item detail screen.
- * This fragment is either contained in a {@link ItemListActivity}
- * in two-pane mode (on tablets) or a {@link ItemDetailActivity}
+ * This fragment is either contained in a {@link NewsListActivity}
+ * in two-pane mode (on tablets) or a {@link NewsDetailActivity}
  * on handsets.
  */
-public class ItemDetailFragment extends Fragment {
+public class NewsDetailFragment extends Fragment {
 
     public static final String ARG_CATEGORY = "category";
     public static final String ARG_NEWS_ID = "news_id";
@@ -50,7 +49,7 @@ public class ItemDetailFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemDetailFragment() {
+    public NewsDetailFragment() {
 
     }
 
@@ -71,10 +70,10 @@ public class ItemDetailFragment extends Fragment {
         if (args.containsKey(ARG_CATEGORY) && args.containsKey(ARG_NEWS_ID)) {
             Categories.CategoryType categoryType =
                     Categories.CategoryType.valueOf(
-                            args.getString(ItemDetailFragment.ARG_CATEGORY));
+                            args.getString(NewsDetailFragment.ARG_CATEGORY));
             Categories categories = ((App)getContext().getApplicationContext()).getCategories();
             mItem = categories.categories.get(categoryType).map
-                    .get(args.getString(ItemDetailFragment.ARG_NEWS_ID));
+                    .get(args.getString(NewsDetailFragment.ARG_NEWS_ID));
 
             newsDetailCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
                 @Override
@@ -98,7 +97,7 @@ public class ItemDetailFragment extends Fragment {
 
                 @Override
                 public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-                    ((ItemDetailActivity)getActivity()).mDetail = data;
+                    ((NewsDetailActivity)getActivity()).mDetail = data;
                     showDetail(data);
                 }
 
@@ -122,7 +121,7 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.item_detail, container, false);
+        View rootView = inflater.inflate(R.layout.news_detail, container, false);
 
         if (mItem != null) {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);

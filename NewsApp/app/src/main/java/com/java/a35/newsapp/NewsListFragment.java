@@ -55,7 +55,7 @@ public class NewsListFragment extends Fragment {
                         new NewsListLoader.QueryCallback() {
                             @Override
                             public NewsListLoader.Query getQuery() {
-                                ItemListActivity activity = (ItemListActivity)getActivity();
+                                NewsListActivity activity = (NewsListActivity)getActivity();
                                 if (activity != null) {
                                     return new NewsListLoader.Query(activity.getQuery(),
                                             loadedPage, expectPage, categoryType);
@@ -264,6 +264,10 @@ public class NewsListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
+            if (getActivity() == null) {
+                return;
+            }
+
             holder.mItem = mValues.get(position);
 
             if (holder.mItem.special) {
@@ -309,9 +313,9 @@ public class NewsListFragment extends Fragment {
                     holder.mItem.read = true;
                     notifyItemChanged(holder.getAdapterPosition());
                     Context context = v.getContext();
-                    Intent intent = new Intent(context, ItemDetailActivity.class);
-                    intent.putExtra(ItemDetailFragment.ARG_CATEGORY, categoryType.toString());
-                    intent.putExtra(ItemDetailFragment.ARG_NEWS_ID, holder.mItem.id);
+                    Intent intent = new Intent(context, NewsDetailActivity.class);
+                    intent.putExtra(NewsDetailFragment.ARG_CATEGORY, categoryType.toString());
+                    intent.putExtra(NewsDetailFragment.ARG_NEWS_ID, holder.mItem.id);
                     context.startActivity(intent);
                 }
             });

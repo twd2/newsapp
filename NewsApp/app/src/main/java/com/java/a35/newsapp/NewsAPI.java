@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by twd2 on 17/8/27.
  */
 
-public class API {
+public class NewsAPI {
 
     public static final int CATEGORY_TECHNOLOGY = 1;
     public static final int CATEGORY_EDUCATION = 2;
@@ -40,7 +40,7 @@ public class API {
     private CachedLoader cachedLoader;
     private Map<String, String> headers;
 
-    public API(String server, CachedLoader cachedLoader) {
+    public NewsAPI(String server, CachedLoader cachedLoader) {
         this.server = server;
         this.cachedLoader = cachedLoader;
         headers = new HashMap<>();
@@ -60,8 +60,8 @@ public class API {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             conn.setRequestProperty(entry.getKey(), entry.getValue());
         }
-        String jsonString = Utility.readAllString(conn.getInputStream());
-        Log.d("API", jsonString);
+        String jsonString = Utils.readAllString(conn.getInputStream());
+        Log.d("NewsAPI", jsonString);
         return new JSONObject(jsonString);
     }
 
@@ -75,7 +75,7 @@ public class API {
             sb.append(queryString);
         }
         String jsonString = cachedLoader.fetch(sb.toString(), "", headers, true);
-        Log.d("API", "from cache: " + jsonString);
+        Log.d("NewsAPI", "from cache: " + jsonString);
         return new JSONObject(jsonString);
     }
 

@@ -3,7 +3,6 @@ package com.java.a35.newsapp;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,14 +18,14 @@ import static org.junit.Assert.*;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class APIUnitTest {
+public class NewsAPIUnitTest {
 
-    private API api;
+    private NewsAPI newsApi;
 
-    public APIUnitTest() {
+    public NewsAPIUnitTest() {
         super();
         Context appContext = InstrumentationRegistry.getTargetContext();
-        api = new API(API.SERVER_URL, null);
+        newsApi = new NewsAPI(NewsAPI.SERVER_URL, null);
     }
 
     @Test
@@ -34,13 +33,13 @@ public class APIUnitTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        JSONObject obj = api.getListNews(2);
+        JSONObject obj = newsApi.getListNews(2);
         assertTrue(obj.has("list"));
         assertTrue(obj.get("list") instanceof JSONArray);
         assertTrue(obj.has("pageNo"));
         assertTrue(obj.getInt("pageNo") == 1);
         assertTrue(obj.has("pageSize"));
-        assertTrue(obj.getInt("pageSize") == API.DEFAULT_PAGE_SIZE);
+        assertTrue(obj.getInt("pageSize") == NewsAPI.DEFAULT_PAGE_SIZE);
     }
 
     @Test

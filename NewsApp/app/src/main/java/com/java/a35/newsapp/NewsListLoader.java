@@ -48,7 +48,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
     @Override
     public JSONObject loadInBackground() {
         Log.d("loader", "this = " + toString());
-        API api = ((App) getContext().getApplicationContext()).getApi();
+        NewsAPI newsApi = ((App) getContext().getApplicationContext()).getNewsApi();
         RecommendAPI recommendAPI = new RecommendAPI(getContext());
         StorageDbHelper db = ((App) getContext().getApplicationContext()).getDb();
 
@@ -58,13 +58,6 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
         if (query == null) {
             Log.d("loader", "query == null, returning");
             return null;
-        }
-
-        Log.d("loader", "sleeping");
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         int category = query.category.getApiId();
@@ -81,15 +74,15 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
             for (int page = query.loadedPage + 1; page <= query.expectPage; ++page) {
                 JSONObject subObj;
                 if (query.query != null && query.query.length() > 0) {
-                    if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
-                        subObj = api.searchNews(category, query.query, page);
+                    if (NewsAPI.CATEGORY_MIN <= category && category <= NewsAPI.CATEGORY_MAX) {
+                        subObj = newsApi.searchNews(category, query.query, page);
                     } else {
                         // search recommended
-                        subObj = api.searchAllNews(query.query, page);
+                        subObj = newsApi.searchAllNews(query.query, page);
                     }
                 } else {
-                    if (API.CATEGORY_MIN <= category && category <= API.CATEGORY_MAX) {
-                        subObj = api.getListNews(category, page);
+                    if (NewsAPI.CATEGORY_MIN <= category && category <= NewsAPI.CATEGORY_MAX) {
+                        subObj = newsApi.getListNews(category, page);
                     } else if (query.category == Categories.CategoryType.RECOMMENDED) {
                         // list recommended
                         subObj = recommendAPI.getRecommendNews(page);
