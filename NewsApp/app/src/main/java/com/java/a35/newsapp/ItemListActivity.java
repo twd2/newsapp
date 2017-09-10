@@ -53,7 +53,6 @@ public class ItemListActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private ImageButton categoryButton;               //该界面中用于切换到添加删除界面的button
-    private Map<Categories.CategoryType, NewsListFragment> fragmentMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -274,14 +273,13 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     public void doRefresh() {
-        // TODO(twd2): strange code
-        for (NewsListFragment fragment : fragmentMap.values()) {
-            fragment.doRefresh();
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof NewsListFragment) {
+                ((NewsListFragment)fragment).doRefresh();
+            } else {
+                Log.d("list", "unknown fragment " + fragment);
+            }
         }
-    }
-
-    public void registerFragment(Categories.CategoryType category, NewsListFragment fragment) {
-        fragmentMap.put(category, fragment);
     }
 
     public String getQuery() {
@@ -299,6 +297,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Log.d("list/adaptor", "getItem: " + position);
             NewsListFragment fragment = new NewsListFragment();
             Bundle args = new Bundle();
             args.putString(NewsListFragment.ARG_CATEGORY,

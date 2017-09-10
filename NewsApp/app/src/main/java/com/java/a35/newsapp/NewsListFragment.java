@@ -150,9 +150,6 @@ public class NewsListFragment extends Fragment {
             }
         });
 
-        // TODO(twd2): strange code
-        Log.d("frag", "" + (ItemListActivity)getActivity());
-        ((ItemListActivity)getActivity()).registerFragment(categoryType, this);
         return refreshLayout;
     }
 
@@ -183,7 +180,7 @@ public class NewsListFragment extends Fragment {
     }
 
     private void updateNews(JSONObject obj, boolean append) {
-        if (getContext() == null) {
+        if (getContext() == null || getActivity() == null) {
             return;
         }
 

@@ -60,6 +60,13 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
             return null;
         }
 
+        Log.d("loader", "sleeping");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         int category = query.category.getApiId();
         try {
             JSONObject obj = new JSONObject();
