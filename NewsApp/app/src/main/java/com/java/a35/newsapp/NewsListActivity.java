@@ -27,23 +27,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-
-/**
- * An activity representing a list of Items. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link NewsDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- */
 public class NewsListActivity extends AppCompatActivity {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
-    private SearchView mSearchView;
     private String query = "";
     private static final int REQUEST_CATEGORY = 0;
 
@@ -58,8 +43,9 @@ public class NewsListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_list);
 
         if (savedInstanceState == null) {
-            boolean nightMode = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                .getBoolean("night_mode", false);
+            boolean nightMode =
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .getBoolean("night_mode", false);
             if (nightMode) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
@@ -73,17 +59,12 @@ public class NewsListActivity extends AppCompatActivity {
             query = savedInstanceState.getString("query");
         }
 
-        Log.d("test", getFilesDir().getAbsolutePath());
-
-        // ViewPager and its adapters use support library
-        // fragments, so use getSupportFragmentManager.
-        //使用适配器将ViewPager与Fragment绑定在一起
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mFragmentPagerAdapter =
                 new CategoryCollectionPagerAdapter(
                         getSupportFragmentManager());
         mViewPager.setAdapter(mFragmentPagerAdapter);
-        //将TabLayout与ViewPager绑定在一起
+
         mTabLayout = (TabLayout)findViewById(R.id.tabLayout);
         mTabLayout.setupWithViewPager(mViewPager);
 
@@ -148,14 +129,6 @@ public class NewsListActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mViewPager.setCurrentItem(savedInstanceState.getInt("tab_id"));
-        }
-
-        if (findViewById(R.id.item_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
         }
     }
 
@@ -236,19 +209,19 @@ public class NewsListActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        mSearchView = searchView;
-
         return true;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CATEGORY) {
-            Log.d("list", "notifyDataSetChanged");
+            Log.d("list", "resetAdapter");
             // reset adaptor
             mViewPager.setAdapter(mViewPager.getAdapter());
+            return;
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

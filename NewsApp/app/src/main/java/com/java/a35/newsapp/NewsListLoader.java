@@ -41,6 +41,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
         Query getQuery();
     }
     private QueryCallback queryCallback;
+    private Thread worker = null;
 
     public NewsListLoader(Context context, QueryCallback callback) {
         super(context);
@@ -49,6 +50,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
 
     @Override
     public JSONObject loadInBackground() {
+        worker = Thread.currentThread();
         Log.d("loader", "this = " + toString());
         NewsAPI newsApi = ((App) getContext().getApplicationContext()).getNewsApi();
         RecommendAPI recommendAPI = new RecommendAPI(getContext());
@@ -142,6 +144,10 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
     @Override
     protected void onStopLoading() {
         cancelLoad();
+        Log.d("loader", "onStopLoading");
+        if (worker != null) {
+            worker.interrupt();
+        }
     }
 
     @Override

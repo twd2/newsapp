@@ -113,7 +113,6 @@ public class NewsListFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView)refreshLayout.findViewById(R.id.newsList);
         assert recyclerView != null;
         setupRecyclerView(recyclerView);
-        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
         DividerItemDecoration dividerItemDecoration =
                 new DividerItemDecoration(recyclerView.getContext(),
@@ -140,7 +139,7 @@ public class NewsListFragment extends Fragment {
                                         .mValues.add(new Categories.NewsItem(
                                                 getString(R.string.loading_more)));
                                 recyclerView.getAdapter().notifyItemInserted(totalItemCount);
-                                Log.d("frag" + categoryType, "onScrolled");
+                                Log.d("frag " + categoryType, "onScrolled");
                                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null,
                                         newsListCallbacks);
                             }
@@ -149,6 +148,8 @@ public class NewsListFragment extends Fragment {
                 }
             }
         });
+
+        getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
 
         return refreshLayout;
     }
@@ -164,7 +165,7 @@ public class NewsListFragment extends Fragment {
         if (getView() == null) {
             return;
         }
-        Log.d("frag", "doRefresh");
+        Log.d("frag " + categoryType, "doRefresh");
 
         loadedPage = 0;
         expectPage = 1;
@@ -173,10 +174,6 @@ public class NewsListFragment extends Fragment {
                 (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshing(true);
         getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
-    }
-
-    public void setCategoryType(Categories.CategoryType categoryType) {
-        this.categoryType = categoryType;
     }
 
     private void updateNews(JSONObject obj, boolean append) {
@@ -245,6 +242,27 @@ public class NewsListFragment extends Fragment {
         outState.putInt("loadedPage", loadedPage);
         outState.putInt("expectPage", expectPage);
         // outState.putString("category", categoryType.toString());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        Log.d("frag " + categoryType, "onDestroyView " + getLoaderManager().hasRunningLoaders());
+        getLoaderManager().destroyLoader(NEWS_LIST_LOADER_ID);
+
+        // I think this is workaround.
+        try {
+            SwipeRefreshLayout refreshLayout =
+                    (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
+            refreshLayout.setRefreshing(false);
+            refreshLayout.setVisibility(View.INVISIBLE);
+            RecyclerView recyclerView = (RecyclerView)getView().findViewById(R.id.newsList);
+            recyclerView.setVisibility(View.INVISIBLE);
+            getView().setVisibility(View.INVISIBLE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public class NewsItemRecyclerViewAdapter
