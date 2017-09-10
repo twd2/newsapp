@@ -18,16 +18,15 @@ import java.util.*;
 
 public class RecommendAPI {
 
-    public static final int RANDOM_SAMPLE_NUM = 10;              //每次各个种类中随机抽样的数量
-    public static final int KEYWORD_SEARCH_SAMPLE = 10;          //每次根据KEY_WORD进行一次Search（不限category）,得到样本的数量
-    public static final int KEYWORDS_NUM = 5;                      //每次进行search的keyword的数量
-    public static final int RANDOM_MIN = 2;                         //完全随机新闻最小数量
-    public static final int HISTORY_NEWS_NUM = 5;                //与推荐相关的最近的历史记录
-    //进行推荐的方法大致如下：每次分别从完全随机的新闻和根据关键字搜索的新闻选出一部分进行推荐
+    public static final int RANDOM_SAMPLE_NUM = 10; // 每次各个种类中随机抽样的数量
+    public static final int KEYWORD_SEARCH_SAMPLE = 10; // 每次根据KEYWORD进行一次Search（不限category）,得到样本的数量
+    public static final int KEYWORDS_NUM = 5; // 每次进行search的keyword的数量
+    public static final int RANDOM_MIN = 2; // 完全随机新闻最小数量
+    public static final int HISTORY_NEWS_NUM = 5; // 与推荐相关的最近的历史记录
 
     // 进行推荐的方法大致如下：每次分别从完全随机的新闻和根据关键字搜索的新闻选出一部分进行推荐
 
-    private int recommendSize; // 每次推荐的新闻数量
+    private final int recommendSize; // 每次推荐的新闻数量
     public App app;
 
     public RecommendAPI(Context context) {
@@ -35,48 +34,52 @@ public class RecommendAPI {
         recommendSize = NewsAPI.DEFAULT_PAGE_SIZE;
     }
 
-    private int randomNewsNum(int readNewsNum) { // 完全随机的新闻占推荐新闻的比重(输入为阅读的新闻数量，随着新闻数量的增加，比重越来越低)
+    // 完全随机的新闻占推荐新闻的比重(输入为阅读的新闻数量，随着新闻数量的增加，比重越来越低)
+    private int randomNewsNum(int readNewsNum) {
         int randomNum = (int)(recommendSize * Math.pow(2.0, -readNewsNum));
         randomNum = Math.max(randomNum, RANDOM_MIN);
         return randomNum;
     }
 
-    private JSONArray getRandomNews(int newsNum) throws IOException, JSONException { // readNewsNum是用户已经阅读的新闻数量
+    // readNewsNum是用户已经阅读的新闻数量
+    private JSONArray getRandomNews(int requiredNum) throws IOException, JSONException {
         NewsAPI newsApi = app.getNewsApi();
-        JSONArray all = new JSONArray();
+        JSONArray categories = new JSONArray();
         Random rn = new Random();
         for (int i = NewsAPI.CATEGORY_MIN; i <= NewsAPI.CATEGORY_MAX; i++) {
             // TODO(twd2): NewsAPI bug
-            int randomPage = rn.nextInt(RANDOM_SAMPLE_NUM - 1) + 1; // in order to avoid server's bug
+            // in order to avoid server's bug
+            int randomPage = rn.nextInt(RANDOM_SAMPLE_NUM - 1) + 1;
             randomPage += 1;
-            JSONObject listNews = newsApi.getListNews(i, randomPage, RANDOM_SAMPLE_NUM);
-            all.put(listNews); // 首先将所有种类的新闻放入all
+            JSONObject list = newsApi.getListNews(i, randomPage, RANDOM_SAMPLE_NUM);
+            categories.put(list); // 首先将所有种类的新闻放入all
         }
 
-        HashSet<String> newsIdSet = new HashSet<>();
-        JSONArray array = new JSONArray();
-        int counter = 0;
-        while (counter < newsNum) {
+        Set<String> newsIdSet = new HashSet<>();
+        JSONArray result = new JSONArray();
+        // TODO(twd2): infinity loop?
+        while (result.length() < requiredNum) {
             int randomCategory = rn.nextInt(NewsAPI.CATEGORY_MAX - NewsAPI.CATEGORY_MIN + 1);
-            JSONArray currentListNews = all.getJSONObject(randomCategory).getJSONArray("list");
-            int randomIndex = rn.nextInt(currentListNews.length());
-            String newsID = currentListNews.getJSONObject(randomIndex).getString("news_ID");
+            JSONArray list = categories.getJSONObject(randomCategory).getJSONArray("list");
+            int randomIndex = rn.nextInt(list.length());
+            String newsID = list.getJSONObject(randomIndex).getString("news_ID");
             if (!newsIdSet.contains(newsID)) {
                 newsIdSet.add(newsID);
-                array.put(currentListNews.getJSONObject(randomIndex));
-                counter++;
+                result.put(list.getJSONObject(randomIndex));
             }
         }
-        return array;
+        return result;
     }
 
-    private float getScore(Hashtable<String, Float> history, JSONArray target)
+    private float getNewsScore(Map<String, Float> historyKeywords, JSONObject newsDetail)
             throws JSONException {
+        JSONArray newsKeywords = newsDetail.getJSONArray("Keywords");
         float sum = 0;
-        for (int i = 0; i < target.length(); i++) {
-                String keyword = target.getJSONObject(i).getString("word");
-                if (history.containsKey(keyword)) {
-                    sum += history.get(keyword) * target.getJSONObject(i).getDouble("score");
+        for (int i = 0; i < newsKeywords.length(); i++) {
+                String keyword = newsKeywords.getJSONObject(i).getString("word");
+                if (historyKeywords.containsKey(keyword)) {
+                    sum += historyKeywords.get(keyword) *
+                            newsKeywords.getJSONObject(i).getDouble("score");
                 }
         }
         return sum;
@@ -84,7 +87,7 @@ public class RecommendAPI {
 
     public static class NewsAndScore implements Comparable<NewsAndScore> {
         public JSONObject newsIntro; // 新闻
-        public float score;           // 新闻的得分
+        public float score; // 新闻的得分
 
         NewsAndScore(JSONObject newsIntro, float score) {
             this.newsIntro = newsIntro;
@@ -97,25 +100,26 @@ public class RecommendAPI {
         }
     }
 
-    private Hashtable<String, Float> generateWordScoreTable(JSONArray historyNews)
+    private Map<String, Float> calcKeywordsScore(JSONArray historyNews)
             throws JSONException {
-        Hashtable<String, Float> table = new Hashtable<>();
+        Map<String, Float> keywordScore = new HashMap<>();
         for (int i = 0; i < historyNews.length(); i++) {
-            JSONArray keyWords = historyNews.getJSONObject(i).getJSONArray("Keywords");
-            for (int j = 0; j < keyWords.length(); j++) {
-                String word = keyWords.getJSONObject(j).getString("word");
-                float score = (float) keyWords.getJSONObject(j).getDouble("score");
-                if (table.containsKey(word)) {
-                    table.put(word, table.get(word) + score);
+            JSONArray keywords = historyNews.getJSONObject(i).getJSONArray("Keywords");
+            for (int j = 0; j < keywords.length(); j++) {
+                String word = keywords.getJSONObject(j).getString("word");
+                float score = (float) keywords.getJSONObject(j).getDouble("score");
+                if (keywordScore.containsKey(word)) {
+                    keywordScore.put(word, keywordScore.get(word) + score);
                 } else {
-                    table.put(word, score);
+                    keywordScore.put(word, score);
                 }
             }
         }
-        return table;
+        return keywordScore;
     }
 
-    public JSONObject getRecommendNews(int page) throws IOException, JSONException { // 返回推荐的新闻
+    // 获得推荐的新闻
+    public JSONObject getRecommendedNews(int page) throws IOException, JSONException {
         if (page >= 2) {
             JSONObject obj = new JSONObject();
             obj.put("list", new JSONArray());
@@ -127,49 +131,56 @@ public class RecommendAPI {
         StorageDbHelper db = app.getDb();
         JSONArray historyNews = db.getListHistory(1, HISTORY_NEWS_NUM).getJSONArray("list");
 
-        int readNewsNum = historyNews.length();
-        Hashtable<String, Float> wordScoreMap = generateWordScoreTable(historyNews);
-        ArrayList<Map.Entry<String, Float>> arrayList = new ArrayList<>(wordScoreMap.entrySet());
-        Collections.sort(arrayList, new Comparator<Map.Entry<String, Float>>() {
+        // 计算读者的关键字分数
+        Map<String, Float> keywordsScore = calcKeywordsScore(historyNews);
+        ArrayList<Map.Entry<String, Float>> keywordScorePairs = new ArrayList<>(keywordsScore.entrySet());
+        Collections.sort(keywordScorePairs, new Comparator<Map.Entry<String, Float>>() {
             public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
                 return o2.getValue().compareTo(o1.getValue());
             }});
-        String[] topWords = new String[Math.min(KEYWORDS_NUM, wordScoreMap.size())];
 
-        for (int i = 0; i < topWords.length; i++) {
-            topWords[i] = arrayList.get(i).getKey();
+        // 选出一些分数大的关键字
+        String[] topKeywords = new String[Math.min(KEYWORDS_NUM, keywordsScore.size())];
+        for (int i = 0; i < topKeywords.length; i++) {
+            topKeywords[i] = keywordScorePairs.get(i).getKey();
         }
 
-        ArrayList<NewsAndScore> array = new ArrayList<>();
-
-        for (int i = 0; i < topWords.length; i++) {
-            JSONArray allWordNews = newsApi.searchAllNews(topWords[i], 1, KEYWORD_SEARCH_SAMPLE)
+        // 获得新闻并计算它们与读者喜好的相关度
+        ArrayList<NewsAndScore> candidates = new ArrayList<>();
+        for (int i = 0; i < topKeywords.length; i++) {
+            JSONArray keywordNews = newsApi.searchAllNews(topKeywords[i], 1, KEYWORD_SEARCH_SAMPLE)
                     .getJSONArray("list");
-            for (int j = 0; j < allWordNews.length(); j++) {
-                JSONObject newsIntro = allWordNews.getJSONObject(j);
-                String newsID = newsIntro.getString("news_ID");
-                if (db.getHistory(newsID) == null) {
+            for (int j = 0; j < keywordNews.length(); j++) {
+                JSONObject newsIntro = keywordNews.getJSONObject(j);
+                String newsId = newsIntro.getString("news_ID");
+                if (db.getHistory(newsId) == null) {
                     JSONObject newsDetail = newsApi.getNews(newsIntro.getString("news_ID"));
-                    float score = getScore(wordScoreMap, newsDetail.getJSONArray("Keywords"));
-                    array.add(new NewsAndScore(newsIntro, score));
+                    float score = getNewsScore(keywordsScore, newsDetail);
+                    candidates.add(new NewsAndScore(newsIntro, score));
                 }
             }
         }
-        JSONArray recommendArray = new JSONArray();
+        // 从大到小排序
+        Collections.sort(candidates);
 
-        Collections.sort(array); //从大到小排序
-        int randomNewsNum = Math.max(randomNewsNum(readNewsNum), recommendSize - array.size());
-        JSONArray randomNewsArray = getRandomNews(randomNewsNum);
+        // 决定推荐新闻、随机新闻的数量
+        int randomNewsNum = Math.max(randomNewsNum(historyNews.length()),
+                recommendSize - candidates.size());
 
+        // 获得推荐新闻
+        JSONArray recommendedNews = new JSONArray();
         for (int i = 0; i < recommendSize - randomNewsNum; i++) {
-            recommendArray.put(array.get(i).newsIntro);
+            recommendedNews.put(candidates.get(i).newsIntro);
         }
-        for (int i = 0; i < randomNewsArray.length(); i++) {
-            recommendArray.put(randomNewsArray.get(i));
+
+        // 获得随机新闻
+        JSONArray randomNews = getRandomNews(randomNewsNum);
+        for (int i = 0; i < randomNews.length(); i++) {
+            recommendedNews.put(randomNews.get(i));
         }
 
         JSONObject newsObj = new JSONObject();
-        newsObj.put("list", recommendArray);
+        newsObj.put("list", recommendedNews);
         newsObj.put("pageNo", 1);
         newsObj.put("pageSize", recommendSize);
         newsObj.put("totalPages", 1);

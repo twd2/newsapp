@@ -89,7 +89,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                         subObj = newsApi.getListNews(category, page);
                     } else if (query.category == Categories.CategoryType.RECOMMENDED) {
                         // list recommended
-                        subObj = recommendAPI.getRecommendNews(page);
+                        subObj = recommendAPI.getRecommendedNews(page);
                     } else if (query.category == Categories.CategoryType.FAVORITE) {
                         // list favorite
                         subObj = db.getListFavorite(page);
@@ -146,7 +146,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
         cancelLoad();
         Log.d("loader", "onStopLoading");
         if (worker != null) {
-            worker.interrupt();
+            // worker.interrupt();
         }
     }
 
