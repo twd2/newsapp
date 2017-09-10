@@ -45,12 +45,8 @@ import java.util.Comparator;
  */
 public class NewsDetailActivity extends AppCompatActivity {
 
-    private ShareActionProvider mShareActionProvider;
-
     private SpeechSynthesizer mTts;
-
     private Categories.NewsItem mItem;
-
     protected JSONObject mDetail = null;
 
     @Override
