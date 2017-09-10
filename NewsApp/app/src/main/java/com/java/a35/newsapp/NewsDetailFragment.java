@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -58,11 +59,11 @@ public class NewsDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         styleString = "<style>\na {text-decoration: none; color:"
-                + Integer.toHexString(getResources().getColor(R.color.colorPrimaryDark) - 0xff000000)
+                + Integer.toHexString(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark) - 0xFF000000)
                 + "; font-size: 20px;}\n"
                 + "p {font-size: 20px; line-height: 150%%}\n"
                 + "html {color:"
-                + Integer.toHexString(getResources().getColor(R.color.primary_text_dark) - 0xff000000)
+                + Integer.toHexString(ContextCompat.getColor(getContext(), R.color.primaryTextDark) - 0xFF000000)
                 + "}\n</style>";
 
         Bundle args = getArguments();

@@ -1,7 +1,8 @@
-package com.java.a35.newsapp;
+package com.java.a35.newsapp.api;
 
 import android.content.Context;
 
+import com.java.a35.newsapp.App;
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
 import org.json.JSONArray;

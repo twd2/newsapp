@@ -5,6 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import com.java.a35.newsapp.api.NewsAPI;
+import com.java.a35.newsapp.api.PictureAPI;
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
 import org.json.JSONArray;
@@ -33,7 +35,7 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         super(context);
         queryCallback = callback;
         headers = new HashMap<>();
-        headers.put("User-Agent", "NewsApp/0.0");
+        headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36");
     }
 
     @Override

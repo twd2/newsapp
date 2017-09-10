@@ -5,6 +5,8 @@ import android.util.Log;
 
 import java.io.File;
 
+import com.java.a35.newsapp.api.NewsAPI;
+import com.java.a35.newsapp.api.PictureAPI;
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
 

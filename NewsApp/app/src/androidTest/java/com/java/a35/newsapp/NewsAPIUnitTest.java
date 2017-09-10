@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.java.a35.newsapp.api.NewsAPI;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;

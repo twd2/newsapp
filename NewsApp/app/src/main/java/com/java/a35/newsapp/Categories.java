@@ -3,6 +3,8 @@ package com.java.a35.newsapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.java.a35.newsapp.api.NewsAPI;
+
 import org.json.JSONObject;
 
 import java.util.*;

@@ -4,6 +4,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import com.java.a35.newsapp.api.NewsAPI;
+import com.java.a35.newsapp.api.RecommendAPI;
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
 import org.json.JSONArray;

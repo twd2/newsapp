@@ -299,7 +299,7 @@ public class NewsListFragment extends Fragment {
             if (!mValues.get(position).read) {
                 holder.mTitleView.setTextColor(ResourcesCompat.getColor(
                         getResources(),
-                        R.color.primary_text_dark,
+                        R.color.primaryTextDark,
                         getContext().getTheme()));
             } else {
                 holder.mTitleView.setTextColor(ResourcesCompat.getColor(
