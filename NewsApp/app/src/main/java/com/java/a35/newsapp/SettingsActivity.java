@@ -1,6 +1,5 @@
 package com.java.a35.newsapp;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,10 +53,9 @@ public class SettingsActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 Boolean checked = ((Switch)v).isChecked();
-                if (checked){
+                if (checked) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                }
-                else {
+                } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
                 //getDelegate().applyDayNight();
@@ -87,7 +85,7 @@ public class SettingsActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case android.R.id.home:
                 finish();
                 return true;
