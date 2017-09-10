@@ -35,14 +35,14 @@
                 android:value="com.java.a35.newsapp.NewsListActivity" />
         </activity>
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
             android:name=".CategoryActivity"
             android:label="@string/categories" />
         <activity
             android:name=".BlockSettingsActivity"
             android:label="@string/title_block_settings" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
