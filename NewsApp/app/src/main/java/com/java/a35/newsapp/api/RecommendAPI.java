@@ -1,7 +1,8 @@
-package com.java.a35.newsapp;
+package com.java.a35.newsapp.api;
 
 import android.content.Context;
 
+import com.java.a35.newsapp.App;
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
 import org.json.JSONArray;
@@ -31,7 +32,7 @@ public class RecommendAPI {
 
     public RecommendAPI(Context context) {
         this.app = (App)context.getApplicationContext();
-        recommendSize = API.DEFAULT_PAGE_SIZE;
+        recommendSize = NewsAPI.DEFAULT_PAGE_SIZE;
     }
 
     private int randomNewsNum(int readNewsNum) { // 完全随机的新闻占推荐新闻的比重(输入为阅读的新闻数量，随着新闻数量的增加，比重越来越低)
@@ -41,14 +42,14 @@ public class RecommendAPI {
     }
 
     private JSONArray getRandomNews(int newsNum) throws IOException, JSONException { // readNewsNum是用户已经阅读的新闻数量
-        API api = app.getApi();
+        NewsAPI newsApi = app.getNewsApi();
         JSONArray all = new JSONArray();
         Random rn = new Random();
-        for (int i = API.CATEGORY_MIN; i <= API.CATEGORY_MAX; i++) {
-            // TODO(twd2): API bug
+        for (int i = NewsAPI.CATEGORY_MIN; i <= NewsAPI.CATEGORY_MAX; i++) {
+            // TODO(twd2): NewsAPI bug
             int randomPage = rn.nextInt(RANDOM_SAMPLE_NUM - 1) + 1; // in order to avoid server's bug
             randomPage += 1;
-            JSONObject listNews = api.getListNews(i, randomPage, RANDOM_SAMPLE_NUM);
+            JSONObject listNews = newsApi.getListNews(i, randomPage, RANDOM_SAMPLE_NUM);
             all.put(listNews); // 首先将所有种类的新闻放入all
         }
 
@@ -56,7 +57,7 @@ public class RecommendAPI {
         JSONArray array = new JSONArray();
         int counter = 0;
         while (counter < newsNum) {
-            int randomCategory = rn.nextInt(API.CATEGORY_MAX - API.CATEGORY_MIN + 1);
+            int randomCategory = rn.nextInt(NewsAPI.CATEGORY_MAX - NewsAPI.CATEGORY_MIN + 1);
             JSONArray currentListNews = all.getJSONObject(randomCategory).getJSONArray("list");
             int randomIndex = rn.nextInt(currentListNews.length());
             String newsID = currentListNews.getJSONObject(randomIndex).getString("news_ID");
@@ -122,7 +123,7 @@ public class RecommendAPI {
             return obj;
         }
 
-        API api = app.getApi();
+        NewsAPI newsApi = app.getNewsApi();
         StorageDbHelper db = app.getDb();
         JSONArray historyNews = db.getListHistory(1, HISTORY_NEWS_NUM).getJSONArray("list");
 
@@ -142,13 +143,13 @@ public class RecommendAPI {
         ArrayList<NewsAndScore> array = new ArrayList<>();
 
         for (int i = 0; i < topWords.length; i++) {
-            JSONArray allWordNews = api.searchAllNews(topWords[i], 1, KEYWORD_SEARCH_SAMPLE)
+            JSONArray allWordNews = newsApi.searchAllNews(topWords[i], 1, KEYWORD_SEARCH_SAMPLE)
                     .getJSONArray("list");
             for (int j = 0; j < allWordNews.length(); j++) {
                 JSONObject newsIntro = allWordNews.getJSONObject(j);
                 String newsID = newsIntro.getString("news_ID");
                 if (db.getHistory(newsID) == null) {
-                    JSONObject newsDetail = api.getNews(newsIntro.getString("news_ID"));
+                    JSONObject newsDetail = newsApi.getNews(newsIntro.getString("news_ID"));
                     float score = getScore(wordScoreMap, newsDetail.getJSONArray("Keywords"));
                     array.add(new NewsAndScore(newsIntro, score));
                 }

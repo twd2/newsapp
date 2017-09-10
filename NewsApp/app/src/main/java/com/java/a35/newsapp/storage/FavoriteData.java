@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  */
 
 public final class FavoriteData {
-    private FavoriteData() {}
+    private FavoriteData() { }
 
     public static class FavoriteEntry implements BaseColumns {
         public static final String TABLE_NAME = "favorite";

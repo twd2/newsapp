@@ -3,8 +3,8 @@ package com.java.a35.newsapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -31,11 +31,11 @@ import java.util.regex.Pattern;
 
 /**
  * A fragment representing a single Item detail screen.
- * This fragment is either contained in a {@link ItemListActivity}
- * in two-pane mode (on tablets) or a {@link ItemDetailActivity}
+ * This fragment is either contained in a {@link NewsListActivity}
+ * in two-pane mode (on tablets) or a {@link NewsDetailActivity}
  * on handsets.
  */
-public class ItemDetailFragment extends Fragment {
+public class NewsDetailFragment extends Fragment {
 
     public static final String ARG_CATEGORY = "category";
     public static final String ARG_NEWS_ID = "news_id";
@@ -50,7 +50,7 @@ public class ItemDetailFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemDetailFragment() {
+    public NewsDetailFragment() {
 
     }
 
@@ -59,11 +59,11 @@ public class ItemDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         styleString = "<style>\na {text-decoration: none; color:"
-                + Integer.toHexString(getResources().getColor(R.color.colorPrimaryDark) - 0xff000000)
+                + Integer.toHexString(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark) - 0xFF000000)
                 + "; font-size: 20px;}\n"
                 + "p {font-size: 20px; line-height: 150%%}\n"
                 + "html {color:"
-                + Integer.toHexString(getResources().getColor(R.color.primary_text_dark) - 0xff000000)
+                + Integer.toHexString(ContextCompat.getColor(getContext(), R.color.primaryTextDark) - 0xFF000000)
                 + "}\n</style>";
 
         Bundle args = getArguments();
@@ -71,10 +71,10 @@ public class ItemDetailFragment extends Fragment {
         if (args.containsKey(ARG_CATEGORY) && args.containsKey(ARG_NEWS_ID)) {
             Categories.CategoryType categoryType =
                     Categories.CategoryType.valueOf(
-                            args.getString(ItemDetailFragment.ARG_CATEGORY));
+                            args.getString(NewsDetailFragment.ARG_CATEGORY));
             Categories categories = ((App)getContext().getApplicationContext()).getCategories();
             mItem = categories.categories.get(categoryType).map
-                    .get(args.getString(ItemDetailFragment.ARG_NEWS_ID));
+                    .get(args.getString(NewsDetailFragment.ARG_NEWS_ID));
 
             newsDetailCallbacks = new LoaderManager.LoaderCallbacks<JSONObject>() {
                 @Override
@@ -98,7 +98,7 @@ public class ItemDetailFragment extends Fragment {
 
                 @Override
                 public void onLoadFinished(Loader<JSONObject> loader, JSONObject data) {
-                    ((ItemDetailActivity)getActivity()).mDetail = data;
+                    ((NewsDetailActivity)getActivity()).mDetail = data;
                     showDetail(data);
                 }
 
@@ -122,7 +122,7 @@ public class ItemDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.item_detail, container, false);
+        View rootView = inflater.inflate(R.layout.news_detail, container, false);
 
         if (mItem != null) {
             WebView webView = (WebView) rootView.findViewById(R.id.item_web);

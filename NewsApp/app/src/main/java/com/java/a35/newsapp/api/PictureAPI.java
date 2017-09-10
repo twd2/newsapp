@@ -1,6 +1,9 @@
-package com.java.a35.newsapp;
+package com.java.a35.newsapp.api;
 
 import android.util.Log;
+
+import com.java.a35.newsapp.CachedLoader;
+import com.java.a35.newsapp.Utils;
 
 import org.json.*;
 
@@ -47,7 +50,7 @@ public class PictureAPI {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             conn.setRequestProperty(entry.getKey(), entry.getValue());
         }
-        String jsonString = Utility.readAllString(conn.getInputStream());
+        String jsonString = Utils.readAllString(conn.getInputStream());
         Log.d("PictureAPI", jsonString);
         return new JSONObject(jsonString);
     }

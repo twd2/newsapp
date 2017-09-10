@@ -24,9 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -34,11 +32,11 @@ import java.util.Set;
  * An activity representing a list of Items. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link ItemDetailActivity} representing
+ * lead to a {@link NewsDetailActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class ItemListActivity extends AppCompatActivity {
+public class NewsListActivity extends AppCompatActivity {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -57,7 +55,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_list);
+        setContentView(R.layout.activity_news_list);
 
         if (savedInstanceState == null) {
             boolean nightMode = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
@@ -95,7 +93,7 @@ public class ItemListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(ItemListActivity.this, CategoryActivity.class);
+                Intent intent = new Intent(NewsListActivity.this, CategoryActivity.class);
                 startActivityForResult(intent, REQUEST_CATEGORY);
             }
         });
@@ -109,12 +107,12 @@ public class ItemListActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.app_bar_settings: {
-                        Intent intent = new Intent(ItemListActivity.this, SettingsActivity.class);
+                        Intent intent = new Intent(NewsListActivity.this, SettingsActivity.class);
                         startActivity(intent);
                         break;
                     } case R.id.app_bar_block_list: {
                         Intent intent =
-                                new Intent(ItemListActivity.this, BlockSettingsActivity.class);
+                                new Intent(NewsListActivity.this, BlockSettingsActivity.class);
                         Set<String> blockSet =
                                 getSharedPreferences(BlockSettingsActivity.PREFERENCES_BLOCK,
                                         Context.MODE_PRIVATE)

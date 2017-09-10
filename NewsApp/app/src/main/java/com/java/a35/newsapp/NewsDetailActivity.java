@@ -4,7 +4,6 @@ import android.content.Intent;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.ShareActionProvider;
@@ -42,9 +41,9 @@ import java.util.Comparator;
  * An activity representing a single Item detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link ItemListActivity}.
+ * in a {@link NewsListActivity}.
  */
-public class ItemDetailActivity extends AppCompatActivity {
+public class NewsDetailActivity extends AppCompatActivity {
 
     private ShareActionProvider mShareActionProvider;
 
@@ -57,7 +56,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_detail);
+        setContentView(R.layout.activity_news_detail);
 
         initTts();
 
@@ -77,7 +76,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(View v) {
                                         db.setFavorite(mItem.obj, false);
-                                        Toast.makeText(ItemDetailActivity.this,
+                                        Toast.makeText(NewsDetailActivity.this,
                                                 R.string.canceled, Toast.LENGTH_SHORT).show();
                                     }
                                 }).show();
@@ -91,7 +90,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                     case R.id.app_bar_block:
                         if (mDetail == null) break;
                         Intent intent =
-                                new Intent(ItemDetailActivity.this, BlockSettingsActivity.class);
+                                new Intent(NewsDetailActivity.this, BlockSettingsActivity.class);
                         ArrayList<String> keywordsList = new ArrayList<>();
                         try {
                             ArrayList<Pair<Double, String> > candidatesList = new ArrayList<>();
@@ -129,24 +128,24 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         Categories.CategoryType categoryType =
                 Categories.CategoryType.valueOf(
-                        getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
+                        getIntent().getStringExtra(NewsDetailFragment.ARG_CATEGORY));
         Categories categories = ((App)getApplicationContext()).getCategories();
         mItem = categories.categories.get(categoryType).map
-                .get(getIntent().getStringExtra(ItemDetailFragment.ARG_NEWS_ID));
+                .get(getIntent().getStringExtra(NewsDetailFragment.ARG_NEWS_ID));
 
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
-            arguments.putString(ItemDetailFragment.ARG_NEWS_ID,
-                    getIntent().getStringExtra(ItemDetailFragment.ARG_NEWS_ID));
-            arguments.putString(ItemDetailFragment.ARG_CATEGORY,
-                    getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
-            ItemDetailFragment fragment = new ItemDetailFragment();
+            arguments.putString(NewsDetailFragment.ARG_NEWS_ID,
+                    getIntent().getStringExtra(NewsDetailFragment.ARG_NEWS_ID));
+            arguments.putString(NewsDetailFragment.ARG_CATEGORY,
+                    getIntent().getStringExtra(NewsDetailFragment.ARG_CATEGORY));
+            NewsDetailFragment fragment = new NewsDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         } else {
-            ItemDetailFragment fragment = new ItemDetailFragment();
+            NewsDetailFragment fragment = new NewsDetailFragment();
             fragment.setArguments(savedInstanceState);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
@@ -188,10 +187,10 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(ItemDetailFragment.ARG_CATEGORY,
-                           getIntent().getStringExtra(ItemDetailFragment.ARG_CATEGORY));
-        outState.putString(ItemDetailFragment.ARG_NEWS_ID,
-                getIntent().getStringExtra(ItemDetailFragment.ARG_NEWS_ID));
+        outState.putString(NewsDetailFragment.ARG_CATEGORY,
+                           getIntent().getStringExtra(NewsDetailFragment.ARG_CATEGORY));
+        outState.putString(NewsDetailFragment.ARG_NEWS_ID,
+                getIntent().getStringExtra(NewsDetailFragment.ARG_NEWS_ID));
     }
 
     protected void doShare() {
@@ -209,7 +208,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 File tempFile = new File(((App)getApplicationContext()).getSharedDir(),
                         pictureFile.getName() + ".jpg");
                 try {
-                    Utility.copyFileUsingFileChannels(pictureFile, tempFile);
+                    Utils.copyFileUsingFileChannels(pictureFile, tempFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -244,7 +243,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     protected void initTts() {
         SpeechUtility.createUtility(this, SpeechConstant.APPID + "=59a78bf9");
-        mTts = SpeechSynthesizer.createSynthesizer(ItemDetailActivity.this, mTtsInitListener);
+        mTts = SpeechSynthesizer.createSynthesizer(NewsDetailActivity.this, mTtsInitListener);
         if (mTts != null) {
             mTts.setParameter(SpeechConstant.PITCH, "50");
         }
@@ -258,12 +257,12 @@ public class ItemDetailActivity extends AppCompatActivity {
             if (!isTtsPlaying) {
                 int code = mTts.startSpeaking(mItem.detail, mTtsListener);
                 if (code != ErrorCode.SUCCESS) {
-                    Toast.makeText(ItemDetailActivity.this,
+                    Toast.makeText(NewsDetailActivity.this,
                             getString(R.string.tts_failed) + code,
                             Toast.LENGTH_SHORT).show();
                 } else {
                     isTtsPlaying = true;
-                    Toast.makeText(ItemDetailActivity.this,
+                    Toast.makeText(NewsDetailActivity.this,
                             R.string.reading, Toast.LENGTH_SHORT).show();
                 }
             } else {
@@ -271,7 +270,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 mTts.stopSpeaking();
             }
         } else {
-            Toast.makeText(ItemDetailActivity.this,
+            Toast.makeText(NewsDetailActivity.this,
                     R.string.tts_engine_init_failed, Toast.LENGTH_SHORT).show();
         }
     }
@@ -318,11 +317,11 @@ public class ItemDetailActivity extends AppCompatActivity {
             isTtsPlaying = false;
             if (error == null) {
                 Log.d("tts", "播放完成");
-                Toast.makeText(ItemDetailActivity.this,
+                Toast.makeText(NewsDetailActivity.this,
                         R.string.read_completed, Toast.LENGTH_SHORT).show();
             } else {
                 Log.d("tts", error.getPlainDescription(true));
-                Toast.makeText(ItemDetailActivity.this,
+                Toast.makeText(NewsDetailActivity.this,
                         error.getPlainDescription(true), Toast.LENGTH_SHORT).show();
             }
         }

@@ -5,6 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import com.java.a35.newsapp.api.NewsAPI;
+import com.java.a35.newsapp.api.PictureAPI;
 import com.java.a35.newsapp.storage.StorageDbHelper;
 
 import org.json.JSONArray;
@@ -33,20 +35,20 @@ public class NewsDetailLoader extends AsyncTaskLoader<JSONObject> {
         super(context);
         queryCallback = callback;
         headers = new HashMap<>();
-        headers.put("User-Agent", "NewsApp/0.0");
+        headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36");
     }
 
     @Override
     public JSONObject loadInBackground() {
         App app = (App) getContext().getApplicationContext();
         CachedLoader cachedLoader = app.getCachedLoader();
-        API api = app.getApi();
+        NewsAPI newsApi = app.getNewsApi();
         PictureAPI pictureAPI = app.getPictureApi();
         StorageDbHelper db = app.getDb();
 
         String id = queryCallback.getId();
         try {
-            JSONObject obj = api.getNews(id);
+            JSONObject obj = newsApi.getNews(id);
             db.setHistory(obj);
             boolean showPictures = (PreferenceManager.getDefaultSharedPreferences(getContext())
                     .getBoolean("show_pictures", true)); // TODO(twd2): default value?

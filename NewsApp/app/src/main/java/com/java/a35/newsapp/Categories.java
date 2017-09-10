@@ -3,6 +3,8 @@ package com.java.a35.newsapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.java.a35.newsapp.api.NewsAPI;
+
 import org.json.JSONObject;
 
 import java.util.*;
@@ -15,18 +17,18 @@ public class Categories {
         RECOMMENDED(-1, R.string.category_short_recommended, -1),
         FAVORITE(-1, R.string.category_short_favorited, -1),
 
-        CHINA(API.CATEGORY_CHINA, R.string.category_short_china, R.drawable.category_china),
-        INTERNATIONAL(API.CATEGORY_INTERNATIONAL, R.string.category_short_international, R.drawable.category_international),
-        SOCIAL(API.CATEGORY_SOCIAL, R.string.category_short_social, R.drawable.category_social),
-        CULTURE(API.CATEGORY_CULTURE, R.string.category_short_culture, R.drawable.category_culture),
-        SPORTS(API.CATEGORY_SPORTS, R.string.category_short_sports, R.drawable.category_sports),
-        TECHNOLOGY(API.CATEGORY_TECHNOLOGY, R.string.category_short_technology, R.drawable.category_technology),
-        ENTERTAINMENT(API.CATEGORY_ENTERTAINMENT, R.string.category_short_entertainment, R.drawable.category_entertainment),
-        EDUCATION(API.CATEGORY_EDUCATION, R.string.category_short_education, R.drawable.category_education),
-        MILITARY(API.CATEGORY_MILITARY, R.string.category_short_military, R.drawable.category_military),
-        FINANCIAL(API.CATEGORY_FINANCIAL, R.string.category_short_financial, R.drawable.category_financial),
-        HEALTH(API.CATEGORY_HEALTH, R.string.category_short_health, R.drawable.category_health),
-        AUTOMOBILE(API.CATEGORY_AUTOMOBILE, R.string.category_short_automobile, R.drawable.category_automobile);
+        CHINA(NewsAPI.CATEGORY_CHINA, R.string.category_short_china, R.drawable.category_china),
+        INTERNATIONAL(NewsAPI.CATEGORY_INTERNATIONAL, R.string.category_short_international, R.drawable.category_international),
+        SOCIAL(NewsAPI.CATEGORY_SOCIAL, R.string.category_short_social, R.drawable.category_social),
+        CULTURE(NewsAPI.CATEGORY_CULTURE, R.string.category_short_culture, R.drawable.category_culture),
+        SPORTS(NewsAPI.CATEGORY_SPORTS, R.string.category_short_sports, R.drawable.category_sports),
+        TECHNOLOGY(NewsAPI.CATEGORY_TECHNOLOGY, R.string.category_short_technology, R.drawable.category_technology),
+        ENTERTAINMENT(NewsAPI.CATEGORY_ENTERTAINMENT, R.string.category_short_entertainment, R.drawable.category_entertainment),
+        EDUCATION(NewsAPI.CATEGORY_EDUCATION, R.string.category_short_education, R.drawable.category_education),
+        MILITARY(NewsAPI.CATEGORY_MILITARY, R.string.category_short_military, R.drawable.category_military),
+        FINANCIAL(NewsAPI.CATEGORY_FINANCIAL, R.string.category_short_financial, R.drawable.category_financial),
+        HEALTH(NewsAPI.CATEGORY_HEALTH, R.string.category_short_health, R.drawable.category_health),
+        AUTOMOBILE(NewsAPI.CATEGORY_AUTOMOBILE, R.string.category_short_automobile, R.drawable.category_automobile);
 
         private final int apiId;
         private final int nameId;
@@ -160,6 +162,7 @@ public class Categories {
             this.obj = obj;
         }
 
+        // special
         public NewsItem(String title) {
             this("", title, false, null);
             special = true;

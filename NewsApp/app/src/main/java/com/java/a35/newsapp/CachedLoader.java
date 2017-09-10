@@ -48,7 +48,7 @@ public class CachedLoader {
             sb.append(entry.getValue());
             sb.append("\n");
         }
-        return Utility.byteArrayToHexString(messageDigest.digest(sb.toString().getBytes()));
+        return Utils.byteArrayToHexString(messageDigest.digest(sb.toString().getBytes()));
     }
 
     public String fetch(String targetURL, String queryString, Map<String, String> headerPayload,
@@ -93,7 +93,7 @@ public class CachedLoader {
         }
 
         FileInputStream fin = new FileInputStream(cacheFile);
-        String data = Utility.readAllString(fin);
+        String data = Utils.readAllString(fin);
         fin.close();
         memoryCachedData.put(uuid, data);
         return data;
