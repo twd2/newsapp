@@ -152,19 +152,22 @@ public class Categories {
         public final String title;
         public String detail = "";
         public boolean read = false;
+        public boolean favorite = false;
         public final JSONObject obj;
         public boolean special = false;
 
-        public NewsItem(String id, String title, boolean read, JSONObject obj) {
+        public NewsItem(String id, String title, boolean read, boolean favorite,
+                        JSONObject obj) {
             this.id = id;
             this.title = title;
             this.read = read;
+            this.favorite = favorite;
             this.obj = obj;
         }
 
         // special
         public NewsItem(String title) {
-            this("", title, false, null);
+            this("", title, false, false, null);
             special = true;
         }
 

@@ -117,6 +117,7 @@ public class NewsListLoader extends AsyncTaskLoader<JSONObject> {
                         continue;
                     }
                     news.put("read", db.getHistory(news.getString("news_ID")) != null);
+                    news.put("favorite", db.getFavorite(news.getString("news_ID")) != null);
                     list.put(news);
                 }
             }

@@ -219,7 +219,8 @@ public class NewsListFragment extends Fragment {
             for (int i = 0; i < newsList.length(); ++i) {
                 JSONObject news = newsList.getJSONObject(i);
                 category.addItem(new Categories.NewsItem(news.getString("news_ID"),
-                        news.getString("news_Title"), news.getBoolean("read"), news));
+                        news.getString("news_Title"), news.getBoolean("read"),
+                        news.getBoolean("favorite"), news));
             }
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
