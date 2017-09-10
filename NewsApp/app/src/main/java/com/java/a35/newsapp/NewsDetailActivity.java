@@ -69,17 +69,17 @@ public class NewsDetailActivity extends AppCompatActivity {
                     case R.id.app_bar_favorite:
                         // TODO(twd2): async?
                         final StorageDbHelper db = ((App)getApplicationContext()).getDb();
-                        db.setFavorite(mItem.obj, true);
-                        Snackbar.make(getCurrentFocus(),
-                                R.string.marked_as_favorite, Snackbar.LENGTH_LONG)
-                                .setAction(R.string.cancel, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        db.setFavorite(mItem.obj, false);
-                                        Toast.makeText(NewsDetailActivity.this,
-                                                R.string.canceled, Toast.LENGTH_SHORT).show();
-                                    }
-                                }).show();
+                        mItem.favorite = !mItem.favorite;
+                        db.setFavorite(mItem.obj, mItem.favorite);
+                        if (mItem.favorite) {
+                            item.setIcon(R.drawable.ic_favorite_white_24dp);
+                            Toast.makeText(NewsDetailActivity.this,
+                                    R.string.marked_as_favorite, Toast.LENGTH_SHORT).show();
+                        } else {
+                            item.setIcon(R.drawable.ic_favorite_border_white_24dp);
+                            Toast.makeText(NewsDetailActivity.this,
+                                    R.string.canceled, Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     case R.id.app_bar_tts:
                         playTts();
@@ -182,6 +182,12 @@ public class NewsDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detail, menu);
+        MenuItem favoriteItem = menu.findItem(R.id.app_bar_favorite);
+        if (mItem.favorite) {
+            favoriteItem.setIcon(R.drawable.ic_favorite_white_24dp);
+        } else {
+            favoriteItem.setIcon(R.drawable.ic_favorite_border_white_24dp);
+        }
         return true;
     }
 
@@ -199,7 +205,8 @@ public class NewsDetailActivity extends AppCompatActivity {
         }
         try {
             Intent share = new Intent(Intent.ACTION_SEND);
-            if (!mDetail.has("pictures_path")) {
+            if (!mDetail.has("pictures_path") ||
+                mDetail.getJSONArray("pictures_path").length() == 0) {
                 share.setType("text/plain");
             } else {
                 JSONArray pictures = mDetail.getJSONArray("pictures_path");
