@@ -24,7 +24,7 @@
         android:layout_marginTop="@dimen/category_upper_margin"
         android:layout_marginBottom="@dimen/category_upper_margin"
         android:text=""
-        android:textSize="30sp"
+        android:textSize="18sp"
         android:textColor="#cc000000"
         android:gravity="top|start"
         android:paddingTop="3dp"
@@ -35,7 +35,7 @@
         android:layout_height="30dp"
         app:srcCompat="@drawable/ic_check_black_24dp"
         android:elevation="10dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="0dp"
         android:layout_alignTop="@+id/categoryButton"
         android:layout_alignLeft="@+id/categoryButton"
         android:layout_alignStart="@+id/categoryButton" />
