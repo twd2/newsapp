@@ -109,23 +109,28 @@ public class NewsDetailActivity extends AppCompatActivity {
                             ArrayList<String> candidates = new ArrayList<String>();
                             JSONArray arrayOfEntries;
                             arrayOfEntries = mDetail.getJSONArray("persons");
-                            for (int i = 0; i < arrayOfEntries.length(); ++ i)
+                            for (int i = 0; i < arrayOfEntries.length(); ++ i) {
                                 candidates.add(arrayOfEntries.getJSONObject(i).getString("word"));
+                            }
                             arrayOfEntries = mDetail.getJSONArray("locations");
-                            for (int i = 0; i < arrayOfEntries.length(); ++ i)
+                            for (int i = 0; i < arrayOfEntries.length(); ++ i) {
                                 candidates.add(arrayOfEntries.getJSONObject(i).getString("word"));
+                            }
                             arrayOfEntries = mDetail.getJSONArray("organizations");
-                            for (int i = 0; i < arrayOfEntries.length(); ++ i)
+                            for (int i = 0; i < arrayOfEntries.length(); ++ i) {
                                 candidates.add(arrayOfEntries.getJSONObject(i).getString("word"));
-                            for (int i = 0; i < candidatesList.size(); ++ i)
+                            }
+                            for (int i = 0; i < candidatesList.size(); ++ i) {
                                 candidates.add(candidatesList.get(i).second);
+                            }
                             String introText = mItem.obj.getString("news_Title") + "|" +
                                     mItem.obj.getString("news_Intro");
                             introText = introText.toLowerCase();
-                            for (int i = 0; i < candidates.size() && keywordsList.size() < 10; ++ i) {
+                            for (int i = 0; i < candidates.size() && keywordsList.size() < 20; ++ i) {
                                 String candidate = candidates.get(i);
-                                if (introText.contains(candidate.toLowerCase()))
+                                if (introText.contains(candidate.toLowerCase())) {
                                     keywordsList.add(candidate);
+                                }
                             }
                         } catch (JSONException e){
                             Log.e("test", Log.getStackTraceString(e));
