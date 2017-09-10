@@ -110,16 +110,6 @@ public class NewsListActivity extends AppCompatActivity {
                         Intent intent = new Intent(NewsListActivity.this, SettingsActivity.class);
                         startActivity(intent);
                         break;
-                    } case R.id.app_bar_block_list: {
-                        Intent intent =
-                                new Intent(NewsListActivity.this, BlockSettingsActivity.class);
-                        Set<String> blockSet =
-                                getSharedPreferences(BlockSettingsActivity.PREFERENCES_BLOCK,
-                                        Context.MODE_PRIVATE)
-                                        .getStringSet("block_list", new HashSet<String>());
-                        intent.putExtra("keywords", new ArrayList<String>(blockSet));
-                        startActivity(intent);
-                        break;
                     }
                 }
                 return true;

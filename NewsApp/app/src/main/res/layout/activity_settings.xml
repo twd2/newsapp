@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Switch
+        android:id="@+id/show_pictures_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/show_pictures"
+        android:textSize="18sp" />
+
+    <Switch
+        android:id="@+id/night_mode_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/night_mode"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/blocking_settings_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/block_settings" />
+
+</LinearLayout>
