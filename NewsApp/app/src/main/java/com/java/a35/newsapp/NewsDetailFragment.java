@@ -28,13 +28,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-/**
- * A fragment representing a single Item detail screen.
- * This fragment is either contained in a {@link NewsListActivity}
- * in two-pane mode (on tablets) or a {@link NewsDetailActivity}
- * on handsets.
- */
 public class NewsDetailFragment extends Fragment {
 
     public static final String ARG_CATEGORY = "category";
@@ -198,8 +191,8 @@ public class NewsDetailFragment extends Fragment {
                 }
 
                 // prepare detail html
-                String htmlDetail = TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>");
-                htmlDetail = linkToEncyclopedia(htmlDetail, obj);
+                String detailHtml = TextUtils.htmlEncode(mItem.detail).replace("\n", "</p>\n<p>");
+                detailHtml = linkToEncyclopedia(detailHtml, obj);
 
                 // prepare picture html
                 StringBuilder pictureHtml = new StringBuilder();
@@ -211,29 +204,25 @@ public class NewsDetailFragment extends Fragment {
                                 picturesPath.getString(i)));
                     }
                     if (obj.getBoolean("isSearchedImages")) {
-                        pictureHtml.append("<p>(" + getString(R.string.searched_images) + ")</p>\n");
+                        pictureHtml.append("<p>" + getString(R.string.searched_images) + "</p>\n");
                     }
                 }
 
                 // build whole html
-                StringBuilder sb = new StringBuilder();
-                Resources.Theme theme = getContext().getTheme();
-                sb.append(
-                        String.format("%s" +
-                                      "<h1>%s</h1>\n" +
-                                      "%s\n" +
-                                      "<p>%s</p>\n" +
-                                      "<a href=\"%s\" target=\"_blank\">%s</a>",
-                                styleString,
-                                TextUtils.htmlEncode(mItem.title),
-                                pictureHtml.toString(),
-                                htmlDetail,
-                                obj.getString("news_URL"),
-                                getString(R.string.view_source)));
+                StringBuilder html = new StringBuilder();
+                html.append(String.format("%s" +
+                                        "<h1>%s</h1>\n" +
+                                        "%s\n" +
+                                        "<p>%s</p>\n" +
+                                        "<a href=\"%s\" target=\"_blank\">%s</a>",
+                        styleString,
+                        TextUtils.htmlEncode(mItem.title),
+                        pictureHtml.toString(),
+                        detailHtml,
+                        obj.getString("news_URL"),
+                        getString(R.string.view_source)));
 
-                webView.loadDataWithBaseURL(null,
-                        sb.toString(),
-                        "text/html", "UTF-8", null);
+                webView.loadDataWithBaseURL(null, html.toString(), "text/html", "UTF-8", null);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

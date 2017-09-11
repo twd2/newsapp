@@ -93,6 +93,7 @@ public class NewsListFragment extends Fragment {
             // loadedPage = savedInstanceState.getInt("loadedPage");
             loadedPage = 0; // TODO(twd2)
             expectPage = savedInstanceState.getInt("expectPage");
+            noMore = savedInstanceState.getBoolean("noMore");
             Log.d("frag " + categoryType, "saved state = " + loadedPage + "/" + expectPage);
         }
 
@@ -136,8 +137,8 @@ public class NewsListFragment extends Fragment {
                         public void run() {
                             if (getActivity() != null) {
                                 ((NewsItemRecyclerViewAdapter) recyclerView.getAdapter())
-                                        .mValues.add(new Categories.NewsItem(
-                                                getString(R.string.loading_more)));
+                                        .mValues.add(
+                                                new Categories.NewsItem(R.string.loading_more));
                                 recyclerView.getAdapter().notifyItemInserted(totalItemCount);
                                 Log.d("frag " + categoryType, "onScrolled");
                                 getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null,
@@ -198,7 +199,7 @@ public class NewsListFragment extends Fragment {
         if (obj == null) {
             Log.d("frag " + categoryType, "loader returned null, // retrying");
             noMore = true;
-            category.addItem(new Categories.NewsItem(getString(R.string.network_error)));
+            category.addItem(new Categories.NewsItem(R.string.network_error));
             // getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
             isLoadingMore = false;
             SwipeRefreshLayout refreshLayout =
@@ -214,7 +215,7 @@ public class NewsListFragment extends Fragment {
 
             if (loadedPage != expectPage && obj.getBoolean("noMore")) {
                 noMore = true;
-                category.addItem(new Categories.NewsItem(getString(R.string.no_more)));
+                category.addItem(new Categories.NewsItem(R.string.no_more));
             } else {
                 noMore = false;
             }
@@ -247,6 +248,7 @@ public class NewsListFragment extends Fragment {
         Log.d("frag " + categoryType, "onSaveInstanceState");
         outState.putInt("loadedPage", loadedPage);
         outState.putInt("expectPage", expectPage);
+        outState.putBoolean("noMore", noMore);
         // outState.putString("category", categoryType.toString());
     }
 
@@ -298,11 +300,17 @@ public class NewsListFragment extends Fragment {
             if (holder.mItem.special) {
                 holder.mSourceView.setText("");
                 holder.mDatetimeView.setText("");
-                holder.mTitleView.setText(holder.mItem.title);
+                holder.mTitleView.setTextColor(ResourcesCompat.getColor(
+                        getResources(),
+                        R.color.primaryTextDark,
+                        getContext().getTheme()));
+                holder.mTitleView.setText(holder.mItem.specialType);
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // nothing
+                        if (holder.mItem.specialType != R.string.loading_more) {
+                            doRefresh();
+                        }
                     }
                 });
                 return;

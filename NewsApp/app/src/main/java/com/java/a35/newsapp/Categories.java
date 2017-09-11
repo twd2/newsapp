@@ -155,6 +155,7 @@ public class Categories {
         public boolean favorite = false;
         public final JSONObject obj;
         public boolean special = false;
+        public int specialType = 0;
 
         public NewsItem(String id, String title, boolean read, boolean favorite,
                         JSONObject obj) {
@@ -166,9 +167,10 @@ public class Categories {
         }
 
         // special
-        public NewsItem(String title) {
-            this("", title, false, false, null);
+        public NewsItem(int specialType) {
+            this("", "", false, false, null);
             special = true;
+            this.specialType = specialType;
         }
 
         @Override

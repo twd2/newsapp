@@ -46,7 +46,7 @@
     <string name="unblock">取消屏蔽</string>
     <string name="keyword">关键字</string>
     <string name="news_blocked">此新闻已被屏蔽</string>
-    <string name="searched_images">图片来自网络</string>
+    <string name="searched_images">（图片来自网络）</string>
     <string name="no_more">暂无更多，点击刷新</string>
     <string name="network_error">网络错误</string>
 </resources>

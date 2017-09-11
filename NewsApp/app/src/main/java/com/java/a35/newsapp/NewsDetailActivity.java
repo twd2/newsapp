@@ -271,6 +271,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         SpeechUtility.createUtility(this, SpeechConstant.APPID + "=59a78bf9");
         mTts = SpeechSynthesizer.createSynthesizer(NewsDetailActivity.this, mTtsInitListener);
         if (mTts != null) {
+            mTts.setParameter(SpeechConstant.VOICE_NAME, "xiaoyan");
             mTts.setParameter(SpeechConstant.PITCH, "50");
         }
     }

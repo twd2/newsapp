@@ -217,6 +217,8 @@ public class NewsListActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CATEGORY) {
             Log.d("list", "resetAdapter");
             // reset adaptor
+            mViewPager.getAdapter().notifyDataSetChanged();
+            mViewPager.setCurrentItem(0);
             mViewPager.setAdapter(mViewPager.getAdapter());
             return;
         }
