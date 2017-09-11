@@ -2,6 +2,9 @@ package com.java.a35.newsapp;
 
 import android.content.Context;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -52,14 +55,14 @@ public class CachedLoader {
     }
 
     public String fetch(String targetURL, String queryString, Map<String, String> headerPayload,
-                        boolean asString) throws IOException {
+                        boolean asJsonString) throws IOException {
         if (queryString.length() > 0 && queryString.charAt(0) != '?') {
             queryString = "?" + queryString;
         }
 
         String uuid = getUuid(targetURL, queryString, headerPayload);
 
-        if (asString && memoryCachedData.containsKey(uuid)){
+        if (asJsonString && memoryCachedData.containsKey(uuid)){
             return memoryCachedData.get(uuid);
         }
 
@@ -88,7 +91,7 @@ public class CachedLoader {
             }
         }
 
-        if (!asString) {
+        if (!asJsonString) {
             return cacheFile.getAbsolutePath();
         }
 
@@ -96,6 +99,15 @@ public class CachedLoader {
         String data = Utils.readAllString(fin);
         fin.close();
         memoryCachedData.put(uuid, data);
+
+        try {
+            new JSONObject(data); // try parse
+        } catch (JSONException e) {
+            e.printStackTrace();
+            cacheFile.delete();
+            memoryCachedData.remove(uuid);
+        }
+
         return data;
     }
 

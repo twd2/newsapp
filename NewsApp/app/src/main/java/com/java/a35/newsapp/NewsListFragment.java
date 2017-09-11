@@ -200,6 +200,12 @@ public class NewsListFragment extends Fragment {
             noMore = true;
             category.addItem(new Categories.NewsItem(getString(R.string.network_error)));
             // getLoaderManager().restartLoader(NEWS_LIST_LOADER_ID, null, newsListCallbacks);
+            isLoadingMore = false;
+            SwipeRefreshLayout refreshLayout =
+                    (SwipeRefreshLayout)getView().findViewById(R.id.refreshLayout);
+            refreshLayout.setRefreshing(false);
+            RecyclerView newsList = (RecyclerView)refreshLayout.findViewById(R.id.newsList);
+            newsList.getAdapter().notifyDataSetChanged();
             return;
         }
 
