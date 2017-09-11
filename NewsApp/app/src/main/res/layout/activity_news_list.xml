@@ -28,7 +28,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="@dimen/category_height"
-                    android:background="@color/background_holo_light"
+                    android:background="@color/backgroundHoloLight"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:elevation="4dp"
                     app:tabIndicatorColor="@color/colorPrimary"
@@ -45,7 +45,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:scaleType="center"
-                    android:background="@color/background_holo_light"
+                    android:background="@color/backgroundHoloLight"
                     android:elevation="10dp"
                     app:srcCompat="@drawable/ic_add" />
         </LinearLayout>

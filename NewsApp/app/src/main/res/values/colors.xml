@@ -3,12 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="background_holo_light">#FFEEEEEE</color>
+    <color name="backgroundHoloLight">#FFEEEEEE</color>
     <color name="categoryDisabledColor">#44000000</color>
     <color name="categoryDisabledTextColor">#CC000000</color>
     <color name="categoryEnabledColor">#CC000000</color>
     <color name="categoryEnabledTextColor">#FFBDC7C1</color>
     <color name="primaryTextDark">#FF000000</color>
     <color name="newsTitleRead">#FF606060</color>
-    <color name="icon_color">#FF000000</color>
+    <color name="iconColor">#FF000000</color>
 </resources>
