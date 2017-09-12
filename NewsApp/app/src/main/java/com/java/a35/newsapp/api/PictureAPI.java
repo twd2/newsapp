@@ -24,7 +24,7 @@ public class PictureAPI {
     public static final int IMAGE_NUM = 3;               //for each of keyword, the number of picture grabbed is IMAGE_NUM
 
     public static final String SEARCH_PLACE = "zh-CN";     //the location of my client(in which country)
-    public static final String SEARCH_KEY = "3f6dbf8a32c842cb996577084b329068";           //the key of using bing's api
+    public static final String SEARCH_KEY = "1b75124c51004fa18c93ee43e598d341";           //the key of using bing's api
     public static final String USER_AGENT = "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch; NOKIA; Lumia 822)";
 
     private CachedLoader cachedLoader;
