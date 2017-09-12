@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
@@ -130,6 +131,8 @@ public class NewsListActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mViewPager.setCurrentItem(savedInstanceState.getInt("tab_id"));
         }
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     @Override
