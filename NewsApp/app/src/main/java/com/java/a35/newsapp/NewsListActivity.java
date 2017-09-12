@@ -20,13 +20,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class NewsListActivity extends AppCompatActivity {
 
@@ -131,8 +126,6 @@ public class NewsListActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mViewPager.setCurrentItem(savedInstanceState.getInt("tab_id"));
         }
-
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     @Override
@@ -186,7 +179,7 @@ public class NewsListActivity extends AppCompatActivity {
             }
         });
 
-        searchView.onActionViewExpanded();
+        // searchView.onActionViewExpanded();
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
