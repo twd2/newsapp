@@ -8,7 +8,7 @@
 
 This project could be simply built with well-configured Android Studio.
 
-FYI: we used Android Studio 2.3.3.
+FYI: we use Android Studio 2.3.3.
 
 ## Notes
 
