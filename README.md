@@ -1,10 +1,18 @@
 # NewsApp
 
-Java Project
+*Yet Another Android App for Reading News*
 
-**Please do not push to the master branch directly, use PR instead.**
+![demo](demo/1.png)
+
+## Building
+
+This project could be simply built with well-configured Android Studio.
+
+FYI: we used Android Studio 2.3.3.
 
 ## Notes
+
+**Please do not push to the master branch directly, use PR instead.**
 
 Have fun!
 
